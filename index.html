@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>莫静柔 · 足迹地图</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;800;900&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    :root {
+      --bg-1: #06111f;
+      --bg-2: #0b1728;
+      --bg-3: #122239;
+      --panel: rgba(9, 18, 34, 0.84);
+      --panel-strong: rgba(13, 24, 43, 0.94);
+      --panel-soft: rgba(255, 255, 255, 0.04);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f3f7fc;
+      --muted: #9fb2cb;
+      --subtle: #70839a;
+      --glow-blue: rgba(123, 165, 255, 0.22);
+      --visited-fill: rgba(121, 174, 255, 0.26);
+      --visited-stroke: rgba(176, 208, 255, 0.82);
+      --foreign-fill: rgba(255, 202, 112, 0.30);
+      --foreign-stroke: rgba(255, 224, 173, 0.92);
+      --unvisited-fill: rgba(255, 255, 255, 0.04);
+      --unvisited-stroke: rgba(123, 141, 164, 0.38);
+      --success: #8fd8bf;
+      --warning: #ffd189;
+      --shadow: 0 30px 80px rgba(0, 0, 0, 0.38);
+      --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.24);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: "Noto Sans SC", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 14% 18%, rgba(116, 164, 255, 0.18), transparent 24%),
+        radial-gradient(circle at 82% 10%, rgba(124, 211, 255, 0.11), transparent 22%),
+        radial-gradient(circle at 84% 84%, rgba(255, 197, 109, 0.10), transparent 24%),
+        linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 54%, var(--bg-3) 100%);
+      overflow: hidden;
+    }
+
+    .shell {
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 430px 1fr;
+      gap: 18px;
+      padding: 18px;
+    }
+
+    .panel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 30px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.01)),
+        var(--panel);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(140, 182, 255, 0.12);
+      color: #d2e1ff;
+      border: 1px solid rgba(162, 196, 255, 0.14);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .5px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 38px;
+      line-height: 1.06;
+      letter-spacing: -1.2px;
+      font-weight: 900;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .switcher {
+      display: flex;
+      gap: 10px;
+    }
+
+    .switch-btn {
+      flex: 1;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: #eaf1fb;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .switch-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(151, 186, 255, 0.22);
+      box-shadow: 0 12px 24px rgba(0,0,0,.18);
+    }
+
+    .switch-btn.active {
+      background: linear-gradient(135deg, rgba(125,167,255,.18), rgba(125,167,255,.06));
+      border-color: rgba(166, 198, 255, 0.32);
+      color: #ffffff;
+      box-shadow: 0 0 0 1px rgba(166,198,255,.12) inset, 0 12px 28px rgba(88, 118, 177, 0.18);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .stat-card {
+      position: relative;
+      padding: 18px 16px;
+      border-radius: 22px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(255,255,255,.08), transparent 38%);
+      pointer-events: none;
+    }
+
+    .stat-number {
+      position: relative;
+      font-family: Outfit, sans-serif;
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -.6px;
+    }
+
+    .stat-card:nth-child(1) .stat-number { color: #9cc2ff; }
+    .stat-card:nth-child(2) .stat-number { color: #7ed1ff; }
+    .stat-card:nth-child(3) .stat-number { color: #9fe2cf; }
+    .stat-card:nth-child(4) .stat-number { color: #ffd089; }
+
+    .stat-label {
+      position: relative;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .card {
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .card-title {
+      margin: 0 0 12px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: .3px;
+      color: #eef4ff;
+    }
+
+    .legend-list, .rule-list, .tips-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .legend-row, .tip-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d8e4f6;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .swatch {
+      width: 14px;
+      height: 14px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+    }
+
+    .swatch.visited { background: #9cc2ff; box-shadow: 0 0 0 5px rgba(156,194,255,.18), 0 0 16px rgba(156,194,255,.34); }
+    .swatch.foreign { background: #ffd089; box-shadow: 0 0 0 5px rgba(255,208,137,.18), 0 0 16px rgba(255,208,137,.34); }
+    .swatch.unvisited { background: #5d7088; box-shadow: 0 0 0 5px rgba(93,112,136,.18); }
+    .swatch.new { background: #8fd8bf; box-shadow: 0 0 0 5px rgba(143,216,191,.18), 0 0 16px rgba(143,216,191,.28); }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .city-input {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border-radius: 15px;
+      padding: 13px 14px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .city-input::placeholder { color: #7d91aa; }
+    .city-input:focus {
+      border-color: rgba(157, 193, 255, 0.34);
+      box-shadow: 0 0 0 3px rgba(125, 167, 255, 0.12);
+      background: rgba(255,255,255,0.055);
+    }
+
+    .primary-btn, .ghost-btn, .delete-btn {
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .primary-btn {
+      padding: 0 16px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, rgba(118,164,255,.28), rgba(118,164,255,.12));
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      min-width: 108px;
+    }
+
+    .ghost-btn {
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      color: #eaf1fb;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .primary-btn:hover, .ghost-btn:hover, .delete-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(170,200,255,.24);
+      box-shadow: 0 12px 24px rgba(0,0,0,.18);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .helper-text, .status-text, .empty-text {
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .status-text { min-height: 20px; }
+    .status-text.success { color: var(--success); }
+    .status-text.error { color: #ff8f8f; }
+    .status-text.warning { color: var(--warning); }
+
+    .city-palette,
+    .custom-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .city-chip,
+    .custom-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 11px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: #eaf1fb;
+      font-size: 12px;
+    }
+
+    .city-chip { min-height: 40px; }
+    .city-chip-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.04);
+    }
+
+    .custom-item {
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .custom-meta {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .custom-text {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .custom-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 700;
+    }
+
+    .custom-sub {
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .delete-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.04);
+      color: #cfdaf0;
+      flex: 0 0 auto;
+    }
+
+    .rule-item {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .map-panel { position: relative; }
+    #map {
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(255,255,255,0.03), transparent 38%),
+        #081220;
+    }
+
+    .map-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 400;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at center, transparent 58%, rgba(1, 6, 14, 0.2) 100%),
+        linear-gradient(180deg, rgba(3,8,17,.08), rgba(3,8,17,0) 28%, rgba(3,8,17,0) 72%, rgba(3,8,17,.08));
+    }
+
+    .celebration-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 540;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .burst-ring {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      margin-left: -11px;
+      margin-top: -11px;
+      border-radius: 50%;
+      border: 2px solid currentColor;
+      opacity: 0.8;
+      animation: ringPulse 1.15s ease-out forwards;
+      filter: drop-shadow(0 0 14px currentColor);
+    }
+
+    .burst-core {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      margin-left: -7px;
+      margin-top: -7px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 18px currentColor;
+      animation: coreGlow .9s ease-out forwards;
+    }
+
+    .spark {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      margin-left: -4px;
+      margin-top: -4px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 12px currentColor;
+      animation: sparkFly 1.2s ease-out forwards;
+      transform: translate(var(--dx), var(--dy)) scale(1);
+      opacity: 0;
+    }
+
+    @keyframes ringPulse {
+      0% { transform: scale(.45); opacity: .95; }
+      100% { transform: scale(8.2); opacity: 0; }
+    }
+
+    @keyframes coreGlow {
+      0% { transform: scale(.6); opacity: .95; }
+      50% { transform: scale(1.35); opacity: 1; }
+      100% { transform: scale(.8); opacity: 0; }
+    }
+
+    @keyframes sparkFly {
+      0% { transform: translate(0, 0) scale(.6); opacity: 0; }
+      15% { opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+    }
+
+    .topbar {
+      position: absolute;
+      z-index: 500;
+      left: 20px;
+      right: 20px;
+      top: 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      pointer-events: none;
+    }
+
+    .topbar-card,
+    .hover-card {
+      pointer-events: auto;
+      border-radius: 22px;
+      background: rgba(13, 24, 43, 0.94);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .topbar-card {
+      padding: 14px 16px;
+      min-width: 320px;
+    }
+
+    .topbar-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -.2px;
+    }
+
+    .topbar-sub {
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .hover-card {
+      width: 340px;
+      padding: 18px;
+      transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
+    }
+
+    .hover-card.dim { opacity: .97; }
+
+    .hover-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .4px;
+      background: rgba(156,194,255,.12);
+      color: #cfe0ff;
+      border: 1px solid rgba(162,196,255,.16);
+    }
+
+    .hover-title {
+      margin: 12px 0 6px;
+      font-size: 28px;
+      line-height: 1.08;
+      letter-spacing: -.8px;
+      font-weight: 900;
+    }
+
+    .hover-sub {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .hover-pills {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .hover-pill {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #edf3fb;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .leaflet-container { font: inherit; }
+    .leaflet-control-zoom {
+      border: 0 !important;
+      box-shadow: 0 14px 34px rgba(0,0,0,.28) !important;
+    }
+
+    .leaflet-control-zoom a {
+      background: rgba(12, 22, 36, 0.95) !important;
+      color: #eef4ff !important;
+      border: 0 !important;
+      transition: background .18s ease, transform .18s ease;
+    }
+
+    .leaflet-control-zoom a:hover {
+      background: rgba(24, 38, 58, 0.98) !important;
+      transform: scale(1.02);
+    }
+
+    .leaflet-interactive {
+      transition: fill-opacity .28s ease, stroke-width .28s ease, stroke-opacity .28s ease, opacity .28s ease, fill .28s ease;
+    }
+
+    .region-tooltip,
+    .city-tooltip {
+      background: rgba(12, 20, 35, 0.96);
+      color: #f4f8fc;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      box-shadow: 0 18px 36px rgba(0,0,0,.28);
+    }
+
+    .region-tooltip::before,
+    .city-tooltip::before { display: none; }
+
+    .tooltip-inner { padding: 2px 4px; }
+    .tooltip-title { font-size: 14px; font-weight: 900; }
+    .tooltip-sub { margin-top: 2px; font-size: 12px; color: #a7b8cf; }
+
+    .city-hit {
+      opacity: 0;
+      fill-opacity: 0;
+      stroke-opacity: 0;
+    }
+
+    @media (max-width: 1180px) {
+      body { overflow: auto; }
+      .shell {
+        height: auto;
+        min-height: 100vh;
+        grid-template-columns: 1fr;
+        padding: 14px;
+      }
+      .map-panel { min-height: 78vh; }
+      .topbar {
+        left: 14px;
+        right: 14px;
+        top: 14px;
+        flex-direction: column;
+      }
+      .topbar-card,
+      .hover-card { width: 100%; min-width: 0; }
+      .city-palette,
+      .custom-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 700px) {
+      .sidebar { padding: 20px; }
+      h1 { font-size: 30px; }
+      .stats { grid-template-columns: 1fr; }
+      .city-palette,
+      .custom-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .form-grid { grid-template-columns: 1fr; }
+      .primary-btn { min-height: 46px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <aside class="panel sidebar">
+      <div class="eyebrow">FORMAL EDITION · SIS MOJINGROU</div>
+      <h1 id="pageTitle">地球 Online 地图</h1>
+      <p class="subtitle" id="pageSubtitle">我的足迹地图</p>
+
+      <section class="switcher">
+        <button class="switch-btn active" id="moguModeBtn">蘑菇的地图</button>
+        <button class="switch-btn" id="visitorModeBtn">✨ 制作我的足迹地图</button>
+      </section>
+
+      <section class="stats">
+        <div class="stat-card">
+          <div class="stat-number" data-stat="total">0</div>
+          <div class="stat-label">足迹总数</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" data-stat="regions">0</div>
+          <div class="stat-label">点亮省份 / 地区</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" data-stat="domestic">0</div>
+          <div class="stat-label">国内城市</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" data-stat="foreign">0</div>
+          <div class="stat-label">海外地点</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">添加新的足迹</h2>
+        <div class="form-grid">
+          <div class="input-wrap">
+            <input id="cityInput" class="city-input" type="text" placeholder="输入城市名，例如：苏州、东京、纽约" />
+          </div>
+          <button id="addCityBtn" class="primary-btn">添加城市</button>
+        </div>
+        <div class="form-actions">
+          <button id="resetProfileBtn" class="ghost-btn">重置当前地图</button>
+        </div>
+        <div class="status-text" id="statusText"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">地图图例</h2>
+        <div class="legend-list">
+          <div class="legend-row"><span class="swatch visited"></span><span>已去过的国内省份 / 地区：真实行政边界高亮</span></div>
+          <div class="legend-row"><span class="swatch foreign"></span><span>已去过的海外国家：真实边界高亮</span></div>
+          <div class="legend-row"><span class="swatch unvisited"></span><span>未去过区域：保持暗色，但 hover 仍会显示地名</span></div>
+          <div class="legend-row"><span class="swatch new"></span><span>新添加城市时：会触发点亮扩散、粒子烟花与数字滚动</span></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">当前地图颜色图例</h2>
+        <div class="city-palette" id="cityPalette"></div>
+        <div class="empty-text" id="paletteEmpty" style="display:none;">还没有城市足迹，试试从上方输入一个城市，点亮你的第一枚记忆吧。</div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">我新增的城市</h2>
+        <div class="custom-list" id="customList"></div>
+        <div class="empty-text" id="customEmpty">暂无新增城市</div>
+      </section>
+    </aside>
+
+    <section class="panel map-panel">
+      <div class="celebration-layer" id="celebrationLayer"></div>
+      <div class="topbar">
+        <div class="topbar-card">
+          <div class="topbar-title" id="topbarTitle">地球 Online 地图</div>
+          <div class="topbar-sub" id="topbarSub">我的足迹地图</div>
+        </div>
+        <div class="hover-card dim" id="hoverCard">
+          <div class="hover-badge">Earth Online</div>
+          <div class="hover-title">地球 Online 地图</div>
+          <div class="hover-sub">我的足迹地图</div>
+          <div class="hover-pills">
+            <span class="hover-pill">城市</span>
+            <span class="hover-pill">点亮</span>
+            <span class="hover-pill">公开访问</span>
+          </div>
+        </div>
+      </div>
+      <div id="map"></div>
+    </section>
+  </main>
+
+  <script>
+    const CITY_PALETTE = [
+      '#7FA6FF', '#D97C96', '#6BB89A', '#D7A45F', '#62B2C8', '#A183D8',
+      '#DC8F6A', '#8BC16A', '#C26B72', '#5F9FDB', '#56B8A6', '#C7A256'
+    ];
+
+    const CHINA_REGION_MAP = {
+      '北京': '北京市', '北京市': '北京市',
+      '上海': '上海市', '上海市': '上海市',
+      '重庆': '重庆市', '重庆市': '重庆市',
+      '山西': '山西省', '山西省': '山西省',
+      '陕西': '陕西省', '陕西省': '陕西省',
+      '浙江': '浙江省', '浙江省': '浙江省',
+      '福建': '福建省', '福建省': '福建省',
+      '广东': '广东省', '广东省': '广东省',
+      '四川': '四川省', '四川省': '四川省',
+      '贵州': '贵州省', '贵州省': '贵州省',
+      '云南': '云南省', '云南省': '云南省',
+      '吉林': '吉林省', '吉林省': '吉林省',
+      '香港': '香港特别行政区', '香港特别行政区': '香港特别行政区'
+    };
+
+    const BASE_CITIES = [
+      { name: '长春', region: '吉林省', regionDisplay: '吉林', lat: 43.8171, lng: 125.3235, icon: '❄️', color: '#6C91D9', source: 'base' },
+      { name: '北京', region: '北京市', regionDisplay: '北京', lat: 39.9042, lng: 116.4074, icon: '🏯', color: '#E36D82', source: 'base' },
+      { name: '运城', region: '山西省', regionDisplay: '山西', lat: 35.0264, lng: 111.0075, icon: '🏛️', color: '#C78A48', source: 'base' },
+      { name: '西安', region: '陕西省', regionDisplay: '陕西', lat: 34.3416, lng: 108.9398, icon: '🏮', color: '#C45D55', source: 'base' },
+      { name: '上海', region: '上海市', regionDisplay: '上海', lat: 31.2304, lng: 121.4737, icon: '🌃', color: '#5DA9E9', source: 'base' },
+      { name: '杭州', region: '浙江省', regionDisplay: '浙江', lat: 30.2741, lng: 120.1551, icon: '🌿', color: '#55B690', source: 'base' },
+      { name: '厦门', region: '福建省', regionDisplay: '福建', lat: 24.4798, lng: 118.0894, icon: '🌊', color: '#4FA8B8', source: 'base' },
+      { name: '香港', region: '香港特别行政区', regionDisplay: '香港', lat: 22.3193, lng: 114.1694, icon: '✨', color: '#9A78D3', source: 'base' },
+      { name: '惠州', region: '广东省', regionDisplay: '广东', lat: 23.1115, lng: 114.4152, icon: '🌴', color: '#8EBC66', source: 'base' },
+      { name: '深圳', region: '广东省', regionDisplay: '广东', lat: 22.5431, lng: 114.0579, icon: '🚀', color: '#4FB29A', source: 'base' },
+      { name: '广州', region: '广东省', regionDisplay: '广东', lat: 23.1291, lng: 113.2644, icon: '🦁', color: '#D58A4D', source: 'base' },
+      { name: '重庆', region: '重庆市', regionDisplay: '重庆', lat: 29.5630, lng: 106.5516, icon: '🌉', color: '#D97B93', source: 'base' },
+      { name: '成都', region: '四川省', regionDisplay: '四川', lat: 30.5728, lng: 104.0668, icon: '🐼', color: '#56B8A6', source: 'base' },
+      { name: '绵阳', region: '四川省', regionDisplay: '四川', lat: 31.4675, lng: 104.6796, icon: '🌤️', color: '#6BBFC0', source: 'base' },
+      { name: '乐山', region: '四川省', regionDisplay: '四川', lat: 29.5521, lng: 103.7654, icon: '🗿', color: '#C6A851', source: 'base' },
+      { name: '贵阳', region: '贵州省', regionDisplay: '贵州', lat: 26.6470, lng: 106.6302, icon: '⛰️', color: '#4D9C92', source: 'base' },
+      { name: '六盘水', region: '贵州省', regionDisplay: '贵州', lat: 26.5944, lng: 104.8302, icon: '🌫️', color: '#6A80D2', source: 'base' },
+      { name: '兴义', region: '贵州省', regionDisplay: '贵州', lat: 25.0881, lng: 104.8955, icon: '🏞️', color: '#8A6CCB', source: 'base' },
+      { name: '昆明', region: '云南省', regionDisplay: '云南', lat: 25.0406, lng: 102.7122, icon: '💐', color: '#D66F9A', source: 'base' },
+      { name: '大理', region: '云南省', regionDisplay: '云南', lat: 25.6065, lng: 100.2676, icon: '🌙', color: '#5F9FDB', source: 'base' },
+      { name: '丽江', region: '云南省', regionDisplay: '云南', lat: 26.8721, lng: 100.2297, icon: '🏔️', color: '#88B95A', source: 'base' },
+      { name: '曼谷', region: '泰国', regionDisplay: '泰国', lat: 13.7563, lng: 100.5018, icon: '🌴', color: '#D7A55D', source: 'base' },
+      { name: '清迈', region: '泰国', regionDisplay: '泰国', lat: 18.7883, lng: 98.9853, icon: '🐘', color: '#7EB67A', source: 'base' },
+      { name: '沙美岛', region: '泰国', regionDisplay: '泰国', lat: 12.5681, lng: 101.4530, icon: '🏝️', color: '#62B7CE', source: 'base' }
+    ];
+
+    const PROFILE_CONFIG = {
+      mogu: {
+        key: 'mogu',
+        storageKey: 'footprint_map_mogu_custom_v2',
+        title: '地球 Online 地图',
+        subtitle: '我的足迹地图',
+        topbarTitle: '地球 Online 地图',
+        topbarSub: '我的足迹地图',
+        emptyHint: '',
+        baseCities: BASE_CITIES,
+        resetConfirm: '确定要清空蘑菇地图里“后来新增”的城市吗？原始足迹不会受影响。'
+      },
+      visitor: {
+        key: 'visitor',
+        storageKey: 'footprint_map_visitor_custom_v2',
+        title: '地球 Online 地图',
+        subtitle: '我的足迹地图',
+        topbarTitle: '地球 Online 地图',
+        topbarSub: '我的足迹地图',
+        emptyHint: '',
+        baseCities: [],
+        resetConfirm: '确定要清空你自己的足迹地图吗？这个操作会删除你当前保存的所有自定义城市。'
+      }
+    };
+
+    const DOM = {
+      pageTitle: document.getElementById('pageTitle'),
+      pageSubtitle: document.getElementById('pageSubtitle'),
+      topbarTitle: document.getElementById('topbarTitle'),
+      topbarSub: document.getElementById('topbarSub'),
+      cityInput: document.getElementById('cityInput'),
+      addCityBtn: document.getElementById('addCityBtn'),
+      resetProfileBtn: document.getElementById('resetProfileBtn'),
+      statusText: document.getElementById('statusText'),
+      cityPalette: document.getElementById('cityPalette'),
+      paletteEmpty: document.getElementById('paletteEmpty'),
+      customList: document.getElementById('customList'),
+      customEmpty: document.getElementById('customEmpty'),
+      celebrationLayer: document.getElementById('celebrationLayer'),
+      hoverCard: document.getElementById('hoverCard'),
+      moguModeBtn: document.getElementById('moguModeBtn'),
+      visitorModeBtn: document.getElementById('visitorModeBtn')
+    };
+
+    const map = L.map('map', {
+      zoomControl: false,
+      attributionControl: false,
+      zoomAnimation: true,
+      fadeAnimation: true,
+      markerZoomAnimation: true,
+      zoomSnap: 0.25,
+      zoomDelta: 0.5,
+      wheelPxPerZoomLevel: 110,
+      preferCanvas: true,
+      minZoom: 2.5,
+      maxZoom: 8
+    }).setView([29, 109.5], 4.5);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    let geoCache = { china: null, thailand: null };
+    let activeProfile = location.hash === '#visitor' ? 'visitor' : 'mogu';
+    let regionLayerGroup = L.layerGroup().addTo(map);
+    let cityLayerGroup = L.layerGroup().addTo(map);
+    let lastAddedCityId = null;
+
+    function normalizeText(value) {
+      return (value || '').trim().toLowerCase().replace(/\s+/g, '');
+    }
+
+    function slugify(value) {
+      return normalizeText(value).replace(/[^a-z0-9\u4e00-\u9fa5]/g, '');
+    }
+
+    function hashColor(input) {
+      const text = slugify(input);
+      let hash = 0;
+      for (let i = 0; i < text.length; i += 1) hash = text.charCodeAt(i) + ((hash << 5) - hash);
+      return CITY_PALETTE[Math.abs(hash) % CITY_PALETTE.length];
+    }
+
+    function guessIcon(name, country = '') {
+      const value = `${name}${country}`;
+      if (/岛|island/i.test(value)) return '🏝️';
+      if (/香港/.test(value)) return '✨';
+      if (/海|港|厦门|三亚/.test(value)) return '🌊';
+      if (/山|丽江|大理|昆明|高原|峰/.test(value)) return '🏔️';
+      if (/bangkok|曼谷/i.test(value)) return '🌴';
+      if (/chiang|清迈/i.test(value)) return '🐘';
+      if (/北京|西安|运城/.test(value)) return '🏛️';
+      return '📍';
+    }
+
+    function normalizeRegionName(name) {
+      if (!name) return '未知区域';
+      const short = name.replace(/特别行政区|维吾尔自治区|壮族自治区|回族自治区|自治区|省|市$/g, '');
+      return short || name;
+    }
+
+    function isDomesticRegion(regionKey) {
+      return Boolean(regionKey && (regionKey in CHINA_REGION_MAP || regionKey.endsWith('省') || regionKey.endsWith('市') || regionKey.includes('特别行政区')));
+    }
+
+    function storageRead(profileKey) {
+      try {
+        const raw = localStorage.getItem(PROFILE_CONFIG[profileKey].storageKey);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function storageWrite(profileKey, cities) {
+      localStorage.setItem(PROFILE_CONFIG[profileKey].storageKey, JSON.stringify(cities));
+    }
+
+    function getCurrentProfileConfig() {
+      return PROFILE_CONFIG[activeProfile];
+    }
+
+    function getCustomCities(profileKey = activeProfile) {
+      return storageRead(profileKey);
+    }
+
+    function getAllCities(profileKey = activeProfile) {
+      const config = PROFILE_CONFIG[profileKey];
+      return [...config.baseCities, ...getCustomCities(profileKey)];
+    }
+
+    function getRegionMeta(cities) {
+      const regionMap = new Map();
+      cities.forEach(city => {
+        if (!city.region) return;
+        const existing = regionMap.get(city.region) || {
+          display: city.regionDisplay || normalizeRegionName(city.region),
+          type: city.region === '泰国' || city.country === 'Thailand' ? 'foreign' : (isDomesticRegion(city.region) ? 'domestic' : 'foreign'),
+          cities: [],
+          accent: city.color || hashColor(city.name)
+        };
+        existing.cities.push(city.name);
+        if (!existing.accent) existing.accent = city.color || hashColor(city.name);
+        regionMap.set(city.region, existing);
+      });
+      return regionMap;
+    }
+
+    function buildStats(cities) {
+      const domestic = cities.filter(city => city.kind !== 'foreign').length;
+      const foreign = cities.length - domestic;
+      const regionKeys = new Set(cities.map(city => city.region).filter(Boolean));
+      return {
+        total: cities.length,
+        regions: regionKeys.size,
+        domestic,
+        foreign
+      };
+    }
+
+    function setStatus(message = '', type = '') {
+      DOM.statusText.textContent = message;
+      DOM.statusText.className = 'status-text';
+      if (type) DOM.statusText.classList.add(type);
+    }
+
+    function setHoverCard({ badge, title, sub, pills = [], accent = '#9CC2FF' }) {
+      DOM.hoverCard.classList.remove('dim');
+      DOM.hoverCard.style.borderColor = `${accent}55`;
+      DOM.hoverCard.style.boxShadow = `0 16px 40px rgba(0,0,0,.24), 0 0 0 1px ${accent}16 inset, 0 0 28px ${accent}1a`;
+      DOM.hoverCard.innerHTML = `
+        <div class="hover-badge" style="background:${accent}16;color:${accent};border-color:${accent}30;">${badge}</div>
+        <div class="hover-title">${title}</div>
+        <div class="hover-sub">${sub}</div>
+        <div class="hover-pills">${pills.map(item => `<span class="hover-pill" style="border-color:${accent}22;box-shadow: inset 0 0 0 1px ${accent}10;">${item}</span>`).join('')}</div>
+      `;
+    }
+
+    function resetHoverCard() {
+      DOM.hoverCard.classList.add('dim');
+      DOM.hoverCard.style.borderColor = 'rgba(255,255,255,0.08)';
+      DOM.hoverCard.style.boxShadow = '0 16px 40px rgba(0,0,0,.24)';
+      DOM.hoverCard.innerHTML = `
+        <div class="hover-badge">Earth Online</div>
+        <div class="hover-title">地球 Online 地图</div>
+        <div class="hover-sub">我的足迹地图</div>
+        <div class="hover-pills">
+          <span class="hover-pill">城市</span>
+          <span class="hover-pill">点亮</span>
+          <span class="hover-pill">公开访问</span>
+        </div>
+      `;
+    }
+
+    function tooltipHtml(title, sub) {
+      return `<div class="tooltip-inner"><div class="tooltip-title">${title}</div><div class="tooltip-sub">${sub}</div></div>`;
+    }
+
+    function regionStyle(visited, type = 'domestic') {
+      if (!visited) {
+        return {
+          color: 'rgba(123,141,164,.38)',
+          weight: 1,
+          fillColor: 'rgba(255,255,255,.04)',
+          fillOpacity: 0.22
+        };
+      }
+      return type === 'foreign'
+        ? {
+            color: 'rgba(255,224,173,.92)',
+            weight: 1.8,
+            fillColor: 'rgba(255,202,112,.30)',
+            fillOpacity: 0.62
+          }
+        : {
+            color: 'rgba(176,208,255,.82)',
+            weight: 1.8,
+            fillColor: 'rgba(121,174,255,.26)',
+            fillOpacity: 0.62
+          };
+    }
+
+    function playParticleCelebration(latlng, color) {
+      if (!latlng || !map) return;
+      const point = map.latLngToContainerPoint(latlng);
+      const ring = document.createElement('span');
+      ring.className = 'burst-ring';
+      ring.style.left = `${point.x}px`;
+      ring.style.top = `${point.y}px`;
+      ring.style.color = color;
+      DOM.celebrationLayer.appendChild(ring);
+
+      const core = document.createElement('span');
+      core.className = 'burst-core';
+      core.style.left = `${point.x}px`;
+      core.style.top = `${point.y}px`;
+      core.style.color = color;
+      DOM.celebrationLayer.appendChild(core);
+
+      for (let i = 0; i < 14; i += 1) {
+        const spark = document.createElement('span');
+        const angle = (Math.PI * 2 * i) / 14;
+        const distance = 36 + (i % 4) * 12;
+        spark.className = 'spark';
+        spark.style.left = `${point.x}px`;
+        spark.style.top = `${point.y}px`;
+        spark.style.color = color;
+        spark.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+        spark.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
+        DOM.celebrationLayer.appendChild(spark);
+        setTimeout(() => spark.remove(), 1300);
+      }
+
+      setTimeout(() => ring.remove(), 1200);
+      setTimeout(() => core.remove(), 1000);
+    }
+
+    function animateRegionPulse(layer, type) {
+      const base = regionStyle(true, type);
+      let frame = 0;
+      const total = 34;
+      function step() {
+        frame += 1;
+        const progress = frame / total;
+        const ease = 1 - Math.pow(1 - progress, 3);
+        layer.setStyle({
+          color: base.color,
+          weight: base.weight + (1 - ease) * 1.5,
+          fillColor: base.fillColor,
+          fillOpacity: 0.18 + ease * 0.5
+        });
+        if (frame < total) {
+          requestAnimationFrame(step);
+        } else {
+          layer.setStyle(base);
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
+    function animateStats(targetStats) {
+      document.querySelectorAll('.stat-number').forEach(node => {
+        const key = node.dataset.stat;
+        const target = Number(targetStats[key] || 0);
+        const from = Number(node.dataset.value || 0);
+        const start = performance.now();
+        const duration = 950;
+        function tick(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const value = Math.round(from + (target - from) * eased);
+          node.textContent = value;
+          if (progress < 1) {
+            requestAnimationFrame(tick);
+          } else {
+            node.dataset.value = String(target);
+            node.textContent = target;
+          }
+        }
+        requestAnimationFrame(tick);
+      });
+    }
+
+    function renderSidebar(cities, customCities, stats) {
+      const config = getCurrentProfileConfig();
+      DOM.pageTitle.textContent = config.title;
+      DOM.pageSubtitle.textContent = config.subtitle;
+      DOM.topbarTitle.textContent = config.topbarTitle;
+      DOM.topbarSub.textContent = config.topbarSub;
+      DOM.cityInput.placeholder = activeProfile === 'visitor' ? '输入你的第一座城市，例如：苏州、巴黎、首尔' : '输入新增城市，例如：苏州、东京、纽约';
+      DOM.moguModeBtn.classList.toggle('active', activeProfile === 'mogu');
+      DOM.visitorModeBtn.classList.toggle('active', activeProfile === 'visitor');
+
+      animateStats(stats);
+
+      DOM.cityPalette.innerHTML = '';
+      const sortedPalette = [...cities].sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
+      DOM.paletteEmpty.style.display = sortedPalette.length ? 'none' : 'block';
+      sortedPalette.forEach(city => {
+        const item = document.createElement('div');
+        item.className = 'city-chip';
+        item.innerHTML = `<span class="city-chip-dot" style="background:${city.color}"></span><span>${city.name}</span>`;
+        DOM.cityPalette.appendChild(item);
+      });
+
+      DOM.customList.innerHTML = '';
+      DOM.customEmpty.textContent = activeProfile === 'visitor' ? '暂无城市' : '暂无新增城市';
+      DOM.customEmpty.style.display = customCities.length ? 'none' : 'block';
+
+      customCities.forEach(city => {
+        const item = document.createElement('div');
+        item.className = 'custom-item';
+        item.innerHTML = `
+          <div class="custom-meta">
+            <span class="city-chip-dot" style="background:${city.color}"></span>
+            <div class="custom-text">
+              <div class="custom-name">${city.name}</div>
+              <div class="custom-sub">${city.regionDisplay || city.region || city.country || '未识别区域'}</div>
+            </div>
+          </div>
+          <button class="delete-btn" data-city-id="${city.id}" title="删除 ${city.name}">×</button>
+        `;
+        DOM.customList.appendChild(item);
+      });
+    }
+
+    function upsertCustomCity(city) {
+      const list = getCustomCities();
+      const exists = list.some(item => normalizeText(item.name) === normalizeText(city.name));
+      if (exists) return false;
+      list.push(city);
+      storageWrite(activeProfile, list);
+      return true;
+    }
+
+    function removeCustomCity(cityId) {
+      const list = getCustomCities().filter(item => item.id !== cityId);
+      storageWrite(activeProfile, list);
+    }
+
+    function switchProfile(profileKey) {
+      activeProfile = profileKey;
+      location.hash = profileKey === 'visitor' ? 'visitor' : 'mogu';
+      DOM.cityInput.value = '';
+      setStatus(PROFILE_CONFIG[profileKey].emptyHint, 'warning');
+      lastAddedCityId = null;
+      resetHoverCard();
+      render();
+    }
+
+    async function ensureGeoData() {
+      if (geoCache.china && geoCache.thailand) return geoCache;
+      const [chinaRes, thailandRes] = await Promise.all([
+        fetch('data/china-provinces.json'),
+        fetch('data/thailand.geojson')
+      ]);
+      geoCache.china = await chinaRes.json();
+      geoCache.thailand = await thailandRes.json();
+      return geoCache;
+    }
+
+    function parseRegionKeyFromAddress(address = {}) {
+      const country = address.country || '';
+      const state = address.state || address.province || '';
+      const city = address.city || address.town || address.county || address.state_district || '';
+      if (/china|中国/i.test(country) || /china/i.test(address.country_code || '')) {
+        const normalizedState = CHINA_REGION_MAP[state] || CHINA_REGION_MAP[normalizeRegionName(state)] || CHINA_REGION_MAP[city] || null;
+        return {
+          region: normalizedState,
+          regionDisplay: normalizedState ? normalizeRegionName(normalizedState) : normalizeRegionName(state || city || '中国'),
+          kind: 'domestic',
+          country: '中国'
+        };
+      }
+      if (/hong kong|香港/i.test(country) || /hong kong|香港/i.test(state)) {
+        return {
+          region: '香港特别行政区',
+          regionDisplay: '香港',
+          kind: 'domestic',
+          country: '中国'
+        };
+      }
+      if (/thailand|泰国/i.test(country) || /thailand|泰国/i.test(state)) {
+        return {
+          region: '泰国',
+          regionDisplay: '泰国',
+          kind: 'foreign',
+          country: 'Thailand'
+        };
+      }
+      return {
+        region: country ? `country:${country}` : '',
+        regionDisplay: country || normalizeRegionName(state || city || '未知区域'),
+        kind: 'foreign',
+        country: country || ''
+      };
+    }
+
+    async function lookupCity(query) {
+      const normalized = normalizeText(query);
+      const existing = BASE_CITIES.find(city => normalizeText(city.name) === normalized);
+      if (existing) {
+        return {
+          ...existing,
+          id: `custom-${slugify(existing.name)}-${Date.now()}`,
+          source: 'custom'
+        };
+      }
+
+      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=1&q=${encodeURIComponent(query)}`;
+      const response = await fetch(url, { headers: { Accept: 'application/json' } });
+      if (!response.ok) throw new Error('地理编码服务暂时不可用');
+      const results = await response.json();
+      if (!Array.isArray(results) || !results.length) throw new Error('没有找到这个城市，请换个写法再试试');
+
+      const result = results[0];
+      const parsed = parseRegionKeyFromAddress(result.address || {});
+      const displayName = query.trim();
+      return {
+        id: `custom-${slugify(displayName)}-${Date.now()}`,
+        name: displayName,
+        region: parsed.region,
+        regionDisplay: parsed.regionDisplay,
+        country: parsed.country,
+        kind: parsed.kind,
+        lat: Number(result.lat),
+        lng: Number(result.lon),
+        icon: guessIcon(displayName, parsed.country),
+        color: hashColor(displayName),
+        source: 'custom'
+      };
+    }
+
+    function createRegionLayers(cities, regionMetaMap) {
+      const boundsList = [];
+      const chinaGeo = {
+        ...geoCache.china,
+        features: geoCache.china.features.filter(feature => feature.properties && feature.properties.name)
+      };
+
+      const chinaLayer = L.geoJSON(chinaGeo, {
+        style: feature => {
+          const regionKey = feature.properties.name;
+          const meta = regionMetaMap.get(regionKey);
+          return regionStyle(Boolean(meta), meta?.type || 'domestic');
+        },
+        onEachFeature: (feature, layer) => {
+          const regionKey = feature.properties.name;
+          const meta = regionMetaMap.get(regionKey);
+          const display = meta?.display || normalizeRegionName(regionKey);
+          layer.bindTooltip(
+            tooltipHtml(display, meta ? `${meta.cities.length} 个已到访城市` : '未点亮区域'),
+            { sticky: true, direction: 'top', className: 'region-tooltip' }
+          );
+
+          layer.on('mouseover', () => {
+            if (meta) {
+              layer.setStyle({
+                weight: 2.4,
+                fillOpacity: 0.76,
+                color: meta.type === 'foreign' ? 'rgba(255,233,194,1)' : 'rgba(215,229,255,1)'
+              });
+              setHoverCard({
+                badge: meta.type === 'foreign' ? '海外足迹' : '国内足迹',
+                title: display,
+                sub: meta.type === 'foreign' ? '该国家边界已被点亮，内部包含已到访的海外地点。' : '该真实行政区域已被点亮，继续将鼠标移到城市热点区域可查看具体城市卡片。',
+                pills: meta.cities,
+                accent: meta.accent || '#9CC2FF'
+              });
+            } else {
+              layer.setStyle({ weight: 1.35, fillOpacity: 0.28, color: 'rgba(168,182,201,.58)' });
+              setHoverCard({
+                badge: '区域信息',
+                title: display,
+                sub: '当前尚未去过这个区域，但 hover 也可以直接查看地名，方便辨认地图位置。',
+                pills: ['未点亮', '仅显示区域名称'],
+                accent: '#8192A8'
+              });
+            }
+          });
+
+          layer.on('mouseout', () => {
+            layer.setStyle(regionStyle(Boolean(meta), meta?.type || 'domestic'));
+            resetHoverCard();
+          });
+
+          regionLayerGroup.addLayer(layer);
+          boundsList.push(layer.getBounds());
+          if (meta && meta.justAdded) animateRegionPulse(layer, meta.type);
+        }
+      });
+
+      const thaiFeature = geoCache.thailand.features[0];
+      thaiFeature.properties = { name: '泰国' };
+      const thaiMeta = regionMetaMap.get('泰国');
+      const thaiLayer = L.geoJSON(thaiFeature, {
+        style: () => regionStyle(Boolean(thaiMeta), 'foreign'),
+        onEachFeature: (_, layer) => {
+          layer.bindTooltip(
+            tooltipHtml('泰国', thaiMeta ? thaiMeta.cities.join(' / ') : '未点亮区域'),
+            { sticky: true, direction: 'top', className: 'region-tooltip' }
+          );
+
+          layer.on('mouseover', () => {
+            if (thaiMeta) {
+              layer.setStyle({ weight: 2.6, fillOpacity: 0.78, color: 'rgba(255,232,191,1)' });
+              setHoverCard({
+                badge: '海外足迹',
+                title: '泰国',
+                sub: '海外足迹采用真实国家边界高亮，当前包含已录入的所有泰国地点。',
+                pills: thaiMeta.cities,
+                accent: thaiMeta.accent || '#D7A55D'
+              });
+            } else {
+              layer.setStyle({ weight: 1.35, fillOpacity: 0.28, color: 'rgba(168,182,201,.58)' });
+              setHoverCard({
+                badge: '区域信息',
+                title: '泰国',
+                sub: '当前还没有点亮这个国家。',
+                pills: ['未点亮', '可通过输入城市加入'],
+                accent: '#8192A8'
+              });
+            }
+          });
+
+          layer.on('mouseout', () => {
+            layer.setStyle(regionStyle(Boolean(thaiMeta), 'foreign'));
+            resetHoverCard();
+          });
+
+          regionLayerGroup.addLayer(layer);
+          boundsList.push(layer.getBounds());
+          if (thaiMeta && thaiMeta.justAdded) animateRegionPulse(layer, 'foreign');
+        }
+      });
+
+      return boundsList;
+    }
+
+    function createCityLayers(cities) {
+      const boundsList = [];
+      cities.forEach(city => {
+        const regionType = city.kind === 'foreign' ? 'foreign' : 'domestic';
+        const radius = regionType === 'foreign' ? 32000 : 23500;
+        const hotspot = L.circle([city.lat, city.lng], {
+          radius,
+          className: 'city-hit',
+          color: city.color,
+          fillColor: city.color,
+          weight: 0,
+          opacity: 0,
+          fillOpacity: 0
+        });
+
+        hotspot.bindTooltip(
+          tooltipHtml(`${city.icon} ${city.name}`, `${city.regionDisplay || city.region || city.country || '未知区域'} · 已到访地点`),
+          { sticky: true, direction: 'top', className: 'city-tooltip' }
+        );
+
+        hotspot.on('mouseover', () => {
+          hotspot.setStyle({ color: city.color, fillColor: city.color, weight: 1.2, opacity: 0.96, fillOpacity: 0.24 });
+          setHoverCard({
+            badge: regionType === 'foreign' ? '旅行信息卡片 · 海外' : '旅行信息卡片 · 国内',
+            title: `${city.icon} ${city.name}`,
+            sub: `${city.regionDisplay || city.region || city.country || '未知区域'} · 已到访城市 / 地点。该地点使用独立高级配色进行标注，与整体风格保持协调。`,
+            pills: [
+              `所在区域：${city.regionDisplay || city.region || city.country || '未知区域'}`,
+              `地点类型：${regionType === 'foreign' ? '海外地点' : '国内城市'}`,
+              `专属颜色：${city.color}`
+            ],
+            accent: city.color
+          });
+        });
+
+        hotspot.on('mouseout', () => {
+          hotspot.setStyle({ color: city.color, fillColor: city.color, weight: 0, opacity: 0, fillOpacity: 0 });
+          resetHoverCard();
+        });
+
+        cityLayerGroup.addLayer(hotspot);
+        boundsList.push(hotspot.getBounds());
+
+        if (city.id === lastAddedCityId) {
+          playParticleCelebration(L.latLng(city.lat, city.lng), city.color);
+          let frame = 0;
+          const total = 26;
+          function pulse() {
+            frame += 1;
+            const progress = frame / total;
+            const wave = Math.sin(progress * Math.PI);
+            hotspot.setStyle({
+              color: city.color,
+              fillColor: city.color,
+              weight: wave * 1.6,
+              opacity: 0.45 + wave * 0.35,
+              fillOpacity: 0.06 + wave * 0.26
+            });
+            if (frame < total) {
+              requestAnimationFrame(pulse);
+            } else {
+              hotspot.setStyle({ color: city.color, fillColor: city.color, weight: 0, opacity: 0, fillOpacity: 0 });
+            }
+          }
+          requestAnimationFrame(pulse);
+        }
+      });
+      return boundsList;
+    }
+
+    async function render() {
+      const config = getCurrentProfileConfig();
+      const cities = getAllCities();
+      const customCities = getCustomCities();
+      const stats = buildStats(cities);
+      const regionMetaMap = getRegionMeta(cities);
+
+      renderSidebar(cities, customCities, stats);
+      await ensureGeoData();
+
+      regionLayerGroup.clearLayers();
+      cityLayerGroup.clearLayers();
+
+      const justAddedCity = cities.find(city => city.id === lastAddedCityId);
+      if (justAddedCity?.region && regionMetaMap.has(justAddedCity.region)) {
+        regionMetaMap.get(justAddedCity.region).justAdded = true;
+      }
+
+      const regionBounds = createRegionLayers(cities, regionMetaMap);
+      const cityBounds = createCityLayers(cities);
+      const boundsList = [...regionBounds, ...cityBounds];
+
+      if (boundsList.length) {
+        const merged = boundsList.reduce((acc, cur) => acc.extend(cur), L.latLngBounds(boundsList[0].getSouthWest(), boundsList[0].getNorthEast()));
+        map.fitBounds(merged, { padding: [48, 48] });
+      }
+
+      if (!cities.length) {
+        map.setView([30, 104], 3.5);
+        resetHoverCard();
+        if (activeProfile === 'visitor') {
+        setHoverCard({
+          badge: 'Earth Online',
+          title: '地球 Online 地图',
+          sub: '我的足迹地图',
+          pills: ['空白版本', '城市', '点亮'],
+          accent: '#9CC2FF'
+        });
+        }
+      }
+
+      setTimeout(() => {
+        map.invalidateSize(true);
+        lastAddedCityId = null;
+      }, 260);
+
+      if (!customCities.length && activeProfile === 'visitor') {
+        setStatus(config.emptyHint, 'warning');
+      }
+    }
+
+    async function handleAddCity() {
+      const value = DOM.cityInput.value.trim();
+      if (!value) {
+        setStatus('先输入一个城市名吧，比如“苏州”或“东京”。', 'warning');
+        return;
+      }
+
+      const currentNames = new Set(getAllCities().map(city => normalizeText(city.name)));
+      if (currentNames.has(normalizeText(value))) {
+        setStatus('这个城市已经在当前地图里啦，可以换一个新地方继续点亮。', 'warning');
+        return;
+      }
+
+      DOM.addCityBtn.disabled = true;
+      DOM.addCityBtn.textContent = '点亮中...';
+      setStatus('正在为你查找城市位置并准备点亮效果...', 'warning');
+
+      try {
+        const city = await lookupCity(value);
+        const saved = upsertCustomCity(city);
+        if (!saved) {
+          setStatus('这个城市已经添加过了。', 'warning');
+        } else {
+          lastAddedCityId = city.id;
+          DOM.cityInput.value = '';
+          setStatus(`已成功点亮 ${city.name}，地图正在为你庆祝 ✨`, 'success');
+          await render();
+        }
+      } catch (error) {
+        setStatus(error.message || '添加失败，请稍后再试。', 'error');
+      } finally {
+        DOM.addCityBtn.disabled = false;
+        DOM.addCityBtn.textContent = '添加城市';
+      }
+    }
+
+    function handleDeleteCity(cityId) {
+      removeCustomCity(cityId);
+      setStatus('已删除该自定义城市。', 'warning');
+      render();
+    }
+
+    function handleResetProfile() {
+      const config = getCurrentProfileConfig();
+      if (!confirm(config.resetConfirm)) return;
+      storageWrite(activeProfile, []);
+      lastAddedCityId = null;
+      setStatus(activeProfile === 'visitor' ? '已清空你的足迹地图，可以重新开始。' : '已清空后来新增的城市，蘑菇原始足迹保留不变。', 'warning');
+      render();
+    }
+
+    DOM.addCityBtn.addEventListener('click', handleAddCity);
+    DOM.cityInput.addEventListener('keydown', event => {
+      if (event.key === 'Enter') handleAddCity();
+    });
+    DOM.resetProfileBtn.addEventListener('click', handleResetProfile);
+    DOM.moguModeBtn.addEventListener('click', () => switchProfile('mogu'));
+    DOM.visitorModeBtn.addEventListener('click', () => switchProfile('visitor'));
+    DOM.customList.addEventListener('click', event => {
+      const button = event.target.closest('[data-city-id]');
+      if (!button) return;
+      handleDeleteCity(button.dataset.cityId);
+    });
+
+    render().then(() => {
+      if (activeProfile === 'visitor' && !getAllCities().length) {
+        setStatus(PROFILE_CONFIG.visitor.emptyHint, 'warning');
+      } else {
+        setStatus('地图已加载完成。你也可以直接添加新的城市。', 'success');
+      }
+    });
+  </script>
+</body>
+</html>
