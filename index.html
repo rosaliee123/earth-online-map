@@ -1424,6 +1424,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         </div>
         <div class="form-actions">
           <button id="resetProfileBtn" class="ghost-btn">重置当前地图</button>
+          <button id="editNameBtn" class="ghost-btn">✏️ 修改名字</button>
           <button id="shareBtn" class="ghost-btn share-btn">📸 截图分享</button>
         </div>
         <div class="status-text" id="statusText"></div>
@@ -1729,6 +1730,8 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       mogu: {
         key: 'mogu',
         storageKey: 'footprint_map_mogu_custom_v2',
+        nameKey: 'footprint_map_mogu_name_v1',
+        defaultName: '蘑菇',
         title: '地球 Online 地图',
         subtitle: '我的足迹地图',
         topbarTitle: '地球 Online 地图',
@@ -1740,6 +1743,8 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       visitor: {
         key: 'visitor',
         storageKey: 'footprint_map_visitor_custom_v2',
+        nameKey: 'footprint_map_visitor_name_v1',
+        defaultName: '我的',
         title: '地球 Online 地图',
         subtitle: '我的足迹地图',
         topbarTitle: '地球 Online 地图',
@@ -1758,6 +1763,7 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       cityInput: document.getElementById('cityInput'),
       addCityBtn: document.getElementById('addCityBtn'),
       resetProfileBtn: document.getElementById('resetProfileBtn'),
+      editNameBtn: document.getElementById('editNameBtn'),
       shareBtn: document.getElementById('shareBtn'),
       visitTypeGroup: document.getElementById('visitTypeGroup'),
       statusText: document.getElementById('statusText'),
@@ -1879,6 +1885,36 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
 
     function getCurrentProfileConfig() {
       return PROFILE_CONFIG[activeProfile];
+    }
+
+    function getProfileName(profileKey = activeProfile) {
+      const config = PROFILE_CONFIG[profileKey];
+      const saved = localStorage.getItem(config.nameKey);
+      return (saved || config.defaultName || '').trim() || config.defaultName;
+    }
+
+    function setProfileName(profileKey, name) {
+      const config = PROFILE_CONFIG[profileKey];
+      localStorage.setItem(config.nameKey, (name || '').trim());
+    }
+
+    function formatMapTitle(name) {
+      const safe = (name || '').trim() || '我的';
+      return `${safe}的足迹地图`;
+    }
+
+    function promptForProfileName(profileKey = activeProfile, force = false) {
+      const current = getProfileName(profileKey);
+      const label = profileKey === 'visitor' ? '请输入你的名字' : '请输入地图显示的名字';
+      const value = prompt(label, force ? '' : current);
+      if (value === null) return null;
+      const trimmed = value.trim();
+      if (!trimmed) {
+        alert('名字不能为空哦～');
+        return promptForProfileName(profileKey, force);
+      }
+      setProfileName(profileKey, trimmed);
+      return trimmed;
     }
 
     function getCustomCities(profileKey = activeProfile) {
@@ -2091,10 +2127,12 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
 
     function renderSidebar(cities, customCities, stats) {
       const config = getCurrentProfileConfig();
-      DOM.pageTitle.textContent = config.title;
-      DOM.pageSubtitle.textContent = config.subtitle;
-      DOM.topbarTitle.textContent = config.topbarTitle;
-      DOM.topbarSub.textContent = config.topbarSub;
+      const profileName = getProfileName();
+      DOM.pageTitle.textContent = formatMapTitle(profileName);
+      DOM.pageSubtitle.textContent = '地球 Online 地图';
+      DOM.topbarTitle.textContent = formatMapTitle(profileName);
+      DOM.topbarSub.textContent = config.key === 'visitor' ? '你的专属旅行地图' : '地球 Online 地图';
+      DOM.editNameBtn.textContent = config.key === 'visitor' ? '✏️ 修改我的名字' : '✏️ 修改地图名字';
       DOM.cityInput.placeholder = activeProfile === 'visitor' ? '输入你的第一座城市，例如：苏州、巴黎、首尔' : '输入新增城市，例如：苏州、东京、纽约';
       DOM.moguModeBtn.classList.toggle('active', activeProfile === 'mogu');
       DOM.visitorModeBtn.classList.toggle('active', activeProfile === 'visitor');
@@ -2169,12 +2207,23 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
     }
 
     function switchProfile(profileKey) {
+      if (profileKey === 'visitor' && !localStorage.getItem(PROFILE_CONFIG.visitor.nameKey)) {
+        const created = promptForProfileName('visitor', true);
+        if (!created) return;
+      }
       activeProfile = profileKey;
       location.hash = profileKey === 'visitor' ? 'visitor' : 'mogu';
       DOM.cityInput.value = '';
       setStatus(PROFILE_CONFIG[profileKey].emptyHint, 'warning');
       lastAddedCityId = null;
       resetHoverCard();
+      render();
+    }
+
+    function handleEditName() {
+      const name = promptForProfileName(activeProfile, false);
+      if (!name) return;
+      setStatus(`已更新为「${name}的足迹地图」`, 'success');
       render();
     }
 
@@ -2581,6 +2630,8 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
         });
 
         const allCities = getAllCities();
+        const profileName = getProfileName();
+        const shareTitle = formatMapTitle(profileName);
         const visitedCities = allCities.filter(city => cityVisitStatus(city) === 'visited');
         const visitedStats = buildStats(allCities);
         const visitedRegions = Array.from(new Set(visitedCities.map(city => city.regionDisplay || normalizeRegionName(city.region)).filter(Boolean)));
@@ -2613,8 +2664,8 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
             <div style="display:flex;flex-direction:column;gap:14px;">
               <div style="padding:16px 16px 14px;border-radius:20px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);">
                 <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(226,238,255,.56);">Earth Online · Travel Data Card</div>
-                <div style="margin-top:8px;font-size:22px;font-weight:800;line-height:1.2;">地球 Online 地图</div>
-                <div style="margin-top:4px;font-size:12px;color:rgba(222,235,255,.72);">旅行足迹分享卡</div>
+                <div style="margin-top:8px;font-size:24px;font-weight:800;line-height:1.2;">${escapeHtml(shareTitle)}</div>
+                <div style="margin-top:4px;font-size:12px;color:rgba(222,235,255,.72);">地球 Online 地图 · 旅行足迹分享卡</div>
                 <div style="margin-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
                   <div style="padding:10px 12px;border-radius:16px;background:rgba(122,173,255,.09);border:1px solid rgba(122,173,255,.14);">
                     <div style="font-size:11px;color:rgba(226,238,255,.6);">已去过城市 / 地点</div>
@@ -2736,6 +2787,7 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       if (event.key === 'Enter') handleAddCity();
     });
     DOM.resetProfileBtn.addEventListener('click', handleResetProfile);
+    DOM.editNameBtn.addEventListener('click', handleEditName);
     DOM.moguModeBtn.addEventListener('click', () => switchProfile('mogu'));
     DOM.visitorModeBtn.addEventListener('click', () => switchProfile('visitor'));
     DOM.customList.addEventListener('click', event => {
