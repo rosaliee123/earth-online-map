@@ -1078,16 +1078,33 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }
 
     .toggle-btn {
-      min-width: 92px;
+      min-width: 108px;
+      width: max-content;
+      max-width: none;
       height: 30px;
       border-radius: 10px;
       background: rgba(255,255,255,0.04);
       color: #d6e8fa;
       font-size: 11px;
       font-weight: 700;
-      padding: 0 10px;
+      line-height: 1;
+      padding: 0 12px;
       white-space: nowrap;
+      word-break: keep-all;
+      overflow-wrap: normal;
       flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .toggle-btn-label {
+      display: inline-block;
+      white-space: nowrap;
+      word-break: keep-all;
+      overflow-wrap: normal;
+      line-height: 1;
     }
 
     .toggle-btn.want {
@@ -1100,6 +1117,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
       display: flex;
       gap: 8px;
       align-items: center;
+      flex: 0 0 auto;
+      flex-wrap: nowrap;
+      white-space: nowrap;
     }
 
     .status-badge {
@@ -1677,6 +1697,49 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       '乌鲁木齐': '新疆维吾尔自治区', '克拉玛依': '新疆维吾尔自治区', '吐鲁番': '新疆维吾尔自治区', '哈密': '新疆维吾尔自治区', '昌吉': '新疆维吾尔自治区', '博尔塔拉': '新疆维吾尔自治区', '巴音郭楞': '新疆维吾尔自治区', '阿克苏': '新疆维吾尔自治区', '克孜勒苏': '新疆维吾尔自治区', '喀什': '新疆维吾尔自治区', '和田': '新疆维吾尔自治区', '伊犁': '新疆维吾尔自治区', '塔城': '新疆维吾尔自治区', '阿勒泰': '新疆维吾尔自治区', '石河子': '新疆维吾尔自治区', '阿拉尔': '新疆维吾尔自治区', '图木舒克': '新疆维吾尔自治区', '五家渠': '新疆维吾尔自治区', '北屯': '新疆维吾尔自治区',
       '香港': '香港特别行政区', '澳门': '澳门特别行政区'
     };
+
+    const CHINA_SCENIC_TO_CITY = {
+      '峨眉山': '乐山', '乐山大佛': '乐山', '都江堰': '成都', '青城山': '成都', '九寨沟': '阿坝',
+      '黄龙': '阿坝', '稻城亚丁': '甘孜', '四姑娘山': '阿坝', '武侯祠': '成都', '宽窄巷子': '成都',
+      '西湖': '杭州', '灵隐寺': '杭州', '西溪湿地': '杭州', '千岛湖': '杭州',
+      '乌镇': '嘉兴', '西塘': '嘉兴', '普陀山': '舟山', '雁荡山': '温州',
+      '黄山': '黄山', '宏村': '黄山', '西递': '黄山', '九华山': '池州', '天柱山': '安庆',
+      '武夷山': '南平', '鼓浪屿': '厦门', '土楼': '龙岩', '南靖土楼': '漳州', '云水谣': '漳州',
+      '泰山': '泰安', '崂山': '青岛', '趵突泉': '济南', '曲阜三孔': '济宁',
+      '少林寺': '郑州', '龙门石窟': '洛阳', '云台山': '焦作', '清明上河园': '开封',
+      '黄鹤楼': '武汉', '东湖': '武汉', '武当山': '十堰', '神农架': '神农架',
+      '张家界': '张家界', '天门山': '张家界', '凤凰古城': '湘西', '岳麓山': '长沙',
+      '橘子洲': '长沙', '崀山': '邵阳', '衡山': '衡阳',
+      '故宫': '北京', '天安门': '北京', '颐和园': '北京', '八达岭长城': '北京', '长城': '北京',
+      '外滩': '上海', '东方明珠': '上海', '迪士尼': '上海', '上海迪士尼': '上海', '豫园': '上海',
+      '兵马俑': '西安', '华山': '渭南', '大唐不夜城': '西安', '钟楼': '西安',
+      '布达拉宫': '拉萨', '纳木错': '那曲', '羊卓雍措': '山南',
+      '洱海': '大理', '玉龙雪山': '丽江', '泸沽湖': '丽江', '西双版纳热带植物园': '西双版纳',
+      '石林': '昆明', '滇池': '昆明', '苍山': '大理',
+      '漓江': '桂林', '阳朔': '桂林', '龙脊梯田': '桂林', '德天瀑布': '崇左',
+      '鼓山': '福州', '滕王阁': '南昌', '庐山': '九江', '婺源': '上饶',
+      '长隆': '广州', '广州塔': '广州', '世界之窗': '深圳', '欢乐谷': '深圳',
+      '珠海长隆': '珠海', '罗浮山': '惠州', '丹霞山': '韶关',
+      '蜈支洲岛': '三亚', '天涯海角': '三亚', '亚龙湾': '三亚', '分界洲岛': '陵水',
+      '青海湖': '海南藏族自治州', '茶卡盐湖': '海西', '莫高窟': '酒泉', '鸣沙山': '酒泉',
+      '喀纳斯': '阿勒泰', '天山天池': '昌吉', '火焰山': '吐鲁番',
+      '平遥古城': '晋中', '五台山': '忻州', '云冈石窟': '大同',
+      '净月潭': '长春', '长白山': '白山', '镜泊湖': '牡丹江'
+    };
+
+    const CHINA_SCENIC_LOOKUP = Object.fromEntries(
+      Object.entries(CHINA_SCENIC_TO_CITY).map(([spot, city]) => [normalizeText(spot), city])
+    );
+
+    function matchScenicSpot(rawName) {
+      if (!rawName) return null;
+      const key = normalizeText(rawName);
+      if (!key) return null;
+      if (CHINA_SCENIC_LOOKUP[key]) return { spot: rawName.trim(), city: CHINA_SCENIC_LOOKUP[key] };
+      const found = Object.entries(CHINA_SCENIC_LOOKUP).find(([spotKey]) => spotKey.includes(key) || key.includes(spotKey));
+      if (!found) return null;
+      return { spot: rawName.trim(), city: found[1] };
+    }
 
     const CHINA_REGION_MAP = Object.fromEntries(
       Object.entries(CHINA_REGION_ALIASES).flatMap(([canonical, aliases]) => aliases.map(alias => [alias, canonical]))
@@ -2294,7 +2357,7 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
         const status = cityVisitStatus(city);
         item.innerHTML = `
           <div class="custom-meta">
-            <span class="city-chip-dot" style="${status === 'want' ? 'background:rgba(143,220,255,.18);border:1px dashed rgba(143,220,255,.6)' : `background:${city.color}`}\"></span>
+            <span class="city-chip-dot" style="${status === 'want' ? 'background:rgba(200,107,255,.18);border:1px dashed rgba(200,107,255,.62)' : `background:${city.color}`}\"></span>
             <div class="custom-text">
               <div class="custom-name">${city.name}</div>
               <div class="custom-sub">${city.regionDisplay || city.region || city.country || '未识别区域'}</div>
@@ -2302,7 +2365,7 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
             </div>
           </div>
           <div class="custom-actions">
-            <button class="ghost-btn toggle-btn ${status}" data-toggle-city-id="${city.id}" title="切换状态">${status === 'want' ? '改成去过' : '改成想去'}</button>
+            <button class="ghost-btn toggle-btn ${status}" data-toggle-city-id="${city.id}" title="切换状态"><span class="toggle-btn-label">${status === 'want' ? '改成去过' : '改成想去'}</span></button>
             <button class="delete-btn" data-city-id="${city.id}" title="删除 ${city.name}">×</button>
           </div>
         `;
@@ -2424,6 +2487,27 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
 
     async function lookupCity(query) {
       const normalized = normalizeText(query);
+      const scenicHit = matchScenicSpot(query);
+      if (scenicHit) {
+        const scenicRegion = matchChinaRegion(scenicHit.city);
+        await ensureGeoData();
+        const center = scenicRegion ? getChinaRegionCenter(scenicRegion) : null;
+        return {
+          id: `custom-${slugify(scenicHit.city)}-${Date.now()}`,
+          name: scenicHit.city,
+          region: scenicRegion,
+          regionDisplay: scenicRegion ? normalizeRegionName(scenicRegion) : scenicHit.city,
+          country: '中国',
+          kind: 'domestic',
+          lat: center ? center.lat : 35,
+          lng: center ? center.lng : 104,
+          icon: guessIcon(scenicHit.city, '中国'),
+          color: hashColor(scenicHit.city),
+          source: 'custom',
+          originalQuery: query.trim()
+        };
+      }
+
       const existing = BASE_CITIES.find(city => normalizeText(city.name) === normalized);
       if (existing) {
         return {
@@ -2895,7 +2979,8 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
 
     function handleToggleCityStatus(cityId) {
       toggleCustomCityStatus(cityId);
-      setStatus('已切换城市状态。', 'success');
+      lastAddedCityId = cityId;
+      setStatus('已切换城市状态，地图颜色已同步更新。', 'success');
       render();
     }
 
