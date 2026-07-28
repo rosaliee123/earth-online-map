@@ -2559,26 +2559,25 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
         setStatus('截图组件还没准备好，请稍后再试。', 'error');
         return;
       }
-      const target = document.querySelector('.shell');
+      const target = document.getElementById('map');
       if (!target) return;
       DOM.shareBtn.disabled = true;
       DOM.shareBtn.textContent = '生成中...';
-      setStatus('正在生成分享图...', 'warning');
+      setStatus('正在生成地图截图...', 'warning');
       try {
         const canvas = await window.html2canvas(target, {
           backgroundColor: '#081220',
           useCORS: true,
-          scale: Math.min(2, window.devicePixelRatio || 1.5),
-          ignoreElements: el => el.classList?.contains('celebration-layer')
+          scale: Math.min(2, window.devicePixelRatio || 1.5)
         });
         const link = document.createElement('a');
         const stamp = new Date().toISOString().slice(0, 10);
-        link.download = `earth-online-map-${stamp}.png`;
+        link.download = `earth-online-map-map-${stamp}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
-        setStatus('截图已生成并开始下载，快去分享给朋友吧 ✨', 'success');
+        setStatus('地图截图已生成并开始下载 ✨', 'success');
       } catch (error) {
-        setStatus('截图生成失败，请稍后再试。', 'error');
+        setStatus('地图截图生成失败，请稍后再试。', 'error');
       } finally {
         DOM.shareBtn.disabled = false;
         DOM.shareBtn.textContent = '📸 截图分享';
