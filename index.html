@@ -1962,6 +1962,15 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       `;
     }
 
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
     function tooltipHtml(title, sub) {
       return `<div class="tooltip-inner"><div class="tooltip-title">${title}</div><div class="tooltip-sub">${sub}</div></div>`;
     }
@@ -2559,25 +2568,99 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
         setStatus('截图组件还没准备好，请稍后再试。', 'error');
         return;
       }
-      const target = document.getElementById('map');
-      if (!target) return;
+      const mapTarget = document.getElementById('map');
+      if (!mapTarget) return;
       DOM.shareBtn.disabled = true;
       DOM.shareBtn.textContent = '生成中...';
-      setStatus('正在生成地图截图...', 'warning');
+      setStatus('正在生成旅行数据卡片...', 'warning');
       try {
-        const canvas = await window.html2canvas(target, {
+        const mapCanvas = await window.html2canvas(mapTarget, {
           backgroundColor: '#081220',
           useCORS: true,
           scale: Math.min(2, window.devicePixelRatio || 1.5)
         });
+
+        const allCities = getAllCities();
+        const visitedCities = allCities.filter(city => cityVisitStatus(city) === 'visited');
+        const visitedStats = buildStats(allCities);
+        const visitedRegions = Array.from(new Set(visitedCities.map(city => city.regionDisplay || normalizeRegionName(city.region)).filter(Boolean)));
+        const visitedNames = visitedCities.map(city => city.name);
+
+        const shareCard = document.createElement('div');
+        shareCard.style.cssText = [
+          'position:fixed',
+          'left:-99999px',
+          'top:0',
+          'width:1240px',
+          'padding:24px',
+          'box-sizing:border-box',
+          'border-radius:28px',
+          'background:radial-gradient(circle at top left, rgba(126,166,255,.18), transparent 32%), linear-gradient(180deg, #091424 0%, #08111d 100%)',
+          'color:#eaf2ff',
+          'font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif',
+          'box-shadow:0 28px 80px rgba(0,0,0,.38)'
+        ].join(';');
+
+        const regionBadges = visitedRegions.map(name => `<span style="display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:11px;line-height:1;color:#dbe8ff;">${escapeHtml(name)}</span>`).join('');
+        const cityBadges = visitedNames.slice(0, 42).map(name => `<span style="display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:rgba(122,173,255,.10);border:1px solid rgba(122,173,255,.16);font-size:11px;line-height:1;color:#eff5ff;">${escapeHtml(name)}</span>`).join('');
+        const extraCount = Math.max(visitedNames.length - 42, 0);
+
+        shareCard.innerHTML = `
+          <div style="display:grid;grid-template-columns:1.65fr .95fr;gap:20px;align-items:stretch;">
+            <div style="border-radius:22px;overflow:hidden;background:#081220;border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);">
+              <img src="${mapCanvas.toDataURL('image/png')}" style="display:block;width:100%;height:100%;object-fit:cover;" />
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div style="padding:16px 16px 14px;border-radius:20px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);">
+                <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(226,238,255,.56);">Earth Online · Travel Data Card</div>
+                <div style="margin-top:8px;font-size:22px;font-weight:800;line-height:1.2;">地球 Online 地图</div>
+                <div style="margin-top:4px;font-size:12px;color:rgba(222,235,255,.72);">旅行足迹分享卡</div>
+                <div style="margin-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
+                  <div style="padding:10px 12px;border-radius:16px;background:rgba(122,173,255,.09);border:1px solid rgba(122,173,255,.14);">
+                    <div style="font-size:11px;color:rgba(226,238,255,.6);">已去过城市 / 地点</div>
+                    <div style="margin-top:4px;font-size:24px;font-weight:800;color:#ffffff;">${visitedStats.visited}</div>
+                  </div>
+                  <div style="padding:10px 12px;border-radius:16px;background:rgba(255,208,137,.09);border:1px solid rgba(255,208,137,.14);">
+                    <div style="font-size:11px;color:rgba(226,238,255,.6);">覆盖省份 / 地区</div>
+                    <div style="margin-top:4px;font-size:24px;font-weight:800;color:#ffffff;">${visitedStats.regions}</div>
+                  </div>
+                </div>
+              </div>
+              <div style="padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);">
+                <div style="font-size:11px;font-weight:800;color:#dce9ff;letter-spacing:.06em;">去过的省份 / 地区</div>
+                <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">${regionBadges || '<span style="font-size:11px;color:rgba(226,238,255,.56);">暂无</span>'}</div>
+              </div>
+              <div style="padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                  <div style="font-size:11px;font-weight:800;color:#dce9ff;letter-spacing:.06em;">去过的城市 / 地点</div>
+                  <div style="font-size:10px;color:rgba(226,238,255,.5);">共 ${visitedNames.length} 个</div>
+                </div>
+                <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">${cityBadges || '<span style="font-size:11px;color:rgba(226,238,255,.56);">暂无</span>'}${extraCount ? `<span style="display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.04);font-size:11px;color:rgba(226,238,255,.58);">+${extraCount}</span>` : ''}</div>
+              </div>
+              <div style="padding:0 4px;font-size:10px;color:rgba(226,238,255,.42);display:flex;justify-content:space-between;gap:10px;">
+                <span>Generated by Earth Online Map</span>
+                <span>${new Date().toLocaleDateString('zh-CN')}</span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(shareCard);
+        const finalCanvas = await window.html2canvas(shareCard, {
+          backgroundColor: null,
+          useCORS: true,
+          scale: 2
+        });
+        shareCard.remove();
+
         const link = document.createElement('a');
         const stamp = new Date().toISOString().slice(0, 10);
-        link.download = `earth-online-map-map-${stamp}.png`;
-        link.href = canvas.toDataURL('image/png');
+        link.download = `earth-online-map-card-${stamp}.png`;
+        link.href = finalCanvas.toDataURL('image/png');
         link.click();
-        setStatus('地图截图已生成并开始下载 ✨', 'success');
+        setStatus('旅行数据卡片已生成并开始下载 ✨', 'success');
       } catch (error) {
-        setStatus('地图截图生成失败，请稍后再试。', 'error');
+        setStatus('旅行数据卡片生成失败，请稍后再试。', 'error');
       } finally {
         DOM.shareBtn.disabled = false;
         DOM.shareBtn.textContent = '📸 截图分享';
