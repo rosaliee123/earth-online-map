@@ -1303,6 +1303,91 @@ svg.leaflet-image-layer.leaflet-interactive path {
       border: 1px solid rgba(255,255,255,0.08);
     }
 
+    .name-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(3, 9, 18, 0.68);
+      backdrop-filter: blur(12px);
+    }
+
+    .name-modal.show { display: flex; }
+
+    .name-dialog {
+      width: min(460px, 100%);
+      border-radius: 28px;
+      padding: 24px;
+      background: linear-gradient(180deg, rgba(12,22,39,.97) 0%, rgba(8,17,30,.98) 100%);
+      border: 1px solid rgba(255,255,255,.09);
+      box-shadow: 0 28px 80px rgba(0,0,0,.42);
+    }
+
+    .name-dialog-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #d7e7ff;
+      background: rgba(122,173,255,.12);
+      border: 1px solid rgba(122,173,255,.2);
+    }
+
+    .name-dialog-title {
+      margin-top: 14px;
+      font-size: 28px;
+      line-height: 1.15;
+      letter-spacing: -.8px;
+      font-weight: 900;
+      color: #f5f8ff;
+    }
+
+    .name-dialog-sub {
+      margin-top: 8px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .name-dialog-input {
+      width: 100%;
+      margin-top: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: #fff;
+      padding: 15px 16px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+      box-sizing: border-box;
+    }
+
+    .name-dialog-input:focus {
+      border-color: rgba(157, 193, 255, 0.34);
+      box-shadow: 0 0 0 3px rgba(125, 167, 255, 0.12);
+      background: rgba(255,255,255,0.055);
+    }
+
+    .name-dialog-error {
+      min-height: 20px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #ff9b9b;
+    }
+
+    .name-dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
     .leaflet-container { font: inherit; }
     .leaflet-control-zoom {
       border: 0 !important;
@@ -1474,6 +1559,19 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <div id="map"></div>
     </section>
   </main>
+
+  <div class="name-modal" id="nameModal" aria-hidden="true">
+    <div class="name-dialog" role="dialog" aria-modal="true" aria-labelledby="nameModalTitle">
+      <div class="name-dialog-badge">✨ 制作我的足迹地图</div>
+      <div class="name-dialog-title" id="nameModalTitle">先给你的地图起个名字</div>
+      <div class="name-dialog-sub">输入名字后，页面标题和分享卡片都会显示成「XX的足迹地图」。</div>
+      <input id="nameModalInput" class="name-dialog-input" type="text" maxlength="18" placeholder="请输入你的名字" />
+      <div class="name-dialog-error" id="nameModalError"></div>
+      <div class="name-dialog-actions">
+        <button id="nameModalConfirm" class="primary-btn" type="button">确认进入地图</button>
+      </div>
+    </div>
+  </div>
 
   <script>
 /*!
@@ -1774,7 +1872,11 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       celebrationLayer: document.getElementById('celebrationLayer'),
       hoverCard: document.getElementById('hoverCard'),
       moguModeBtn: document.getElementById('moguModeBtn'),
-      visitorModeBtn: document.getElementById('visitorModeBtn')
+      visitorModeBtn: document.getElementById('visitorModeBtn'),
+      nameModal: document.getElementById('nameModal'),
+      nameModalInput: document.getElementById('nameModalInput'),
+      nameModalError: document.getElementById('nameModalError'),
+      nameModalConfirm: document.getElementById('nameModalConfirm')
     };
 
     const map = L.map('map', {
@@ -1905,16 +2007,44 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
 
     function promptForProfileName(profileKey = activeProfile, force = false) {
       const current = getProfileName(profileKey);
-      const label = profileKey === 'visitor' ? '请输入你的名字' : '请输入地图显示的名字';
-      const value = prompt(label, force ? '' : current);
-      if (value === null) return null;
-      const trimmed = value.trim();
-      if (!trimmed) {
-        alert('名字不能为空哦～');
-        return promptForProfileName(profileKey, force);
-      }
-      setProfileName(profileKey, trimmed);
-      return trimmed;
+      const isVisitor = profileKey === 'visitor';
+      DOM.nameModal.classList.add('show');
+      DOM.nameModal.setAttribute('aria-hidden', 'false');
+      DOM.nameModalInput.value = force ? '' : current;
+      DOM.nameModalInput.placeholder = isVisitor ? '请输入你的名字' : '请输入地图显示的名字';
+      DOM.nameModalError.textContent = '';
+
+      return new Promise(resolve => {
+        const cleanup = () => {
+          DOM.nameModal.classList.remove('show');
+          DOM.nameModal.setAttribute('aria-hidden', 'true');
+          DOM.nameModalConfirm.removeEventListener('click', handleConfirm);
+          DOM.nameModalInput.removeEventListener('keydown', handleKeydown);
+        };
+
+        const handleConfirm = () => {
+          const trimmed = DOM.nameModalInput.value.trim();
+          if (!trimmed) {
+            DOM.nameModalError.textContent = '请输入名字';
+            DOM.nameModalInput.focus();
+            return;
+          }
+          setProfileName(profileKey, trimmed);
+          cleanup();
+          resolve(trimmed);
+        };
+
+        const handleKeydown = event => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            handleConfirm();
+          }
+        };
+
+        DOM.nameModalConfirm.addEventListener('click', handleConfirm);
+        DOM.nameModalInput.addEventListener('keydown', handleKeydown);
+        requestAnimationFrame(() => DOM.nameModalInput.focus());
+      });
     }
 
     function getCustomCities(profileKey = activeProfile) {
@@ -2206,9 +2336,9 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       });
     }
 
-    function switchProfile(profileKey) {
+    async function switchProfile(profileKey) {
       if (profileKey === 'visitor' && !localStorage.getItem(PROFILE_CONFIG.visitor.nameKey)) {
-        const created = promptForProfileName('visitor', true);
+        const created = await promptForProfileName('visitor', true);
         if (!created) return;
       }
       activeProfile = profileKey;
@@ -2220,8 +2350,8 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       render();
     }
 
-    function handleEditName() {
-      const name = promptForProfileName(activeProfile, false);
+    async function handleEditName() {
+      const name = await promptForProfileName(activeProfile, false);
       if (!name) return;
       setStatus(`已更新为「${name}的足迹地图」`, 'success');
       render();
