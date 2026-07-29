@@ -705,7 +705,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }
 
     * { box-sizing: border-box; }
-    html, body { margin: 0; min-height: 100%; }
+    html, body { margin: 0; min-height: 100%; height: 100%; }
     body {
       font-family: "Noto Sans SC", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--text);
@@ -717,18 +717,101 @@ svg.leaflet-image-layer.leaflet-interactive path {
       overflow: hidden;
     }
 
-    .shell {
+    /* === Top Tab Navigation === */
+    .app-container {
+      display: flex;
+      flex-direction: column;
       height: 100vh;
+    }
+
+    .top-tabs {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 12px 24px;
+      background: rgba(6, 17, 31, 0.92);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .top-tab {
+      padding: 10px 24px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all .2s ease;
+      letter-spacing: .2px;
+    }
+
+    .top-tab:hover {
+      color: #eaf1fb;
+      background: rgba(255,255,255,.04);
+    }
+
+    .top-tab.active {
+      color: #fff;
+      background: rgba(122,173,255,.14);
+      border-color: rgba(176,208,255,.24);
+      box-shadow: 0 4px 16px rgba(122,173,255,.1);
+    }
+
+    .top-tabs-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .top-tabs-name {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .top-tabs-edit {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #d6e8fa;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+
+    .top-tabs-edit:hover {
+      background: rgba(255,255,255,.08);
+      border-color: rgba(170,200,255,.2);
+    }
+
+    /* === Tab Content Areas === */
+    .tab-content {
+      flex: 1;
+      min-height: 0;
+      display: none;
+    }
+
+    .tab-content.active { display: flex; }
+
+    /* === Map View (Tab 1) === */
+    .map-view {
       display: grid;
-      grid-template-columns: 430px 1fr;
-      gap: 18px;
-      padding: 18px;
+      grid-template-columns: 400px 1fr;
+      gap: 14px;
+      padding: 14px;
+      height: 100%;
     }
 
     .panel {
       position: relative;
       overflow: hidden;
-      border-radius: 30px;
+      border-radius: 24px;
       background: var(--panel);
       border: 1px solid var(--border);
       backdrop-filter: blur(18px);
@@ -736,77 +819,58 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }
 
     .sidebar {
-      padding: 28px;
+      padding: 22px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
       overflow-y: auto;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.01)),
         var(--panel);
     }
 
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      width: fit-content;
-      padding: 7px 14px;
-      border-radius: 999px;
-      background: rgba(140, 182, 255, 0.12);
-      color: #d2e1ff;
-      border: 1px solid rgba(162, 196, 255, 0.14);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .5px;
-    }
+    .sidebar::-webkit-scrollbar { width: 6px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 3px; }
 
     h1 {
       margin: 0;
-      font-size: 38px;
-      line-height: 1.06;
-      letter-spacing: -1.2px;
+      font-size: 28px;
+      line-height: 1.1;
+      letter-spacing: -1px;
       font-weight: 900;
     }
 
     .subtitle {
       margin: 0;
       color: var(--muted);
-      line-height: 1.8;
-      font-size: 14px;
+      line-height: 1.7;
+      font-size: 13px;
     }
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
     }
 
     .stat-card {
       position: relative;
-      padding: 18px 16px;
-      border-radius: 22px;
+      padding: 12px 10px;
+      border-radius: 16px;
       overflow: hidden;
       background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
       border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .stat-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at top right, rgba(255,255,255,.08), transparent 38%);
-      pointer-events: none;
+      text-align: center;
     }
 
     .stat-number {
       position: relative;
       font-family: Outfit, sans-serif;
-      font-size: 34px;
+      font-size: 24px;
       line-height: 1;
       font-weight: 900;
-      letter-spacing: -.6px;
+      letter-spacing: -.4px;
     }
 
     .stat-card:nth-child(1) .stat-number { color: #9cc2ff; }
@@ -816,128 +880,129 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     .stat-label {
       position: relative;
-      margin-top: 8px;
-      font-size: 12px;
+      margin-top: 4px;
+      font-size: 10px;
       color: var(--muted);
     }
 
     .card {
-      padding: 18px;
-      border-radius: 24px;
+      padding: 16px;
+      border-radius: 20px;
       background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
       border: 1px solid rgba(255,255,255,0.08);
     }
 
     .card-title {
-      margin: 0 0 12px;
-      font-size: 14px;
+      margin: 0 0 10px;
+      font-size: 13px;
       font-weight: 800;
       letter-spacing: .3px;
       color: #eef4ff;
     }
 
-    .legend-list, .rule-list, .tips-list { display: flex; flex-direction: column; gap: 10px; }
+    .legend-list { display: flex; flex-direction: column; gap: 8px; }
 
-    .legend-row, .tip-row {
+    .legend-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
       color: #d8e4f6;
-      font-size: 13px;
-      line-height: 1.6;
+      font-size: 12px;
+      line-height: 1.5;
     }
 
     .swatch {
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       flex: 0 0 auto;
       border-radius: 50%;
     }
 
-    .swatch.visited { background: #9cc2ff; box-shadow: 0 0 0 5px rgba(156,194,255,.18), 0 0 16px rgba(156,194,255,.34); }
-    .swatch.foreign { background: #ffd089; box-shadow: 0 0 0 5px rgba(255,208,137,.18), 0 0 16px rgba(255,208,137,.34); }
-    .swatch.unvisited { background: #5d7088; box-shadow: 0 0 0 5px rgba(93,112,136,.18); }
-    .swatch.new { background: #8fd8bf; box-shadow: 0 0 0 5px rgba(143,216,191,.18), 0 0 16px rgba(143,216,191,.28); }
-    .swatch.want { background: #c86bff; box-shadow: 0 0 0 5px rgba(200,107,255,.18), 0 0 16px rgba(200,107,255,.32); }
+    .swatch.visited { background: #9cc2ff; box-shadow: 0 0 0 4px rgba(156,194,255,.18), 0 0 12px rgba(156,194,255,.3); }
+    .swatch.foreign { background: #ffd089; box-shadow: 0 0 0 4px rgba(255,208,137,.18), 0 0 12px rgba(255,208,137,.3); }
+    .swatch.unvisited { background: #5d7088; box-shadow: 0 0 0 4px rgba(93,112,136,.18); }
+    .swatch.new { background: #8fd8bf; box-shadow: 0 0 0 4px rgba(143,216,191,.18); }
+    .swatch.want { background: #c86bff; box-shadow: 0 0 0 4px rgba(200,107,255,.18); }
 
     .form-grid {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      margin-bottom: 10px;
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
     }
 
-    .input-wrap {
-      position: relative;
-    }
+    .form-grid .city-input { flex: 1; }
 
     .city-input {
-      width: 100%;
       border: 1px solid rgba(255,255,255,0.09);
       background: rgba(255,255,255,0.04);
       color: var(--text);
-      border-radius: 15px;
-      padding: 13px 14px;
-      font-size: 14px;
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 13px;
       outline: none;
-      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+      transition: border-color .2s ease, box-shadow .2s ease;
     }
 
     .city-input::placeholder { color: #7d91aa; }
     .city-input:focus {
       border-color: rgba(157, 193, 255, 0.34);
       box-shadow: 0 0 0 3px rgba(125, 167, 255, 0.12);
-      background: rgba(255,255,255,0.055);
     }
 
     .primary-btn, .ghost-btn, .delete-btn {
       border: 1px solid rgba(255,255,255,0.08);
       cursor: pointer;
-      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
+      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease, background .15s ease;
     }
 
     .primary-btn {
-      padding: 0 16px;
-      border-radius: 15px;
+      padding: 0 14px;
+      border-radius: 12px;
       background: linear-gradient(135deg, rgba(118,164,255,.28), rgba(118,164,255,.12));
       color: #fff;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
-      min-width: 108px;
+      white-space: nowrap;
     }
 
     .ghost-btn {
-      padding: 10px 14px;
-      border-radius: 14px;
+      padding: 8px 12px;
+      border-radius: 10px;
       background: rgba(255,255,255,0.04);
       color: #eaf1fb;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
+      white-space: nowrap;
     }
 
-    .primary-btn:hover, .ghost-btn:hover, .delete-btn:hover {
+    .primary-btn:hover, .ghost-btn:hover {
       transform: translateY(-1px);
       border-color: rgba(170,200,255,.24);
-      box-shadow: 0 12px 24px rgba(0,0,0,.18);
+      box-shadow: 0 8px 20px rgba(0,0,0,.16);
     }
 
     .form-actions {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
-    .helper-text, .status-text, .empty-text {
-      font-size: 12px;
-      line-height: 1.7;
+    .status-text {
+      font-size: 11px;
+      line-height: 1.6;
       color: var(--muted);
+      min-height: 18px;
+      margin-top: 4px;
     }
+
+    .status-text.success { color: var(--success); }
+    .status-text.error { color: #ff8f8f; }
+    .status-text.warning { color: var(--warning); }
 
     .visit-type-group {
       display: inline-flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
+      gap: 6px;
+      margin-bottom: 8px;
     }
 
     .type-chip {
@@ -945,11 +1010,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
       background: rgba(255,255,255,0.04);
       color: #d9e8fb;
       border-radius: 999px;
-      padding: 9px 12px;
-      font-size: 12px;
+      padding: 7px 10px;
+      font-size: 11px;
       font-weight: 700;
       cursor: pointer;
-      transition: all .2s ease;
+      transition: all .15s ease;
     }
 
     .type-chip.active[data-value="visited"] {
@@ -964,121 +1029,112 @@ svg.leaflet-image-layer.leaflet-interactive path {
       color: #f6e8ff;
     }
 
-    .share-btn {
-      background: linear-gradient(135deg, rgba(255,209,137,.16), rgba(255,255,255,.04));
-    }
-
-    .ticket-btn {
-      background: linear-gradient(135deg, rgba(255,160,200,.16), rgba(255,255,255,.04));
-    }
-
-    .status-text { min-height: 20px; }
-    .status-text.success { color: var(--success); }
-    .status-text.error { color: #ff8f8f; }
-    .status-text.warning { color: var(--warning); }
-
-    .city-palette,
-    .custom-list {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .city-chip,
-    .custom-item {
+    /* City Palette */
+    .city-palette {
       display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .city-chip {
+      display: inline-flex;
       align-items: center;
-      gap: 9px;
-      padding: 10px 11px;
-      border-radius: 14px;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 10px;
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.06);
       color: #eaf1fb;
-      font-size: 12px;
+      font-size: 11px;
     }
 
-    .city-chip { min-height: 40px; }
     .city-chip-dot {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       flex: 0 0 auto;
-      box-shadow: 0 0 0 4px rgba(255,255,255,0.04);
     }
 
+    /* Custom City List - FIXED LAYOUT */
+    .custom-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .custom-list::-webkit-scrollbar { width: 4px; }
+    .custom-list::-webkit-scrollbar-track { background: transparent; }
+    .custom-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
+
     .custom-item {
-      justify-content: space-between;
-      align-items: center;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
     }
 
     .custom-meta {
       display: flex;
-      align-items: center;
-      gap: 9px;
-      min-width: 0;
+      align-items: flex-start;
+      gap: 10px;
       flex: 1;
+      min-width: 0;
+    }
+
+    .custom-meta > .city-chip-dot {
+      margin-top: 5px;
+      flex-shrink: 0;
     }
 
     .custom-text {
+      flex: 1;
       min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
     }
 
     .custom-name {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 13px;
       font-weight: 700;
+      color: #eaf1fb;
+      word-break: break-all;
+      line-height: 1.4;
     }
 
     .custom-sub {
       color: var(--muted);
       font-size: 11px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      line-height: 1.4;
+      margin-top: 2px;
+      word-break: break-all;
     }
 
-    .delete-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.04);
-      color: #cfdaf0;
-      flex: 0 0 auto;
+    .custom-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-shrink: 0;
+      padding-top: 2px;
     }
 
     .toggle-btn {
-      min-width: 108px;
-      width: max-content;
-      max-width: none;
-      height: 30px;
-      border-radius: 10px;
+      padding: 5px 10px;
+      border-radius: 8px;
       background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,.08);
       color: #d6e8fa;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      line-height: 1;
-      padding: 0 12px;
+      cursor: pointer;
       white-space: nowrap;
-      word-break: keep-all;
-      overflow-wrap: normal;
-      flex: 0 0 auto;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+      transition: all .15s ease;
     }
 
-    .toggle-btn-label {
-      display: inline-block;
-      white-space: nowrap;
-      word-break: keep-all;
-      overflow-wrap: normal;
-      line-height: 1;
-    }
+    .toggle-btn:hover { background: rgba(255,255,255,.08); }
 
     .toggle-btn.want {
       border-style: dashed;
@@ -1086,49 +1142,47 @@ svg.leaflet-image-layer.leaflet-interactive path {
       color: #f5ddff;
     }
 
-    .custom-actions {
+    .delete-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      color: #cfdaf0;
+      flex-shrink: 0;
       display: flex;
-      gap: 8px;
       align-items: center;
-      flex: 0 0 auto;
-      flex-wrap: nowrap;
-      white-space: nowrap;
+      justify-content: center;
+      font-size: 14px;
     }
+
+    .delete-btn:hover { background: rgba(255,100,100,.1); color: #ff9b9b; }
 
     .status-badge {
       display: inline-flex;
       align-items: center;
       border-radius: 999px;
-      padding: 2px 8px;
-      font-size: 10px;
+      padding: 2px 6px;
+      font-size: 9px;
       font-weight: 800;
-      width: fit-content;
+      margin-top: 2px;
     }
 
-    .status-badge.visited {
-      background: rgba(122,173,255,.16);
-      color: #dceaff;
-    }
+    .status-badge.visited { background: rgba(122,173,255,.16); color: #dceaff; }
+    .status-badge.want { background: rgba(200,107,255,.12); color: #f4e3ff; border: 1px dashed rgba(200,107,255,.28); }
 
-    .status-badge.want {
-      background: rgba(200,107,255,.12);
-      color: #f4e3ff;
-      border: 1px dashed rgba(200,107,255,.28);
-    }
-
-    .rule-item {
+    .empty-text {
+      font-size: 12px;
       color: var(--muted);
-      font-size: 13px;
-      line-height: 1.7;
+      text-align: center;
+      padding: 16px 0;
     }
 
+    /* === Map Panel === */
     .map-panel { position: relative; }
     #map {
       width: 100%;
       height: 100%;
-      background:
-        radial-gradient(circle at 50% 45%, rgba(255,255,255,0.03), transparent 38%),
-        #081220;
+      background: radial-gradient(circle at 50% 45%, rgba(255,255,255,0.03), transparent 38%), #081220;
     }
 
     .map-panel::before {
@@ -1152,10 +1206,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     .burst-ring {
       position: absolute;
-      width: 22px;
-      height: 22px;
-      margin-left: -11px;
-      margin-top: -11px;
+      width: 22px; height: 22px;
+      margin-left: -11px; margin-top: -11px;
       border-radius: 50%;
       border: 2px solid currentColor;
       opacity: 0.8;
@@ -1165,10 +1217,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     .burst-core {
       position: absolute;
-      width: 14px;
-      height: 14px;
-      margin-left: -7px;
-      margin-top: -7px;
+      width: 14px; height: 14px;
+      margin-left: -7px; margin-top: -7px;
       border-radius: 50%;
       background: currentColor;
       box-shadow: 0 0 18px currentColor;
@@ -1177,10 +1227,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     .spark {
       position: absolute;
-      width: 8px;
-      height: 8px;
-      margin-left: -4px;
-      margin-top: -4px;
+      width: 8px; height: 8px;
+      margin-left: -4px; margin-top: -4px;
       border-radius: 50%;
       background: currentColor;
       box-shadow: 0 0 12px currentColor;
@@ -1193,13 +1241,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
       0% { transform: scale(.45); opacity: .95; }
       100% { transform: scale(8.2); opacity: 0; }
     }
-
     @keyframes coreGlow {
       0% { transform: scale(.6); opacity: .95; }
       50% { transform: scale(1.35); opacity: 1; }
       100% { transform: scale(.8); opacity: 0; }
     }
-
     @keyframes sparkFly {
       0% { transform: translate(0, 0) scale(.6); opacity: 0; }
       15% { opacity: 1; }
@@ -1209,96 +1255,40 @@ svg.leaflet-image-layer.leaflet-interactive path {
     .topbar {
       position: absolute;
       z-index: 500;
-      left: 20px;
-      right: 20px;
-      top: 20px;
+      left: 16px; right: 16px; top: 16px;
       display: flex;
       justify-content: space-between;
-      gap: 14px;
+      gap: 12px;
       pointer-events: none;
     }
 
-    .topbar-card,
-    .hover-card {
+    .topbar-card, .hover-card {
       pointer-events: auto;
-      border-radius: 22px;
+      border-radius: 18px;
       background: rgba(13, 24, 43, 0.94);
       border: 1px solid rgba(255,255,255,0.08);
       backdrop-filter: blur(18px);
       box-shadow: var(--shadow-soft);
     }
 
-    .topbar-card {
-      padding: 14px 16px;
-      min-width: 320px;
-    }
-
-    .topbar-title {
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: -.2px;
-    }
-
-    .topbar-sub {
-      margin-top: 4px;
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
+    .topbar-card { padding: 12px 14px; min-width: 240px; }
+    .topbar-title { font-size: 14px; font-weight: 800; letter-spacing: -.2px; }
+    .topbar-sub { margin-top: 3px; font-size: 11px; color: var(--muted); }
 
     .hover-card {
-      width: 340px;
-      padding: 18px;
-      transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
+      width: 300px;
+      padding: 14px;
+      transition: transform .24s ease, box-shadow .24s ease;
     }
-
     .hover-card.dim { opacity: .97; }
+    .hover-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: .4px; background: rgba(156,194,255,.12); color: #cfe0ff; border: 1px solid rgba(162,196,255,.16); }
+    .hover-title { margin: 10px 0 4px; font-size: 22px; line-height: 1.1; letter-spacing: -.6px; font-weight: 900; }
+    .hover-sub { color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .hover-pills { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .hover-pill { padding: 5px 8px; border-radius: 999px; font-size: 11px; color: #edf3fb; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
 
-    .hover-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: .4px;
-      background: rgba(156,194,255,.12);
-      color: #cfe0ff;
-      border: 1px solid rgba(162,196,255,.16);
-    }
-
-    .hover-title {
-      margin: 12px 0 6px;
-      font-size: 28px;
-      line-height: 1.08;
-      letter-spacing: -.8px;
-      font-weight: 900;
-    }
-
-    .hover-sub {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    .hover-pills {
-      margin-top: 14px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .hover-pill {
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      color: #edf3fb;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .name-modal {
+    /* === Province Selector Modal === */
+    .province-modal {
       position: fixed;
       inset: 0;
       z-index: 3000;
@@ -1306,724 +1296,510 @@ svg.leaflet-image-layer.leaflet-interactive path {
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background: rgba(3, 9, 18, 0.68);
-      backdrop-filter: blur(12px);
+      background: rgba(3, 9, 18, 0.72);
+      backdrop-filter: blur(8px);
     }
 
-    .name-modal.show { display: flex; }
+    .province-modal.show { display: flex; }
 
-    .name-dialog {
-      width: min(460px, 100%);
-      border-radius: 28px;
-      padding: 24px;
-      background: linear-gradient(180deg, rgba(12,22,39,.97) 0%, rgba(8,17,30,.98) 100%);
+    .province-dialog {
+      width: min(680px, 95vw);
+      max-height: 80vh;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(12,22,39,.98) 0%, rgba(8,17,30,.99) 100%);
       border: 1px solid rgba(255,255,255,.09);
-      box-shadow: 0 28px 80px rgba(0,0,0,.42);
-    }
-
-    .name-dialog-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 800;
-      color: #d7e7ff;
-      background: rgba(122,173,255,.12);
-      border: 1px solid rgba(122,173,255,.2);
-    }
-
-    .name-dialog-title {
-      margin-top: 14px;
-      font-size: 28px;
-      line-height: 1.15;
-      letter-spacing: -.8px;
-      font-weight: 900;
-      color: #f5f8ff;
-    }
-
-    .name-dialog-sub {
-      margin-top: 8px;
-      font-size: 13px;
-      line-height: 1.7;
-      color: var(--muted);
-    }
-
-    .name-dialog-input {
-      width: 100%;
-      margin-top: 18px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-      color: #fff;
-      padding: 15px 16px;
-      font-size: 15px;
-      outline: none;
-      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
-      box-sizing: border-box;
-    }
-
-    .name-dialog-input:focus {
-      border-color: rgba(157, 193, 255, 0.34);
-      box-shadow: 0 0 0 3px rgba(125, 167, 255, 0.12);
-      background: rgba(255,255,255,0.055);
-    }
-
-    .name-dialog-error {
-      min-height: 20px;
-      margin-top: 10px;
-      font-size: 12px;
-      color: #ff9b9b;
-    }
-
-    .name-dialog-actions {
+      box-shadow: 0 28px 80px rgba(0,0,0,.5);
       display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 10px;
+      flex-direction: column;
+      overflow: hidden;
     }
 
-    /* Province Selector */
-    .province-selector {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      margin-top: 6px;
-      max-height: 320px;
-      overflow-y: auto;
-      border-radius: 18px;
-      background: rgba(12, 22, 39, 0.98);
-      border: 1px solid rgba(255,255,255,.1);
-      box-shadow: 0 20px 50px rgba(0,0,0,.4);
-      z-index: 1000;
-      display: none;
-      padding: 12px;
-    }
-
-    .province-selector.show { display: block; }
-
-    .province-selector-header {
+    .province-dialog-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
-      padding: 0 4px;
+      padding: 18px 22px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      flex-shrink: 0;
     }
 
-    .province-selector-title {
-      font-size: 12px;
+    .province-dialog-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #eef4ff;
+    }
+
+    .province-dialog-close {
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      color: #cfdaf0;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .15s ease;
+    }
+
+    .province-dialog-close:hover { background: rgba(255,100,100,.1); color: #ff9b9b; }
+
+    .province-dialog-body {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .province-list-panel {
+      border-right: 1px solid rgba(255,255,255,.06);
+      overflow-y: auto;
+      padding: 12px 8px;
+    }
+
+    .province-list-panel::-webkit-scrollbar { width: 4px; }
+    .province-list-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
+
+    .province-list-item {
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #dce8ff;
+      cursor: pointer;
+      transition: all .12s ease;
+      margin-bottom: 2px;
+    }
+
+    .province-list-item:hover { background: rgba(122,173,255,.08); color: #fff; }
+    .province-list-item.active { background: rgba(122,173,255,.16); color: #fff; border: 1px solid rgba(176,208,255,.24); }
+
+    .city-list-panel {
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .city-list-panel::-webkit-scrollbar { width: 4px; }
+    .city-list-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
+
+    .city-list-title {
+      font-size: 13px;
       font-weight: 800;
       color: #cfe0ff;
+      margin-bottom: 12px;
+      padding-left: 4px;
     }
 
-    .province-selector-back {
-      font-size: 11px;
-      color: #9cc2ff;
-      cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 8px;
-      background: rgba(122,173,255,.1);
-      border: none;
-      font-weight: 700;
-      display: none;
-    }
-
-    .province-selector-back.show { display: inline-block; }
-
-    .province-grid {
+    .city-list-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 8px;
     }
 
-    .province-item, .city-select-item {
-      padding: 8px 10px;
+    .city-select-item {
+      padding: 10px 8px;
       border-radius: 10px;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
       color: #dce8ff;
       background: rgba(255,255,255,.04);
       border: 1px solid rgba(255,255,255,.06);
       cursor: pointer;
       text-align: center;
-      transition: all .15s ease;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      transition: all .12s ease;
     }
 
-    .province-item:hover, .city-select-item:hover {
+    .city-select-item:hover {
       background: rgba(122,173,255,.14);
       border-color: rgba(176,208,255,.3);
       color: #fff;
+      transform: translateY(-1px);
     }
 
-    /* Ticket Stub Page */
-    .ticket-page {
+    .province-dialog-hint {
+      padding: 12px 22px;
+      border-top: 1px solid rgba(255,255,255,.06);
+      font-size: 11px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    /* === Name Modal === */
+    .name-modal {
       position: fixed;
       inset: 0;
-      z-index: 2000;
+      z-index: 4000;
       display: none;
-      background:
-        radial-gradient(circle at 14% 18%, rgba(116, 164, 255, 0.12), transparent 24%),
-        radial-gradient(circle at 82% 80%, rgba(255, 197, 109, 0.08), transparent 24%),
-        linear-gradient(135deg, #06111f 0%, #0b1728 54%, #122239 100%);
-      overflow-y: auto;
-    }
-
-    .ticket-page.show { display: block; }
-
-    .ticket-page-inner {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 40px 24px;
-    }
-
-    .ticket-page-header {
-      display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 32px;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(3, 9, 18, 0.68);
+      backdrop-filter: blur(12px);
+    }
+    .name-modal.show { display: flex; }
+
+    .name-dialog {
+      width: min(420px, 100%);
+      border-radius: 24px;
+      padding: 22px;
+      background: linear-gradient(180deg, rgba(12,22,39,.97) 0%, rgba(8,17,30,.98) 100%);
+      border: 1px solid rgba(255,255,255,.09);
+      box-shadow: 0 28px 80px rgba(0,0,0,.42);
     }
 
-    .ticket-page-title {
-      font-size: 32px;
-      font-weight: 900;
-      letter-spacing: -1px;
-    }
+    .name-dialog-badge { display: inline-flex; padding: 5px 9px; border-radius: 999px; font-size: 11px; font-weight: 800; color: #d7e7ff; background: rgba(122,173,255,.12); border: 1px solid rgba(122,173,255,.2); }
+    .name-dialog-title { margin-top: 12px; font-size: 24px; line-height: 1.15; letter-spacing: -.6px; font-weight: 900; color: #f5f8ff; }
+    .name-dialog-sub { margin-top: 6px; font-size: 12px; line-height: 1.7; color: var(--muted); }
 
-    .ticket-back-btn {
-      padding: 10px 18px;
+    .name-dialog-input {
+      width: 100%;
+      margin-top: 16px;
       border-radius: 14px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.1);
-      color: #eaf1fb;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all .2s ease;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: #fff;
+      padding: 13px 14px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .name-dialog-input:focus { border-color: rgba(157, 193, 255, 0.34); box-shadow: 0 0 0 3px rgba(125, 167, 255, 0.12); }
+    .name-dialog-error { min-height: 18px; margin-top: 8px; font-size: 11px; color: #ff9b9b; }
+    .name-dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+
+    /* === Ticket View (Tab 2) === */
+    .ticket-view {
+      height: 100%;
+      overflow-y: auto;
+      padding: 28px;
     }
 
-    .ticket-back-btn:hover {
-      background: rgba(255,255,255,.1);
-      border-color: rgba(170,200,255,.24);
+    .ticket-view::-webkit-scrollbar { width: 6px; }
+    .ticket-view::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 3px; }
+
+    .ticket-view-inner {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .ticket-view-title {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -.8px;
+      margin-bottom: 24px;
     }
 
     .ticket-create-section {
-      padding: 24px;
-      border-radius: 24px;
+      padding: 22px;
+      border-radius: 22px;
       background: rgba(255,255,255,.04);
       border: 1px solid rgba(255,255,255,.08);
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
 
-    .ticket-form-title {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 16px;
-      color: #eef4ff;
-    }
+    .ticket-form-title { font-size: 15px; font-weight: 800; margin-bottom: 14px; color: #eef4ff; }
 
     .ticket-form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
-    .ticket-form-field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .ticket-form-field label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .5px;
-    }
-
-    .ticket-form-field input,
-    .ticket-form-field select {
-      padding: 11px 14px;
-      border-radius: 12px;
+    .ticket-form-field { display: flex; flex-direction: column; gap: 5px; }
+    .ticket-form-field label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+    .ticket-form-field input, .ticket-form-field select {
+      padding: 10px 12px;
+      border-radius: 10px;
       border: 1px solid rgba(255,255,255,.09);
       background: rgba(255,255,255,.04);
       color: var(--text);
-      font-size: 14px;
+      font-size: 13px;
       outline: none;
-      transition: border-color .2s ease;
     }
+    .ticket-form-field input:focus, .ticket-form-field select:focus { border-color: rgba(157, 193, 255, 0.34); }
+    .ticket-form-field select option { background: #0b1728; color: #fff; }
 
-    .ticket-form-field input:focus,
-    .ticket-form-field select:focus {
-      border-color: rgba(157, 193, 255, 0.34);
-    }
-
-    .ticket-form-field select option {
-      background: #0b1728;
-      color: #fff;
-    }
-
-    .ticket-color-group {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
-
-    .ticket-color-swatch {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: all .2s ease;
-    }
-
-    .ticket-color-swatch.active {
-      border-color: #fff;
-      box-shadow: 0 0 0 3px rgba(255,255,255,.2);
-      transform: scale(1.1);
-    }
+    .ticket-color-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .ticket-color-swatch { width: 32px; height: 32px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all .15s ease; }
+    .ticket-color-swatch.active { border-color: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,.2); transform: scale(1.1); }
 
     .ticket-photo-upload {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 80px;
-      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 70px;
+      border-radius: 12px;
       border: 2px dashed rgba(255,255,255,.15);
       background: rgba(255,255,255,.02);
-      cursor: pointer;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      transition: all .2s ease;
+      cursor: pointer; color: var(--muted); font-size: 12px; font-weight: 600;
+      margin-bottom: 14px; transition: all .15s ease;
     }
-
-    .ticket-photo-upload:hover {
-      border-color: rgba(157, 193, 255, 0.34);
-      background: rgba(255,255,255,.04);
-    }
-
-    .ticket-photo-upload.has-photo {
-      border-style: solid;
-      border-color: rgba(143,216,191,.4);
-      color: var(--success);
-    }
+    .ticket-photo-upload:hover { border-color: rgba(157, 193, 255, 0.34); background: rgba(255,255,255,.04); }
+    .ticket-photo-upload.has-photo { border-style: solid; border-color: rgba(143,216,191,.4); color: var(--success); }
 
     .ticket-create-btn {
-      padding: 14px 28px;
-      border-radius: 16px;
+      padding: 12px 24px; border-radius: 14px;
       background: linear-gradient(135deg, rgba(118,164,255,.28), rgba(118,164,255,.12));
       border: 1px solid rgba(176,208,255,.3);
-      color: #fff;
-      font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all .2s ease;
+      color: #fff; font-size: 13px; font-weight: 800;
+      cursor: pointer; transition: all .15s ease;
     }
+    .ticket-create-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,.18); }
 
-    .ticket-create-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 28px rgba(0,0,0,.2);
-    }
-
-    .ticket-gallery {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
+    .ticket-gallery { display: grid; grid-template-columns: 1fr; gap: 18px; }
 
     .ticket-stub {
       display: flex;
-      border-radius: 20px;
+      border-radius: 18px;
       overflow: hidden;
       position: relative;
-      min-height: 180px;
+      min-height: 170px;
     }
 
     .ticket-stub-left {
-      flex: 0 0 38%;
-      padding: 22px 18px;
+      flex: 0 0 36%;
+      padding: 18px 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      position: relative;
     }
 
     .ticket-stub-right {
       flex: 1;
-      padding: 14px;
+      padding: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
     }
 
-    .ticket-stub-right img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 12px;
-      max-height: 160px;
-    }
+    .ticket-stub-right img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; max-height: 150px; }
+    .ticket-stub-right .ticket-no-photo { width: 100%; height: 130px; border-radius: 10px; background: rgba(0,0,0,.12); display: flex; align-items: center; justify-content: center; font-size: 28px; opacity: .5; }
 
-    .ticket-stub-right .ticket-no-photo {
-      width: 100%;
-      height: 140px;
-      border-radius: 12px;
-      background: rgba(0,0,0,.12);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      opacity: .5;
-    }
+    .ticket-stub-divider { position: absolute; top: 0; bottom: 0; left: 36%; width: 1px; border-left: 1px dashed rgba(0,0,0,.2); }
+    .ticket-stub-notch-top, .ticket-stub-notch-bottom { position: absolute; left: 36%; width: 16px; height: 16px; border-radius: 50%; background: var(--bg-1); transform: translateX(-50%); }
+    .ticket-stub-notch-top { top: -8px; }
+    .ticket-stub-notch-bottom { bottom: -8px; }
 
-    .ticket-stub-divider {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 38%;
-      width: 1px;
-      border-left: 1px dashed rgba(0,0,0,.2);
-    }
+    .ticket-next-label { font-size: 8px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; opacity: .7; margin-bottom: 3px; }
+    .ticket-city-name { font-size: 18px; font-weight: 900; line-height: 1.15; letter-spacing: -.2px; margin-bottom: 10px; }
+    .ticket-date-row { display: flex; gap: 14px; }
+    .ticket-date-field { display: flex; flex-direction: column; gap: 2px; }
+    .ticket-date-label { font-size: 8px; font-weight: 700; letter-spacing: 1px; opacity: .6; }
+    .ticket-date-value { font-size: 15px; font-weight: 800; font-family: Outfit, sans-serif; }
 
-    .ticket-stub-notch-top,
-    .ticket-stub-notch-bottom {
-      position: absolute;
-      left: 38%;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: var(--bg-1);
-      transform: translateX(-50%);
-    }
+    .ticket-barcode { margin-top: 10px; height: 24px; background: rgba(255,255,255,.9); border-radius: 3px; display: flex; align-items: center; gap: 1px; padding: 3px 5px; overflow: hidden; }
+    .ticket-barcode-bar { width: 2px; height: 100%; background: #1a1a1a; border-radius: 1px; }
 
-    .ticket-stub-notch-top { top: -9px; }
-    .ticket-stub-notch-bottom { bottom: -9px; }
+    .ticket-stub-actions { display: flex; gap: 6px; margin-top: 8px; justify-content: flex-end; }
+    .ticket-action-btn { padding: 5px 10px; border-radius: 7px; font-size: 10px; font-weight: 700; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.06); color: #eaf1fb; cursor: pointer; transition: all .12s ease; }
+    .ticket-action-btn:hover { background: rgba(255,255,255,.1); }
+    .ticket-action-btn.delete { color: #ff9b9b; border-color: rgba(255,155,155,.2); }
 
-    .ticket-next-label {
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      opacity: .7;
-      margin-bottom: 4px;
-    }
-
-    .ticket-city-name {
-      font-size: 20px;
-      font-weight: 900;
-      line-height: 1.15;
-      letter-spacing: -.3px;
-      margin-bottom: 12px;
-    }
-
-    .ticket-date-row {
-      display: flex;
-      gap: 16px;
-    }
-
-    .ticket-date-field {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .ticket-date-label {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      opacity: .6;
-    }
-
-    .ticket-date-value {
-      font-size: 16px;
-      font-weight: 800;
-      font-family: Outfit, sans-serif;
-    }
-
-    .ticket-barcode {
-      margin-top: 12px;
-      height: 28px;
-      background: rgba(255,255,255,.9);
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1px;
-      padding: 4px 6px;
-      overflow: hidden;
-    }
-
-    .ticket-barcode-bar {
-      width: 2px;
-      height: 100%;
-      background: #1a1a1a;
-      border-radius: 1px;
-    }
-
-    .ticket-stub-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-      justify-content: flex-end;
-    }
-
-    .ticket-action-btn {
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      border: 1px solid rgba(255,255,255,.1);
-      background: rgba(255,255,255,.06);
-      color: #eaf1fb;
-      cursor: pointer;
-      transition: all .15s ease;
-    }
-
-    .ticket-action-btn:hover {
-      background: rgba(255,255,255,.1);
-    }
-
-    .ticket-action-btn.delete {
-      color: #ff9b9b;
-      border-color: rgba(255,155,155,.2);
-    }
-
-    .leaflet-container { font: inherit; }
-    .leaflet-control-zoom {
-      border: 0 !important;
-      box-shadow: 0 14px 34px rgba(0,0,0,.28) !important;
-    }
-
-    .leaflet-control-zoom a {
-      background: rgba(12, 22, 36, 0.95) !important;
-      color: #eef4ff !important;
-      border: 0 !important;
-      transition: background .18s ease, transform .18s ease;
-    }
-
-    .leaflet-control-zoom a:hover {
-      background: rgba(24, 38, 58, 0.98) !important;
-      transform: scale(1.02);
-    }
-
-    .leaflet-interactive {
-      transition: fill-opacity .28s ease, stroke-width .28s ease, stroke-opacity .28s ease, opacity .28s ease, fill .28s ease;
-    }
-
-    .region-tooltip,
-    .city-tooltip {
+    /* === City Action Popup on Map === */
+    .city-action-popup .leaflet-popup-content-wrapper {
       background: rgba(12, 20, 35, 0.96);
-      color: #f4f8fc;
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,.1);
       border-radius: 14px;
-      box-shadow: 0 18px 36px rgba(0,0,0,.28);
+      box-shadow: 0 12px 32px rgba(0,0,0,.3);
+      color: #eaf1fb;
     }
+    .city-action-popup .leaflet-popup-tip { background: rgba(12, 20, 35, 0.96); }
+    .city-action-popup .leaflet-popup-content { margin: 10px 12px; }
+    .city-popup-title { font-size: 14px; font-weight: 800; margin-bottom: 8px; }
+    .city-popup-btn { display: block; width: 100%; padding: 8px 12px; margin-bottom: 4px; border-radius: 8px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.04); color: #eaf1fb; font-size: 12px; font-weight: 700; cursor: pointer; text-align: left; transition: all .12s ease; }
+    .city-popup-btn:hover { background: rgba(122,173,255,.14); border-color: rgba(176,208,255,.3); }
+    .city-popup-btn:last-child { margin-bottom: 0; }
 
-    .region-tooltip::before,
-    .city-tooltip::before { display: none; }
-
+    /* === Leaflet Overrides === */
+    .leaflet-container { font: inherit; }
+    .leaflet-control-zoom { border: 0 !important; box-shadow: 0 14px 34px rgba(0,0,0,.28) !important; }
+    .leaflet-control-zoom a { background: rgba(12, 22, 36, 0.95) !important; color: #eef4ff !important; border: 0 !important; }
+    .leaflet-control-zoom a:hover { background: rgba(24, 38, 58, 0.98) !important; }
+    .leaflet-interactive { transition: fill-opacity .28s ease, stroke-width .28s ease, stroke-opacity .28s ease, opacity .28s ease, fill .28s ease; }
+    .region-tooltip, .city-tooltip { background: rgba(12, 20, 35, 0.96); color: #f4f8fc; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; box-shadow: 0 18px 36px rgba(0,0,0,.28); }
+    .region-tooltip::before, .city-tooltip::before { display: none; }
     .tooltip-inner { padding: 2px 4px; }
-    .tooltip-title { font-size: 14px; font-weight: 900; }
-    .tooltip-sub { margin-top: 2px; font-size: 12px; color: #a7b8cf; }
+    .tooltip-title { font-size: 13px; font-weight: 900; }
+    .tooltip-sub { margin-top: 2px; font-size: 11px; color: #a7b8cf; }
+    .city-hit { opacity: 0; fill-opacity: 0; stroke-opacity: 0; }
 
-    .city-hit {
-      opacity: 0;
-      fill-opacity: 0;
-      stroke-opacity: 0;
-    }
-
-    @media (max-width: 1180px) {
-      body { overflow: auto; }
-      .shell {
-        height: auto;
-        min-height: 100vh;
-        grid-template-columns: 1fr;
-        padding: 14px;
-      }
-      .map-panel { min-height: 78vh; }
-      .topbar {
-        left: 14px;
-        right: 14px;
-        top: 14px;
-        flex-direction: column;
-      }
-      .topbar-card,
-      .hover-card { width: 100%; min-width: 0; }
-      .city-palette,
-      .custom-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    /* === Responsive === */
+    @media (max-width: 1080px) {
+      .map-view { grid-template-columns: 1fr; height: auto; }
+      .sidebar { max-height: 50vh; }
+      .map-panel { min-height: 60vh; }
+      .topbar { flex-direction: column; }
+      .topbar-card, .hover-card { width: 100%; min-width: 0; }
     }
 
     @media (max-width: 700px) {
-      .sidebar { padding: 20px; }
-      h1 { font-size: 30px; }
-      .stats { grid-template-columns: 1fr; }
-      .city-palette,
-      .custom-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .form-grid { grid-template-columns: 1fr; }
-      .primary-btn { min-height: 46px; }
+      .top-tabs { padding: 10px 14px; }
+      .top-tab { padding: 8px 16px; font-size: 13px; }
+      .top-tabs-right { display: none; }
+      .map-view { padding: 10px; }
+      .sidebar { padding: 16px; }
+      h1 { font-size: 22px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .form-grid { flex-direction: column; }
+      .primary-btn { padding: 12px 14px; }
       .ticket-form-grid { grid-template-columns: 1fr; }
       .ticket-stub { flex-direction: column; }
       .ticket-stub-left { flex: none; }
-      .ticket-stub-divider,
-      .ticket-stub-notch-top,
-      .ticket-stub-notch-bottom { display: none; }
+      .ticket-stub-divider, .ticket-stub-notch-top, .ticket-stub-notch-bottom { display: none; }
+      .province-dialog-body { grid-template-columns: 1fr; }
+      .province-list-panel { border-right: none; border-bottom: 1px solid rgba(255,255,255,.06); max-height: 160px; }
     }
   </style>
 </head>
 <body>
-  <main class="shell">
-    <aside class="panel sidebar">
-      <div class="eyebrow">EARTH ONLINE · 足迹地图</div>
-      <h1 id="pageTitle">地球 Online 地图</h1>
-      <p class="subtitle" id="pageSubtitle">我的足迹地图</p>
+  <div class="app-container">
+    <!-- Top Tab Navigation -->
+    <nav class="top-tabs">
+      <button class="top-tab active" id="tabMap" data-tab="map">🗺️ 我的足迹</button>
+      <button class="top-tab" id="tabTicket" data-tab="ticket">🎫 旅行票根</button>
+      <div class="top-tabs-right">
+        <span class="top-tabs-name" id="topTabsName"></span>
+        <button class="top-tabs-edit" id="topTabsEdit">✏️ 改名</button>
+      </div>
+    </nav>
 
-      <section class="stats">
-        <div class="stat-card">
-          <div class="stat-number" data-stat="total">0</div>
-          <div class="stat-label">足迹总数</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" data-stat="regions">0</div>
-          <div class="stat-label">点亮省份 / 地区</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" data-stat="visited">0</div>
-          <div class="stat-label">去过城市</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" data-stat="want">0</div>
-          <div class="stat-label">想去城市</div>
-        </div>
-      </section>
+    <!-- Tab 1: Map View -->
+    <div class="tab-content active" id="tabContentMap" data-tab="map">
+      <div class="map-view">
+        <aside class="panel sidebar">
+          <h1 id="pageTitle">地球 Online 地图</h1>
+          <p class="subtitle" id="pageSubtitle">足迹地图</p>
 
-      <section class="card">
-        <h2 class="card-title">添加新的足迹</h2>
-        <div class="visit-type-group" id="visitTypeGroup">
-          <button class="type-chip active" type="button" data-value="visited">✅ 去过</button>
-          <button class="type-chip" type="button" data-value="want">🌟 想去</button>
-        </div>
-        <div class="form-grid">
-          <div class="input-wrap" id="inputWrap">
-            <input id="cityInput" class="city-input" type="text" placeholder="输入城市名，例如：苏州、东京、纽约" autocomplete="off" />
-            <div class="province-selector" id="provinceSelector">
-              <div class="province-selector-header">
-                <span class="province-selector-title" id="provinceSelectorTitle">选择省份</span>
-                <button class="province-selector-back" id="provinceSelectorBack">← 返回省份</button>
-              </div>
-              <div class="province-grid" id="provinceGrid"></div>
+          <section class="stats">
+            <div class="stat-card"><div class="stat-number" data-stat="total">0</div><div class="stat-label">总数</div></div>
+            <div class="stat-card"><div class="stat-number" data-stat="regions">0</div><div class="stat-label">省份</div></div>
+            <div class="stat-card"><div class="stat-number" data-stat="visited">0</div><div class="stat-label">去过</div></div>
+            <div class="stat-card"><div class="stat-number" data-stat="want">0</div><div class="stat-label">想去</div></div>
+          </section>
+
+          <section class="card">
+            <h2 class="card-title">添加足迹</h2>
+            <div class="visit-type-group" id="visitTypeGroup">
+              <button class="type-chip active" type="button" data-value="visited">✅ 去过</button>
+              <button class="type-chip" type="button" data-value="want">🌟 想去</button>
+            </div>
+            <div class="form-grid">
+              <input id="cityInput" class="city-input" type="text" placeholder="输入城市名 或 点击选择" autocomplete="off" />
+              <button id="openSelectorBtn" class="ghost-btn" type="button" style="padding:0 10px;font-size:16px;" title="打开省市选择器">📋</button>
+              <button id="addCityBtn" class="primary-btn">添加</button>
+            </div>
+            <div class="form-actions">
+              <button id="resetProfileBtn" class="ghost-btn">🗑️ 重置</button>
+              <button id="shareBtn" class="ghost-btn">📸 截图分享</button>
+            </div>
+            <div class="status-text" id="statusText"></div>
+          </section>
+
+          <section class="card">
+            <h2 class="card-title">图例</h2>
+            <div class="legend-list">
+              <div class="legend-row"><span class="swatch visited"></span><span>去过：彩色高亮</span></div>
+              <div class="legend-row"><span class="swatch want"></span><span>想去：亮紫色</span></div>
+              <div class="legend-row"><span class="swatch foreign"></span><span>海外国家</span></div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2 class="card-title">颜色图例</h2>
+            <div class="city-palette" id="cityPalette"></div>
+            <div class="empty-text" id="paletteEmpty" style="display:none;">暂无足迹</div>
+          </section>
+
+          <section class="card">
+            <h2 class="card-title">我添加的城市</h2>
+            <div class="custom-list" id="customList"></div>
+            <div class="empty-text" id="customEmpty">暂无城市，去上方添加吧</div>
+          </section>
+        </aside>
+
+        <section class="panel map-panel">
+          <div class="celebration-layer" id="celebrationLayer"></div>
+          <div class="topbar">
+            <div class="topbar-card">
+              <div class="topbar-title" id="topbarTitle">地球 Online 地图</div>
+              <div class="topbar-sub" id="topbarSub">足迹地图</div>
+            </div>
+            <div class="hover-card dim" id="hoverCard">
+              <div class="hover-badge">Earth Online</div>
+              <div class="hover-title">地球 Online</div>
+              <div class="hover-sub">我的足迹地图</div>
+              <div class="hover-pills"><span class="hover-pill">城市</span><span class="hover-pill">点亮</span></div>
             </div>
           </div>
-          <button id="addCityBtn" class="primary-btn">添加城市</button>
-        </div>
-        <div class="form-actions">
-          <button id="resetProfileBtn" class="ghost-btn">重置当前地图</button>
-          <button id="editNameBtn" class="ghost-btn">✏️ 修改名字</button>
-          <button id="shareBtn" class="ghost-btn share-btn">📸 截图分享</button>
-          <button id="ticketPageBtn" class="ghost-btn ticket-btn">🎫 旅行票根</button>
-        </div>
-        <div class="status-text" id="statusText"></div>
-      </section>
-
-      <section class="card">
-        <h2 class="card-title">地图图例</h2>
-        <div class="legend-list">
-          <div class="legend-row"><span class="swatch visited"></span><span>去过：彩色高亮真实边界</span></div>
-          <div class="legend-row"><span class="swatch want"></span><span>想去：亮紫色高亮 / 虚线标记</span></div>
-          <div class="legend-row"><span class="swatch foreign"></span><span>海外国家：按国家边界显示</span></div>
-          <div class="legend-row"><span class="swatch new"></span><span>新添加城市：会触发点亮动效</span></div>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2 class="card-title">当前地图颜色图例</h2>
-        <div class="city-palette" id="cityPalette"></div>
-        <div class="empty-text" id="paletteEmpty" style="display:none;">还没有城市足迹，试试从上方输入一个城市，点亮你的第一枚记忆吧。</div>
-      </section>
-
-      <section class="card">
-        <h2 class="card-title">我添加的城市</h2>
-        <div class="custom-list" id="customList"></div>
-        <div class="empty-text" id="customEmpty">暂无城市</div>
-      </section>
-    </aside>
-
-    <section class="panel map-panel">
-      <div class="celebration-layer" id="celebrationLayer"></div>
-      <div class="topbar">
-        <div class="topbar-card">
-          <div class="topbar-title" id="topbarTitle">地球 Online 地图</div>
-          <div class="topbar-sub" id="topbarSub">我的足迹地图</div>
-        </div>
-        <div class="hover-card dim" id="hoverCard">
-          <div class="hover-badge">Earth Online</div>
-          <div class="hover-title">地球 Online 地图</div>
-          <div class="hover-sub">我的足迹地图</div>
-          <div class="hover-pills">
-            <span class="hover-pill">城市</span>
-            <span class="hover-pill">点亮</span>
-            <span class="hover-pill">公开访问</span>
-          </div>
-        </div>
+          <div id="map"></div>
+        </section>
       </div>
-      <div id="map"></div>
-    </section>
-  </main>
+    </div>
 
-  <div class="name-modal" id="nameModal" aria-hidden="true">
-    <div class="name-dialog" role="dialog" aria-modal="true" aria-labelledby="nameModalTitle">
-      <div class="name-dialog-badge">✨ 制作我的足迹地图</div>
-      <div class="name-dialog-title" id="nameModalTitle">先给你的地图起个名字</div>
-      <div class="name-dialog-sub">输入名字后，页面标题和分享卡片都会显示成「XX的足迹地图」。</div>
-      <input id="nameModalInput" class="name-dialog-input" type="text" maxlength="18" placeholder="请输入你的名字" />
-      <div class="name-dialog-error" id="nameModalError"></div>
-      <div class="name-dialog-actions">
-        <button id="nameModalConfirm" class="primary-btn" type="button">确认进入地图</button>
+    <!-- Tab 2: Ticket View -->
+    <div class="tab-content" id="tabContentTicket" data-tab="ticket">
+      <div class="ticket-view">
+        <div class="ticket-view-inner">
+          <div class="ticket-view-title">🎫 我的旅行票根</div>
+          <div class="ticket-create-section">
+            <div class="ticket-form-title">制作新票根</div>
+            <div class="ticket-form-grid">
+              <div class="ticket-form-field">
+                <label>城市 / 地点</label>
+                <input id="ticketCityInput" type="text" placeholder="例如：上海、巴黎" />
+              </div>
+              <div class="ticket-form-field">
+                <label>日期</label>
+                <input id="ticketDateInput" type="date" />
+              </div>
+            </div>
+            <div class="ticket-form-field" style="margin-bottom:12px;">
+              <label>票根配色</label>
+              <div class="ticket-color-group" id="ticketColorGroup"></div>
+            </div>
+            <div class="ticket-form-field" style="margin-bottom:14px;">
+              <label>旅行照片（可选）</label>
+              <div class="ticket-photo-upload" id="ticketPhotoUpload">📷 点击上传照片</div>
+              <input type="file" id="ticketPhotoFile" accept="image/*" style="display:none;" />
+            </div>
+            <button class="ticket-create-btn" id="ticketCreateBtn">生成票根 🎫</button>
+          </div>
+          <div class="ticket-gallery" id="ticketGallery"></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Ticket Page -->
-  <div class="ticket-page" id="ticketPage">
-    <div class="ticket-page-inner">
-      <div class="ticket-page-header">
-        <div class="ticket-page-title">🎫 旅行票根</div>
-        <button class="ticket-back-btn" id="ticketBackBtn">← 返回地图</button>
+  <!-- Province Selector Modal -->
+  <div class="province-modal" id="provinceModal">
+    <div class="province-dialog">
+      <div class="province-dialog-header">
+        <div class="province-dialog-title">选择省份和城市</div>
+        <button class="province-dialog-close" id="provinceModalClose">✕</button>
       </div>
-      <div class="ticket-create-section">
-        <div class="ticket-form-title">制作新票根</div>
-        <div class="ticket-form-grid">
-          <div class="ticket-form-field">
-            <label>城市 / 地点名称</label>
-            <input id="ticketCityInput" type="text" placeholder="例如：上海、巴黎" />
-          </div>
-          <div class="ticket-form-field">
-            <label>日期</label>
-            <input id="ticketDateInput" type="date" />
-          </div>
+      <div class="province-dialog-body">
+        <div class="province-list-panel" id="provinceListPanel"></div>
+        <div class="city-list-panel" id="cityListPanel">
+          <div class="city-list-title" id="cityListTitle">← 请先选择省份</div>
+          <div class="city-list-grid" id="cityListGrid"></div>
         </div>
-        <div class="ticket-form-field" style="margin-bottom:14px;">
-          <label>票根配色</label>
-          <div class="ticket-color-group" id="ticketColorGroup"></div>
-        </div>
-        <div class="ticket-form-field" style="margin-bottom:16px;">
-          <label>旅行照片（可选）</label>
-          <div class="ticket-photo-upload" id="ticketPhotoUpload">📷 点击上传照片</div>
-          <input type="file" id="ticketPhotoFile" accept="image/*" style="display:none;" />
-        </div>
-        <button class="ticket-create-btn" id="ticketCreateBtn">生成票根 🎫</button>
       </div>
-      <div class="ticket-gallery" id="ticketGallery"></div>
+      <div class="province-dialog-hint">💡 也可以直接在输入框手动输入海外城市或景点名称</div>
+    </div>
+  </div>
+
+  <!-- Name Modal -->
+  <div class="name-modal" id="nameModal" aria-hidden="true">
+    <div class="name-dialog">
+      <div class="name-dialog-badge">✨ 制作我的足迹地图</div>
+      <div class="name-dialog-title" id="nameModalTitle">先给你的地图起个名字</div>
+      <div class="name-dialog-sub">输入名字后，标题和分享卡片会显示「XX的足迹地图」。</div>
+      <input id="nameModalInput" class="name-dialog-input" type="text" maxlength="18" placeholder="请输入你的名字" />
+      <div class="name-dialog-error" id="nameModalError"></div>
+      <div class="name-dialog-actions">
+        <button id="nameModalConfirm" class="primary-btn" type="button" style="padding:12px 20px;">确认进入</button>
+      </div>
     </div>
   </div>
 
@@ -2071,315 +1847,159 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
     ];
 
     const CHINA_REGION_ALIASES = {
-      '北京市': ['北京', '北京市', 'beijing', 'beijingmunicipality'],
-      '天津市': ['天津', '天津市', 'tianjin', 'tianjinmunicipality'],
-      '上海市': ['上海', '上海市', 'shanghai', 'shanghaimunicipality'],
-      '重庆市': ['重庆', '重庆市', 'chongqing', 'chongqingmunicipality'],
-      '河北省': ['河北', '河北省', 'hebei'],
-      '山西省': ['山西', '山西省', 'shanxi'],
-      '辽宁省': ['辽宁', '辽宁省', 'liaoning'],
-      '吉林省': ['吉林', '吉林省', 'jilin'],
-      '黑龙江省': ['黑龙江', '黑龙江省', 'heilongjiang'],
-      '江苏省': ['江苏', '江苏省', 'jiangsu'],
-      '浙江省': ['浙江', '浙江省', 'zhejiang'],
-      '安徽省': ['安徽', '安徽省', 'anhui'],
-      '福建省': ['福建', '福建省', 'fujian'],
-      '江西省': ['江西', '江西省', 'jiangxi'],
-      '山东省': ['山东', '山东省', 'shandong'],
-      '河南省': ['河南', '河南省', 'henan'],
-      '湖北省': ['湖北', '湖北省', 'hubei'],
-      '湖南省': ['湖南', '湖南省', 'hunan'],
-      '广东省': ['广东', '广东省', 'guangdong', 'canton'],
-      '海南省': ['海南', '海南省', 'hainan'],
-      '四川省': ['四川', '四川省', 'sichuan'],
-      '贵州省': ['贵州', '贵州省', 'guizhou'],
-      '云南省': ['云南', '云南省', 'yunnan'],
-      '陕西省': ['陕西', '陕西省', 'shaanxi'],
-      '甘肃省': ['甘肃', '甘肃省', 'gansu'],
-      '青海省': ['青海', '青海省', 'qinghai'],
+      '北京市': ['北京', '北京市', 'beijing'], '天津市': ['天津', '天津市', 'tianjin'],
+      '上海市': ['上海', '上海市', 'shanghai'], '重庆市': ['重庆', '重庆市', 'chongqing'],
+      '河北省': ['河北', '河北省', 'hebei'], '山西省': ['山西', '山西省', 'shanxi'],
+      '辽宁省': ['辽宁', '辽宁省', 'liaoning'], '吉林省': ['吉林', '吉林省', 'jilin'],
+      '黑龙江省': ['黑龙江', '黑龙江省', 'heilongjiang'], '江苏省': ['江苏', '江苏省', 'jiangsu'],
+      '浙江省': ['浙江', '浙江省', 'zhejiang'], '安徽省': ['安徽', '安徽省', 'anhui'],
+      '福建省': ['福建', '福建省', 'fujian'], '江西省': ['江西', '江西省', 'jiangxi'],
+      '山东省': ['山东', '山东省', 'shandong'], '河南省': ['河南', '河南省', 'henan'],
+      '湖北省': ['湖北', '湖北省', 'hubei'], '湖南省': ['湖南', '湖南省', 'hunan'],
+      '广东省': ['广东', '广东省', 'guangdong'], '海南省': ['海南', '海南省', 'hainan'],
+      '四川省': ['四川', '四川省', 'sichuan'], '贵州省': ['贵州', '贵州省', 'guizhou'],
+      '云南省': ['云南', '云南省', 'yunnan'], '陕西省': ['陕西', '陕西省', 'shaanxi'],
+      '甘肃省': ['甘肃', '甘肃省', 'gansu'], '青海省': ['青海', '青海省', 'qinghai'],
       '台湾省': ['台湾', '台湾省', 'taiwan'],
-      '内蒙古自治区': ['内蒙古', '内蒙古自治区', 'neimenggu', 'innermongolia'],
+      '内蒙古自治区': ['内蒙古', '内蒙古自治区', 'innermongolia'],
       '广西壮族自治区': ['广西', '广西壮族自治区', 'guangxi'],
-      '西藏自治区': ['西藏', '西藏自治区', 'xizang', 'tibet'],
+      '西藏自治区': ['西藏', '西藏自治区', 'tibet'],
       '宁夏回族自治区': ['宁夏', '宁夏回族自治区', 'ningxia'],
       '新疆维吾尔自治区': ['新疆', '新疆维吾尔自治区', 'xinjiang'],
-      '香港特别行政区': ['香港', '香港特别行政区', 'hongkong', 'hong kong'],
-      '澳门特别行政区': ['澳门', '澳门特别行政区', 'macao', 'macau']
+      '香港特别行政区': ['香港', '香港特别行政区', 'hongkong'],
+      '澳门特别行政区': ['澳门', '澳门特别行政区', 'macau']
     };
 
     const CHINA_CITY_TO_REGION = {
-      '北京': '北京市', '天津': '天津市', '上海': '上海市',
-      '重庆': '重庆市', '万州': '重庆市', '涪陵': '重庆市', '渝中': '重庆市', '江北': '重庆市', '沙坪坝': '重庆市', '九龙坡': '重庆市', '南岸': '重庆市', '北碚': '重庆市', '綦江': '重庆市', '大足': '重庆市', '渝北': '重庆市', '巴南': '重庆市', '黔江': '重庆市', '长寿': '重庆市', '江津': '重庆市', '合川': '重庆市', '永川': '重庆市', '南川': '重庆市',
-      '石家庄': '河北省', '唐山': '河北省', '秦皇岛': '河北省', '邯郸': '河北省', '邢台': '河北省', '保定': '河北省', '张家口': '河北省', '承德': '河北省', '沧州': '河北省', '廊坊': '河北省', '衡水': '河北省',
-      '太原': '山西省', '大同': '山西省', '阳泉': '山西省', '长治': '山西省', '晋城': '山西省', '朔州': '山西省', '晋中': '山西省', '运城': '山西省', '忻州': '山西省', '临汾': '山西省', '吕梁': '山西省',
-      '沈阳': '辽宁省', '大连': '辽宁省', '鞍山': '辽宁省', '抚顺': '辽宁省', '本溪': '辽宁省', '丹东': '辽宁省', '锦州': '辽宁省', '营口': '辽宁省', '阜新': '辽宁省', '辽阳': '辽宁省', '盘锦': '辽宁省', '铁岭': '辽宁省', '朝阳': '辽宁省', '葫芦岛': '辽宁省',
-      '长春': '吉林省', '吉林': '吉林省', '四平': '吉林省', '辽源': '吉林省', '通化': '吉林省', '白山': '吉林省', '松原': '吉林省', '白城': '吉林省', '延边': '吉林省',
-      '哈尔滨': '黑龙江省', '齐齐哈尔': '黑龙江省', '鸡西': '黑龙江省', '鹤岗': '黑龙江省', '双鸭山': '黑龙江省', '大庆': '黑龙江省', '伊春': '黑龙江省', '佳木斯': '黑龙江省', '七台河': '黑龙江省', '牡丹江': '黑龙江省', '黑河': '黑龙江省', '绥化': '黑龙江省', '大兴安岭': '黑龙江省',
+      '北京': '北京市', '天津': '天津市', '上海': '上海市', '重庆': '重庆市',
+      '石家庄': '河北省', '唐山': '河北省', '秦皇岛': '河北省', '邯郸': '河北省', '保定': '河北省', '张家口': '河北省', '承德': '河北省', '沧州': '河北省', '廊坊': '河北省', '衡水': '河北省',
+      '太原': '山西省', '大同': '山西省', '阳泉': '山西省', '长治': '山西省', '晋城': '山西省', '晋中': '山西省', '运城': '山西省', '临汾': '山西省',
+      '沈阳': '辽宁省', '大连': '辽宁省', '鞍山': '辽宁省', '丹东': '辽宁省', '锦州': '辽宁省', '营口': '辽宁省', '盘锦': '辽宁省',
+      '长春': '吉林省', '吉林': '吉林省', '四平': '吉林省', '通化': '吉林省', '延边': '吉林省',
+      '哈尔滨': '黑龙江省', '齐齐哈尔': '黑龙江省', '大庆': '黑龙江省', '佳木斯': '黑龙江省', '牡丹江': '黑龙江省',
       '南京': '江苏省', '无锡': '江苏省', '徐州': '江苏省', '常州': '江苏省', '苏州': '江苏省', '南通': '江苏省', '连云港': '江苏省', '淮安': '江苏省', '盐城': '江苏省', '扬州': '江苏省', '镇江': '江苏省', '泰州': '江苏省', '宿迁': '江苏省',
       '杭州': '浙江省', '宁波': '浙江省', '温州': '浙江省', '嘉兴': '浙江省', '湖州': '浙江省', '绍兴': '浙江省', '金华': '浙江省', '衢州': '浙江省', '舟山': '浙江省', '台州': '浙江省', '丽水': '浙江省',
-      '合肥': '安徽省', '芜湖': '安徽省', '蚌埠': '安徽省', '淮南': '安徽省', '马鞍山': '安徽省', '淮北': '安徽省', '铜陵': '安徽省', '安庆': '安徽省', '黄山': '安徽省', '滁州': '安徽省', '阜阳': '安徽省', '宿州': '安徽省', '六安': '安徽省', '亳州': '安徽省', '池州': '安徽省', '宣城': '安徽省',
-      '福州': '福建省', '厦门': '福建省', '莆田': '福建省', '三明': '福建省', '泉州': '福建省', '漳州': '福建省', '南平': '福建省', '龙岩': '福建省', '宁德': '福建省',
-      '南昌': '江西省', '景德镇': '江西省', '萍乡': '江西省', '九江': '江西省', '新余': '江西省', '鹰潭': '江西省', '赣州': '江西省', '吉安': '江西省', '宜春': '江西省', '抚州': '江西省', '上饶': '江西省',
-      '济南': '山东省', '青岛': '山东省', '淄博': '山东省', '枣庄': '山东省', '东营': '山东省', '烟台': '山东省', '潍坊': '山东省', '济宁': '山东省', '泰安': '山东省', '威海': '山东省', '日照': '山东省', '临沂': '山东省', '德州': '山东省', '聊城': '山东省', '滨州': '山东省', '菏泽': '山东省',
-      '郑州': '河南省', '开封': '河南省', '洛阳': '河南省', '平顶山': '河南省', '安阳': '河南省', '鹤壁': '河南省', '新乡': '河南省', '焦作': '河南省', '濮阳': '河南省', '许昌': '河南省', '漯河': '河南省', '三门峡': '河南省', '南阳': '河南省', '商丘': '河南省', '信阳': '河南省', '周口': '河南省', '驻马店': '河南省', '济源': '河南省',
-      '武汉': '湖北省', '黄石': '湖北省', '十堰': '湖北省', '宜昌': '湖北省', '襄阳': '湖北省', '鄂州': '湖北省', '荆门': '湖北省', '孝感': '湖北省', '荆州': '湖北省', '黄冈': '湖北省', '咸宁': '湖北省', '随州': '湖北省', '恩施': '湖北省', '仙桃': '湖北省', '潜江': '湖北省', '天门': '湖北省', '神农架': '湖北省',
-      '长沙': '湖南省', '株洲': '湖南省', '湘潭': '湖南省', '衡阳': '湖南省', '邵阳': '湖南省', '岳阳': '湖南省', '常德': '湖南省', '张家界': '湖南省', '益阳': '湖南省', '郴州': '湖南省', '永州': '湖南省', '怀化': '湖南省', '娄底': '湖南省', '湘西': '湖南省',
-      '广州': '广东省', '深圳': '广东省', '珠海': '广东省', '汕头': '广东省', '佛山': '广东省', '韶关': '广东省', '湛江': '广东省', '肇庆': '广东省', '江门': '广东省', '茂名': '广东省', '惠州': '广东省', '梅州': '广东省', '汕尾': '广东省', '河源': '广东省', '阳江': '广东省', '清远': '广东省', '东莞': '广东省', '中山': '广东省', '潮州': '广东省', '揭阳': '广东省', '云浮': '广东省',
-      '海口': '海南省', '三亚': '海南省', '三沙': '海南省', '儋州': '海南省', '五指山': '海南省', '琼海': '海南省', '文昌': '海南省', '万宁': '海南省', '东方': '海南省',
-      '成都': '四川省', '自贡': '四川省', '攀枝花': '四川省', '泸州': '四川省', '德阳': '四川省', '绵阳': '四川省', '广元': '四川省', '遂宁': '四川省', '内江': '四川省', '乐山': '四川省', '南充': '四川省', '眉山': '四川省', '宜宾': '四川省', '广安': '四川省', '达州': '四川省', '雅安': '四川省', '巴中': '四川省', '资阳': '四川省', '阿坝': '四川省', '甘孜': '四川省', '凉山': '四川省',
-      '贵阳': '贵州省', '六盘水': '贵州省', '遵义': '贵州省', '安顺': '贵州省', '毕节': '贵州省', '铜仁': '贵州省', '兴义': '贵州省', '凯里': '贵州省', '都匀': '贵州省',
-      '昆明': '云南省', '曲靖': '云南省', '玉溪': '云南省', '保山': '云南省', '昭通': '云南省', '丽江': '云南省', '普洱': '云南省', '临沧': '云南省', '楚雄': '云南省', '红河': '云南省', '文山': '云南省', '西双版纳': '云南省', '大理': '云南省', '德宏': '云南省', '怒江': '云南省', '迪庆': '云南省',
-      '西安': '陕西省', '铜川': '陕西省', '宝鸡': '陕西省', '咸阳': '陕西省', '渭南': '陕西省', '延安': '陕西省', '汉中': '陕西省', '榆林': '陕西省', '安康': '陕西省', '商洛': '陕西省',
-      '兰州': '甘肃省', '嘉峪关': '甘肃省', '金昌': '甘肃省', '白银': '甘肃省', '天水': '甘肃省', '武威': '甘肃省', '张掖': '甘肃省', '平凉': '甘肃省', '酒泉': '甘肃省', '庆阳': '甘肃省', '定西': '甘肃省', '陇南': '甘肃省', '临夏': '甘肃省', '甘南': '甘肃省',
-      '西宁': '青海省', '海东': '青海省', '海北': '青海省', '黄南': '青海省', '海南藏族自治州': '青海省', '果洛': '青海省', '玉树': '青海省', '海西': '青海省',
-      '台北': '台湾省', '新北': '台湾省', '桃园': '台湾省', '台中': '台湾省', '台南': '台湾省', '高雄': '台湾省', '基隆': '台湾省', '新竹': '台湾省', '嘉义': '台湾省',
-      '呼和浩特': '内蒙古自治区', '包头': '内蒙古自治区', '乌海': '内蒙古自治区', '赤峰': '内蒙古自治区', '通辽': '内蒙古自治区', '鄂尔多斯': '内蒙古自治区', '呼伦贝尔': '内蒙古自治区', '巴彦淖尔': '内蒙古自治区', '乌兰察布': '内蒙古自治区',
-      '南宁': '广西壮族自治区', '柳州': '广西壮族自治区', '桂林': '广西壮族自治区', '梧州': '广西壮族自治区', '北海': '广西壮族自治区', '防城港': '广西壮族自治区', '钦州': '广西壮族自治区', '贵港': '广西壮族自治区', '玉林': '广西壮族自治区', '百色': '广西壮族自治区', '贺州': '广西壮族自治区', '河池': '广西壮族自治区', '来宾': '广西壮族自治区', '崇左': '广西壮族自治区',
-      '拉萨': '西藏自治区', '日喀则': '西藏自治区', '昌都': '西藏自治区', '林芝': '西藏自治区', '山南': '西藏自治区', '那曲': '西藏自治区', '阿里': '西藏自治区',
+      '合肥': '安徽省', '芜湖': '安徽省', '蚌埠': '安徽省', '马鞍山': '安徽省', '安庆': '安徽省', '黄山': '安徽省', '滁州': '安徽省', '阜阳': '安徽省', '宿州': '安徽省', '六安': '安徽省', '宣城': '安徽省',
+      '福州': '福建省', '厦门': '福建省', '莆田': '福建省', '泉州': '福建省', '漳州': '福建省', '南平': '福建省', '龙岩': '福建省', '宁德': '福建省',
+      '南昌': '江西省', '景德镇': '江西省', '九江': '江西省', '赣州': '江西省', '吉安': '江西省', '宜春': '江西省', '上饶': '江西省',
+      '济南': '山东省', '青岛': '山东省', '淄博': '山东省', '烟台': '山东省', '潍坊': '山东省', '济宁': '山东省', '泰安': '山东省', '威海': '山东省', '日照': '山东省', '临沂': '山东省', '德州': '山东省', '聊城': '山东省', '滨州': '山东省', '菏泽': '山东省',
+      '郑州': '河南省', '开封': '河南省', '洛阳': '河南省', '安阳': '河南省', '新乡': '河南省', '焦作': '河南省', '许昌': '河南省', '南阳': '河南省', '商丘': '河南省', '信阳': '河南省', '周口': '河南省', '驻马店': '河南省',
+      '武汉': '湖北省', '黄石': '湖北省', '十堰': '湖北省', '宜昌': '湖北省', '襄阳': '湖北省', '荆门': '湖北省', '荆州': '湖北省', '黄冈': '湖北省', '咸宁': '湖北省', '恩施': '湖北省',
+      '长沙': '湖南省', '株洲': '湖南省', '湘潭': '湖南省', '衡阳': '湖南省', '岳阳': '湖南省', '常德': '湖南省', '张家界': '湖南省', '郴州': '湖南省', '永州': '湖南省', '怀化': '湖南省', '湘西': '湖南省',
+      '广州': '广东省', '深圳': '广东省', '珠海': '广东省', '汕头': '广东省', '佛山': '广东省', '韶关': '广东省', '湛江': '广东省', '肇庆': '广东省', '江门': '广东省', '惠州': '广东省', '梅州': '广东省', '东莞': '广东省', '中山': '广东省', '潮州': '广东省', '揭阳': '广东省',
+      '海口': '海南省', '三亚': '海南省', '儋州': '海南省', '琼海': '海南省', '文昌': '海南省', '万宁': '海南省',
+      '成都': '四川省', '自贡': '四川省', '攀枝花': '四川省', '泸州': '四川省', '德阳': '四川省', '绵阳': '四川省', '广元': '四川省', '遂宁': '四川省', '内江': '四川省', '乐山': '四川省', '南充': '四川省', '眉山': '四川省', '宜宾': '四川省', '达州': '四川省', '雅安': '四川省', '阿坝': '四川省', '甘孜': '四川省', '凉山': '四川省',
+      '贵阳': '贵州省', '六盘水': '贵州省', '遵义': '贵州省', '安顺': '贵州省', '毕节': '贵州省', '铜仁': '贵州省',
+      '昆明': '云南省', '曲靖': '云南省', '玉溪': '云南省', '丽江': '云南省', '普洱': '云南省', '大理': '云南省', '西双版纳': '云南省', '德宏': '云南省', '迪庆': '云南省',
+      '西安': '陕西省', '宝鸡': '陕西省', '咸阳': '陕西省', '渭南': '陕西省', '延安': '陕西省', '汉中': '陕西省', '榆林': '陕西省', '安康': '陕西省',
+      '兰州': '甘肃省', '嘉峪关': '甘肃省', '天水': '甘肃省', '武威': '甘肃省', '张掖': '甘肃省', '酒泉': '甘肃省', '庆阳': '甘肃省',
+      '西宁': '青海省', '海东': '青海省', '海北': '青海省', '玉树': '青海省', '海西': '青海省',
+      '台北': '台湾省', '新北': '台湾省', '台中': '台湾省', '台南': '台湾省', '高雄': '台湾省',
+      '呼和浩特': '内蒙古自治区', '包头': '内蒙古自治区', '赤峰': '内蒙古自治区', '通辽': '内蒙古自治区', '鄂尔多斯': '内蒙古自治区', '呼伦贝尔': '内蒙古自治区',
+      '南宁': '广西壮族自治区', '柳州': '广西壮族自治区', '桂林': '广西壮族自治区', '北海': '广西壮族自治区', '玉林': '广西壮族自治区', '百色': '广西壮族自治区', '贺州': '广西壮族自治区', '河池': '广西壮族自治区',
+      '拉萨': '西藏自治区', '日喀则': '西藏自治区', '林芝': '西藏自治区', '昌都': '西藏自治区',
       '银川': '宁夏回族自治区', '石嘴山': '宁夏回族自治区', '吴忠': '宁夏回族自治区', '固原': '宁夏回族自治区', '中卫': '宁夏回族自治区',
-      '乌鲁木齐': '新疆维吾尔自治区', '克拉玛依': '新疆维吾尔自治区', '吐鲁番': '新疆维吾尔自治区', '哈密': '新疆维吾尔自治区', '昌吉': '新疆维吾尔自治区', '阿克苏': '新疆维吾尔自治区', '喀什': '新疆维吾尔自治区', '和田': '新疆维吾尔自治区', '伊犁': '新疆维吾尔自治区', '塔城': '新疆维吾尔自治区', '阿勒泰': '新疆维吾尔自治区',
+      '乌鲁木齐': '新疆维吾尔自治区', '克拉玛依': '新疆维吾尔自治区', '吐鲁番': '新疆维吾尔自治区', '哈密': '新疆维吾尔自治区', '阿克苏': '新疆维吾尔自治区', '喀什': '新疆维吾尔自治区', '和田': '新疆维吾尔自治区', '伊犁': '新疆维吾尔自治区',
       '香港': '香港特别行政区', '澳门': '澳门特别行政区'
     };
 
-    // Province -> cities for the selector
     const PROVINCE_CITIES = {
-      '北京': ['北京'],
-      '天津': ['天津'],
-      '上海': ['上海'],
-      '重庆': ['重庆', '万州', '涪陵', '江津', '合川', '永川'],
-      '河北': ['石家庄', '唐山', '秦皇岛', '邯郸', '保定', '张家口', '承德', '沧州', '廊坊'],
+      '北京': ['北京'], '天津': ['天津'], '上海': ['上海'], '重庆': ['重庆'],
+      '河北': ['石家庄', '唐山', '秦皇岛', '邯郸', '保定', '张家口', '承德', '沧州', '廊坊', '衡水'],
       '山西': ['太原', '大同', '阳泉', '长治', '晋城', '晋中', '运城', '临汾'],
-      '辽宁': ['沈阳', '大连', '鞍山', '抚顺', '丹东', '锦州', '营口', '盘锦'],
-      '吉林': ['长春', '吉林', '四平', '通化', '白山', '松原', '延边'],
-      '黑龙江': ['哈尔滨', '齐齐哈尔', '大庆', '佳木斯', '牡丹江', '绥化'],
+      '辽宁': ['沈阳', '大连', '鞍山', '丹东', '锦州', '营口', '盘锦'],
+      '吉林': ['长春', '吉林', '四平', '通化', '延边'],
+      '黑龙江': ['哈尔滨', '齐齐哈尔', '大庆', '佳木斯', '牡丹江'],
       '江苏': ['南京', '无锡', '徐州', '常州', '苏州', '南通', '连云港', '淮安', '盐城', '扬州', '镇江', '泰州', '宿迁'],
       '浙江': ['杭州', '宁波', '温州', '嘉兴', '湖州', '绍兴', '金华', '衢州', '舟山', '台州', '丽水'],
-      '安徽': ['合肥', '芜湖', '蚌埠', '淮南', '马鞍山', '安庆', '黄山', '滁州', '阜阳', '宿州', '六安', '宣城'],
-      '福建': ['福州', '厦门', '莆田', '三明', '泉州', '漳州', '南平', '龙岩', '宁德'],
-      '江西': ['南昌', '景德镇', '九江', '赣州', '吉安', '宜春', '抚州', '上饶'],
-      '山东': ['济南', '青岛', '淄博', '枣庄', '东营', '烟台', '潍坊', '济宁', '泰安', '威海', '日照', '临沂', '德州', '聊城', '滨州', '菏泽'],
-      '河南': ['郑州', '开封', '洛阳', '平顶山', '安阳', '新乡', '焦作', '许昌', '南阳', '商丘', '信阳', '周口', '驻马店'],
-      '湖北': ['武汉', '黄石', '十堰', '宜昌', '襄阳', '荆门', '孝感', '荆州', '黄冈', '咸宁', '随州', '恩施'],
-      '湖南': ['长沙', '株洲', '湘潭', '衡阳', '邵阳', '岳阳', '常德', '张家界', '益阳', '郴州', '永州', '怀化', '娄底', '湘西'],
-      '广东': ['广州', '深圳', '珠海', '汕头', '佛山', '韶关', '湛江', '肇庆', '江门', '茂名', '惠州', '梅州', '东莞', '中山', '潮州', '揭阳'],
-      '海南': ['海口', '三亚', '三沙', '儋州', '琼海', '文昌', '万宁'],
-      '四川': ['成都', '自贡', '攀枝花', '泸州', '德阳', '绵阳', '广元', '遂宁', '内江', '乐山', '南充', '眉山', '宜宾', '广安', '达州', '雅安', '巴中'],
-      '贵州': ['贵阳', '六盘水', '遵义', '安顺', '毕节', '铜仁', '兴义', '凯里', '都匀'],
-      '云南': ['昆明', '曲靖', '玉溪', '保山', '昭通', '丽江', '普洱', '临沧', '大理', '西双版纳', '德宏', '迪庆'],
-      '陕西': ['西安', '铜川', '宝鸡', '咸阳', '渭南', '延安', '汉中', '榆林', '安康', '商洛'],
-      '甘肃': ['兰州', '嘉峪关', '金昌', '天水', '武威', '张掖', '酒泉', '庆阳', '定西', '陇南'],
-      '青海': ['西宁', '海东', '海北', '黄南', '果洛', '玉树', '海西'],
-      '台湾': ['台北', '新北', '桃园', '台中', '台南', '高雄', '基隆', '新竹'],
-      '内蒙古': ['呼和浩特', '包头', '乌海', '赤峰', '通辽', '鄂尔多斯', '呼伦贝尔', '巴彦淖尔', '乌兰察布'],
-      '广西': ['南宁', '柳州', '桂林', '梧州', '北海', '防城港', '钦州', '贵港', '玉林', '百色', '贺州', '河池', '来宾', '崇左'],
-      '西藏': ['拉萨', '日喀则', '昌都', '林芝', '山南', '那曲'],
+      '安徽': ['合肥', '芜湖', '蚌埠', '马鞍山', '安庆', '黄山', '滁州', '阜阳', '宿州', '六安', '宣城'],
+      '福建': ['福州', '厦门', '莆田', '泉州', '漳州', '南平', '龙岩', '宁德'],
+      '江西': ['南昌', '景德镇', '九江', '赣州', '吉安', '宜春', '上饶'],
+      '山东': ['济南', '青岛', '淄博', '烟台', '潍坊', '济宁', '泰安', '威海', '日照', '临沂', '德州', '聊城', '滨州', '菏泽'],
+      '河南': ['郑州', '开封', '洛阳', '安阳', '新乡', '焦作', '许昌', '南阳', '商丘', '信阳', '周口', '驻马店'],
+      '湖北': ['武汉', '黄石', '十堰', '宜昌', '襄阳', '荆门', '荆州', '黄冈', '咸宁', '恩施'],
+      '湖南': ['长沙', '株洲', '湘潭', '衡阳', '岳阳', '常德', '张家界', '郴州', '永州', '怀化', '湘西'],
+      '广东': ['广州', '深圳', '珠海', '汕头', '佛山', '韶关', '湛江', '肇庆', '江门', '惠州', '梅州', '东莞', '中山', '潮州', '揭阳'],
+      '海南': ['海口', '三亚', '儋州', '琼海', '文昌', '万宁'],
+      '四川': ['成都', '自贡', '攀枝花', '泸州', '德阳', '绵阳', '广元', '遂宁', '内江', '乐山', '南充', '眉山', '宜宾', '达州', '雅安'],
+      '贵州': ['贵阳', '六盘水', '遵义', '安顺', '毕节', '铜仁'],
+      '云南': ['昆明', '曲靖', '玉溪', '丽江', '普洱', '大理', '西双版纳', '德宏', '迪庆'],
+      '陕西': ['西安', '宝鸡', '咸阳', '渭南', '延安', '汉中', '榆林', '安康'],
+      '甘肃': ['兰州', '嘉峪关', '天水', '武威', '张掖', '酒泉', '庆阳'],
+      '青海': ['西宁', '海东', '海北', '玉树', '海西'],
+      '台湾': ['台北', '新北', '台中', '台南', '高雄'],
+      '内蒙古': ['呼和浩特', '包头', '赤峰', '通辽', '鄂尔多斯', '呼伦贝尔'],
+      '广西': ['南宁', '柳州', '桂林', '北海', '玉林', '百色', '贺州', '河池'],
+      '西藏': ['拉萨', '日喀则', '林芝', '昌都'],
       '宁夏': ['银川', '石嘴山', '吴忠', '固原', '中卫'],
-      '新疆': ['乌鲁木齐', '克拉玛依', '吐鲁番', '哈密', '昌吉', '阿克苏', '喀什', '和田', '伊犁', '塔城', '阿勒泰'],
-      '香港': ['香港'],
-      '澳门': ['澳门']
+      '新疆': ['乌鲁木齐', '克拉玛依', '吐鲁番', '哈密', '阿克苏', '喀什', '和田', '伊犁'],
+      '香港': ['香港'], '澳门': ['澳门']
     };
 
     const CHINA_SCENIC_TO_CITY = {
-      '峨眉山': '乐山', '乐山大佛': '乐山', '都江堰': '成都', '青城山': '成都', '九寨沟': '阿坝',
-      '黄龙': '阿坝', '稻城亚丁': '甘孜', '四姑娘山': '阿坝', '武侯祠': '成都', '宽窄巷子': '成都',
-      '西湖': '杭州', '灵隐寺': '杭州', '西溪湿地': '杭州', '千岛湖': '杭州',
-      '乌镇': '嘉兴', '西塘': '嘉兴', '普陀山': '舟山', '雁荡山': '温州',
-      '黄山': '黄山', '宏村': '黄山', '西递': '黄山', '九华山': '池州', '天柱山': '安庆',
-      '武夷山': '南平', '鼓浪屿': '厦门', '土楼': '龙岩', '南靖土楼': '漳州', '云水谣': '漳州',
-      '泰山': '泰安', '崂山': '青岛', '趵突泉': '济南', '曲阜三孔': '济宁',
-      '少林寺': '郑州', '龙门石窟': '洛阳', '云台山': '焦作', '清明上河园': '开封',
-      '黄鹤楼': '武汉', '东湖': '武汉', '武当山': '十堰', '神农架': '神农架',
-      '张家界': '张家界', '天门山': '张家界', '凤凰古城': '湘西', '岳麓山': '长沙',
-      '橘子洲': '长沙', '崀山': '邵阳', '衡山': '衡阳',
-      '故宫': '北京', '天安门': '北京', '颐和园': '北京', '八达岭长城': '北京', '长城': '北京',
-      '外滩': '上海', '东方明珠': '上海', '迪士尼': '上海', '上海迪士尼': '上海', '豫园': '上海',
-      '兵马俑': '西安', '华山': '渭南', '大唐不夜城': '西安', '钟楼': '西安',
-      '布达拉宫': '拉萨', '纳木错': '那曲', '羊卓雍措': '山南',
-      '洱海': '大理', '玉龙雪山': '丽江', '泸沽湖': '丽江', '西双版纳热带植物园': '西双版纳',
-      '石林': '昆明', '滇池': '昆明', '苍山': '大理',
-      '漓江': '桂林', '阳朔': '桂林', '龙脊梯田': '桂林', '德天瀑布': '崇左',
-      '鼓山': '福州', '滕王阁': '南昌', '庐山': '九江', '婺源': '上饶',
-      '长隆': '广州', '广州塔': '广州', '世界之窗': '深圳', '欢乐谷': '深圳',
-      '珠海长隆': '珠海', '罗浮山': '惠州', '丹霞山': '韶关',
-      '蜈支洲岛': '三亚', '天涯海角': '三亚', '亚龙湾': '三亚', '分界洲岛': '陵水',
-      '青海湖': '海南藏族自治州', '茶卡盐湖': '海西', '莫高窟': '酒泉', '鸣沙山': '酒泉',
-      '喀纳斯': '阿勒泰', '天山天池': '昌吉', '火焰山': '吐鲁番',
-      '平遥古城': '晋中', '五台山': '忻州', '云冈石窟': '大同',
-      '净月潭': '长春', '长白山': '白山', '镜泊湖': '牡丹江'
+      '峨眉山': '乐山', '都江堰': '成都', '九寨沟': '阿坝', '稻城亚丁': '甘孜', '宽窄巷子': '成都',
+      '西湖': '杭州', '灵隐寺': '杭州', '千岛湖': '杭州', '乌镇': '嘉兴', '西塘': '嘉兴', '普陀山': '舟山',
+      '黄山': '黄山', '宏村': '黄山', '九华山': '池州',
+      '武夷山': '南平', '鼓浪屿': '厦门', '土楼': '龙岩',
+      '泰山': '泰安', '崂山': '青岛', '趵突泉': '济南',
+      '少林寺': '郑州', '龙门石窟': '洛阳', '云台山': '焦作',
+      '黄鹤楼': '武汉', '武当山': '十堰', '神农架': '恩施',
+      '张家界': '张家界', '凤凰古城': '湘西', '岳麓山': '长沙', '橘子洲': '长沙',
+      '故宫': '北京', '天安门': '北京', '颐和园': '北京', '长城': '北京', '八达岭长城': '北京',
+      '外滩': '上海', '东方明珠': '上海', '迪士尼': '上海',
+      '兵马俑': '西安', '华山': '渭南', '大唐不夜城': '西安',
+      '布达拉宫': '拉萨', '纳木错': '拉萨',
+      '洱海': '大理', '玉龙雪山': '丽江', '泸沽湖': '丽江', '石林': '昆明',
+      '漓江': '桂林', '阳朔': '桂林',
+      '广州塔': '广州', '长隆': '广州', '世界之窗': '深圳',
+      '蜈支洲岛': '三亚', '天涯海角': '三亚', '亚龙湾': '三亚',
+      '青海湖': '西宁', '茶卡盐湖': '海西', '莫高窟': '酒泉',
+      '喀纳斯': '伊犁', '天山天池': '乌鲁木齐',
+      '平遥古城': '晋中', '五台山': '长治', '云冈石窟': '大同',
+      '长白山': '延边', '镜泊湖': '牡丹江'
     };
 
-    const CHINA_SCENIC_LOOKUP = Object.fromEntries(
-      Object.entries(CHINA_SCENIC_TO_CITY).map(([spot, city]) => [normalizeText(spot), city])
-    );
-
-    function matchScenicSpot(rawName) {
-      if (!rawName) return null;
-      const key = normalizeText(rawName);
-      if (!key) return null;
-      if (CHINA_SCENIC_LOOKUP[key]) return { spot: rawName.trim(), city: CHINA_SCENIC_LOOKUP[key] };
-      const found = Object.entries(CHINA_SCENIC_LOOKUP).find(([spotKey]) => spotKey.includes(key) || key.includes(spotKey));
-      if (!found) return null;
-      return { spot: rawName.trim(), city: found[1] };
-    }
-
-    const CHINA_REGION_MAP = Object.fromEntries(
-      Object.entries(CHINA_REGION_ALIASES).flatMap(([canonical, aliases]) => aliases.map(alias => [alias, canonical]))
-    );
-
-    const COUNTRY_ZH = {
-      'Thailand': '泰国', 'Japan': '日本', 'South Korea': '韩国', 'North Korea': '朝鲜',
-      'Vietnam': '越南', 'Cambodia': '柬埔寨', 'Laos': '老挝', 'Myanmar': '缅甸',
-      'Malaysia': '马来西亚', 'Indonesia': '印度尼西亚', 'Philippines': '菲律宾', 'Brunei': '文莱',
-      'India': '印度', 'Nepal': '尼泊尔', 'Bhutan': '不丹', 'Sri Lanka': '斯里兰卡', 'Bangladesh': '孟加拉国',
-      'Pakistan': '巴基斯坦', 'Mongolia': '蒙古', 'Kazakhstan': '哈萨克斯坦',
-      'United States of America': '美国', 'Canada': '加拿大', 'Mexico': '墨西哥', 'Cuba': '古巴',
-      'Brazil': '巴西', 'Argentina': '阿根廷', 'Chile': '智利', 'Peru': '秘鲁', 'Colombia': '哥伦比亚',
-      'United Kingdom': '英国', 'Ireland': '爱尔兰', 'France': '法国', 'Germany': '德国',
-      'Italy': '意大利', 'Spain': '西班牙', 'Portugal': '葡萄牙', 'Netherlands': '荷兰',
-      'Belgium': '比利时', 'Switzerland': '瑞士', 'Austria': '奥地利', 'Greece': '希腊',
-      'Norway': '挪威', 'Sweden': '瑞典', 'Finland': '芬兰', 'Denmark': '丹麦', 'Iceland': '冰岛',
-      'Poland': '波兰', 'Czech Republic': '捷克', 'Hungary': '匈牙利', 'Croatia': '克罗地亚',
-      'Russia': '俄罗斯', 'Ukraine': '乌克兰', 'Turkey': '土耳其', 'Israel': '以色列',
-      'United Arab Emirates': '阿联酋', 'Saudi Arabia': '沙特阿拉伯', 'Qatar': '卡塔尔', 'Iran': '伊朗',
-      'Egypt': '埃及', 'Morocco': '摩洛哥', 'South Africa': '南非', 'Kenya': '肯尼亚', 'Tanzania': '坦桑尼亚',
-      'United Republic of Tanzania': '坦桑尼亚', 'Australia': '澳大利亚', 'New Zealand': '新西兰', 'Fiji': '斐济'
-    };
-
-    const COUNTRY_ALIASES = {
-      '泰国': 'Thailand', 'thailand': 'Thailand',
-      '日本': 'Japan', 'japan': 'Japan',
-      '韩国': 'South Korea', '南韩': 'South Korea', 'korea': 'South Korea', 'southkorea': 'South Korea',
-      '越南': 'Vietnam', 'vietnam': 'Vietnam',
-      '柬埔寨': 'Cambodia', 'cambodia': 'Cambodia',
-      '老挝': 'Laos', 'laos': 'Laos',
-      '缅甸': 'Myanmar', 'myanmar': 'Myanmar',
-      '马来西亚': 'Malaysia', 'malaysia': 'Malaysia',
-      '印尼': 'Indonesia', '印度尼西亚': 'Indonesia', 'indonesia': 'Indonesia',
-      '菲律宾': 'Philippines', 'philippines': 'Philippines',
-      '印度': 'India', 'india': 'India',
-      '尼泊尔': 'Nepal', 'nepal': 'Nepal',
-      '斯里兰卡': 'Sri Lanka', 'srilanka': 'Sri Lanka',
-      '巴基斯坦': 'Pakistan', 'pakistan': 'Pakistan',
-      '蒙古': 'Mongolia', 'mongolia': 'Mongolia',
-      '美国': 'United States of America', 'usa': 'United States of America', 'us': 'United States of America', 'america': 'United States of America',
-      '加拿大': 'Canada', 'canada': 'Canada',
-      '墨西哥': 'Mexico', 'mexico': 'Mexico',
-      '巴西': 'Brazil', 'brazil': 'Brazil',
-      '阿根廷': 'Argentina', 'argentina': 'Argentina',
-      '英国': 'United Kingdom', 'uk': 'United Kingdom', 'england': 'United Kingdom',
-      '爱尔兰': 'Ireland', 'ireland': 'Ireland',
-      '法国': 'France', 'france': 'France',
-      '德国': 'Germany', 'germany': 'Germany',
-      '意大利': 'Italy', 'italy': 'Italy',
-      '西班牙': 'Spain', 'spain': 'Spain',
-      '葡萄牙': 'Portugal', 'portugal': 'Portugal',
-      '荷兰': 'Netherlands', 'netherlands': 'Netherlands',
-      '瑞士': 'Switzerland', 'switzerland': 'Switzerland',
-      '奥地利': 'Austria', 'austria': 'Austria',
-      '希腊': 'Greece', 'greece': 'Greece',
-      '挪威': 'Norway', 'norway': 'Norway',
-      '瑞典': 'Sweden', 'sweden': 'Sweden',
-      '芬兰': 'Finland', 'finland': 'Finland',
-      '丹麦': 'Denmark', 'denmark': 'Denmark',
-      '冰岛': 'Iceland', 'iceland': 'Iceland',
-      '俄罗斯': 'Russia', 'russia': 'Russia',
-      '土耳其': 'Turkey', 'turkey': 'Turkey',
-      '以色列': 'Israel', 'israel': 'Israel',
-      '阿联酋': 'United Arab Emirates', '迪拜': 'United Arab Emirates', 'uae': 'United Arab Emirates',
-      '沙特': 'Saudi Arabia', 'saudiarabia': 'Saudi Arabia',
-      '埃及': 'Egypt', 'egypt': 'Egypt',
-      '摩洛哥': 'Morocco', 'morocco': 'Morocco',
-      '南非': 'South Africa', 'southafrica': 'South Africa',
-      '肯尼亚': 'Kenya', 'kenya': 'Kenya',
-      '坦桑尼亚': 'United Republic of Tanzania', 'tanzania': 'United Republic of Tanzania',
-      '澳大利亚': 'Australia', '澳洲': 'Australia', 'australia': 'Australia',
-      '新西兰': 'New Zealand', 'newzealand': 'New Zealand',
-      '斐济': 'Fiji', 'fiji': 'Fiji'
-    };
-
+    const COUNTRY_ZH = { 'Thailand': '泰国', 'Japan': '日本', 'South Korea': '韩国', 'Vietnam': '越南', 'Cambodia': '柬埔寨', 'Laos': '老挝', 'Myanmar': '缅甸', 'Malaysia': '马来西亚', 'Indonesia': '印度尼西亚', 'Philippines': '菲律宾', 'India': '印度', 'Nepal': '尼泊尔', 'Sri Lanka': '斯里兰卡', 'Pakistan': '巴基斯坦', 'Mongolia': '蒙古', 'United States of America': '美国', 'Canada': '加拿大', 'Mexico': '墨西哥', 'Brazil': '巴西', 'Argentina': '阿根廷', 'Chile': '智利', 'United Kingdom': '英国', 'Ireland': '爱尔兰', 'France': '法国', 'Germany': '德国', 'Italy': '意大利', 'Spain': '西班牙', 'Portugal': '葡萄牙', 'Netherlands': '荷兰', 'Switzerland': '瑞士', 'Austria': '奥地利', 'Greece': '希腊', 'Norway': '挪威', 'Sweden': '瑞典', 'Finland': '芬兰', 'Denmark': '丹麦', 'Iceland': '冰岛', 'Russia': '俄罗斯', 'Turkey': '土耳其', 'Israel': '以色列', 'United Arab Emirates': '阿联酋', 'Egypt': '埃及', 'Morocco': '摩洛哥', 'South Africa': '南非', 'Kenya': '肯尼亚', 'Australia': '澳大利亚', 'New Zealand': '新西兰' };
+    const COUNTRY_ALIASES = { '泰国': 'Thailand', '日本': 'Japan', '韩国': 'South Korea', '越南': 'Vietnam', '柬埔寨': 'Cambodia', '老挝': 'Laos', '缅甸': 'Myanmar', '马来西亚': 'Malaysia', '印尼': 'Indonesia', '印度尼西亚': 'Indonesia', '菲律宾': 'Philippines', '印度': 'India', '尼泊尔': 'Nepal', '斯里兰卡': 'Sri Lanka', '蒙古': 'Mongolia', '美国': 'United States of America', 'usa': 'United States of America', '加拿大': 'Canada', '墨西哥': 'Mexico', '巴西': 'Brazil', '阿根廷': 'Argentina', '英国': 'United Kingdom', 'uk': 'United Kingdom', '法国': 'France', '德国': 'Germany', '意大利': 'Italy', '西班牙': 'Spain', '葡萄牙': 'Portugal', '荷兰': 'Netherlands', '瑞士': 'Switzerland', '奥地利': 'Austria', '希腊': 'Greece', '挪威': 'Norway', '瑞典': 'Sweden', '芬兰': 'Finland', '丹麦': 'Denmark', '冰岛': 'Iceland', '俄罗斯': 'Russia', '土耳其': 'Turkey', '以色列': 'Israel', '阿联酋': 'United Arab Emirates', '迪拜': 'United Arab Emirates', '埃及': 'Egypt', '摩洛哥': 'Morocco', '南非': 'South Africa', '肯尼亚': 'Kenya', '澳大利亚': 'Australia', '澳洲': 'Australia', '新西兰': 'New Zealand' };
     const WORLD_EXCLUDE = new Set(['China', 'Taiwan']);
 
-    function countryDisplay(geoName) {
-      return COUNTRY_ZH[geoName] || geoName;
-    }
+    function normalizeText(v) { return (v || '').trim().toLowerCase().replace(/\s+/g, ''); }
+    function slugify(v) { return normalizeText(v).replace(/[^a-z0-9\u4e00-\u9fa5]/g, ''); }
+    function hashColor(input) { let h = 0; const t = slugify(input); for (let i = 0; i < t.length; i++) h = t.charCodeAt(i) + ((h << 5) - h); return CITY_PALETTE[Math.abs(h) % CITY_PALETTE.length]; }
+    function escapeHtml(v) { return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    function tooltipHtml(title, sub) { return `<div class="tooltip-inner"><div class="tooltip-title">${title}</div><div class="tooltip-sub">${sub}</div></div>`; }
+    function countryDisplay(n) { return COUNTRY_ZH[n] || n; }
+    function normalizeRegionName(n) { if (!n) return '未知'; return n.replace(/特别行政区|维吾尔自治区|壮族自治区|回族自治区|自治区|省|市$/g, '') || n; }
 
-    const CHINA_REGION_LOOKUP = Object.fromEntries(
-      Object.entries(CHINA_REGION_MAP).map(([alias, canonical]) => [normalizeText(alias), canonical])
-    );
-    const CHINA_CITY_LOOKUP = Object.fromEntries(
-      Object.entries(CHINA_CITY_TO_REGION).map(([city, canonical]) => [normalizeText(city), canonical])
-    );
+    const CHINA_REGION_MAP = Object.fromEntries(Object.entries(CHINA_REGION_ALIASES).flatMap(([c, a]) => a.map(x => [x, c])));
+    const CHINA_REGION_LOOKUP = Object.fromEntries(Object.entries(CHINA_REGION_MAP).map(([a, c]) => [normalizeText(a), c]));
+    const CHINA_CITY_LOOKUP = Object.fromEntries(Object.entries(CHINA_CITY_TO_REGION).map(([city, r]) => [normalizeText(city), r]));
+    const CHINA_SCENIC_LOOKUP = Object.fromEntries(Object.entries(CHINA_SCENIC_TO_CITY).map(([s, c]) => [normalizeText(s), c]));
 
-    function matchChinaRegion(rawName) {
-      if (!rawName) return null;
-      const key = normalizeText(rawName);
-      return CHINA_REGION_LOOKUP[key] || CHINA_CITY_LOOKUP[key] || null;
-    }
+    function matchChinaRegion(raw) { if (!raw) return null; const k = normalizeText(raw); return CHINA_REGION_LOOKUP[k] || CHINA_CITY_LOOKUP[k] || null; }
+    function matchScenicSpot(raw) { if (!raw) return null; const k = normalizeText(raw); if (CHINA_SCENIC_LOOKUP[k]) return { spot: raw.trim(), city: CHINA_SCENIC_LOOKUP[k] }; const f = Object.entries(CHINA_SCENIC_LOOKUP).find(([sk]) => sk.includes(k) || k.includes(sk)); return f ? { spot: raw.trim(), city: f[1] } : null; }
+    function matchWorldCountry(raw) { if (!raw) return null; const k = normalizeText(raw); if (COUNTRY_ALIASES[k]) return COUNTRY_ALIASES[k]; return null; }
+    function getChinaRegionCenter(rn) { const f = geoCache.china?.features?.find(i => i?.properties?.name === rn); if (!f) return null; const b = L.geoJSON(f).getBounds(); return b.isValid() ? b.getCenter() : null; }
+    function guessIcon(n, c = '') { const v = `${n}${c}`; if (/岛|island/i.test(v)) return '🏝️'; if (/海|港|厦门|三亚/.test(v)) return '🌊'; if (/山|丽江|大理/.test(v)) return '🏔️'; if (/北京|西安/.test(v)) return '🏛️'; return '📍'; }
 
-    function getChinaRegionCenter(regionName) {
-      const feature = geoCache.china?.features?.find(item => item?.properties?.name === regionName);
-      if (!feature) return null;
-      const bounds = L.geoJSON(feature).getBounds();
-      return bounds.isValid() ? bounds.getCenter() : null;
-    }
-
-    // Universal profile - no more mogu/visitor distinction
     const STORAGE_KEY = 'footprint_map_universal_custom_v2';
     const NAME_KEY = 'footprint_map_universal_name_v1';
     const TICKET_KEY = 'footprint_map_tickets_v1';
 
-    const DOM = {
-      pageTitle: document.getElementById('pageTitle'),
-      pageSubtitle: document.getElementById('pageSubtitle'),
-      topbarTitle: document.getElementById('topbarTitle'),
-      topbarSub: document.getElementById('topbarSub'),
-      cityInput: document.getElementById('cityInput'),
-      addCityBtn: document.getElementById('addCityBtn'),
-      resetProfileBtn: document.getElementById('resetProfileBtn'),
-      editNameBtn: document.getElementById('editNameBtn'),
-      shareBtn: document.getElementById('shareBtn'),
-      ticketPageBtn: document.getElementById('ticketPageBtn'),
-      visitTypeGroup: document.getElementById('visitTypeGroup'),
-      statusText: document.getElementById('statusText'),
-      cityPalette: document.getElementById('cityPalette'),
-      paletteEmpty: document.getElementById('paletteEmpty'),
-      customList: document.getElementById('customList'),
-      customEmpty: document.getElementById('customEmpty'),
-      celebrationLayer: document.getElementById('celebrationLayer'),
-      hoverCard: document.getElementById('hoverCard'),
-      nameModal: document.getElementById('nameModal'),
-      nameModalInput: document.getElementById('nameModalInput'),
-      nameModalError: document.getElementById('nameModalError'),
-      nameModalConfirm: document.getElementById('nameModalConfirm'),
-      inputWrap: document.getElementById('inputWrap'),
-      provinceSelector: document.getElementById('provinceSelector'),
-      provinceSelectorTitle: document.getElementById('provinceSelectorTitle'),
-      provinceSelectorBack: document.getElementById('provinceSelectorBack'),
-      provinceGrid: document.getElementById('provinceGrid'),
-      ticketPage: document.getElementById('ticketPage'),
-      ticketBackBtn: document.getElementById('ticketBackBtn'),
-      ticketCityInput: document.getElementById('ticketCityInput'),
-      ticketDateInput: document.getElementById('ticketDateInput'),
-      ticketColorGroup: document.getElementById('ticketColorGroup'),
-      ticketPhotoUpload: document.getElementById('ticketPhotoUpload'),
-      ticketPhotoFile: document.getElementById('ticketPhotoFile'),
-      ticketCreateBtn: document.getElementById('ticketCreateBtn'),
-      ticketGallery: document.getElementById('ticketGallery')
-    };
+    function storageRead() { try { const r = localStorage.getItem(STORAGE_KEY); return r ? JSON.parse(r) : []; } catch { return []; } }
+    function storageWrite(c) { localStorage.setItem(STORAGE_KEY, JSON.stringify(c)); }
+    function getProfileName() { return (localStorage.getItem(NAME_KEY) || '').trim(); }
+    function setProfileName(n) { localStorage.setItem(NAME_KEY, (n || '').trim()); }
+    function formatMapTitle(n) { return `${(n || '我的').trim()}的地球Online`; }
+    function cityVisitStatus(c) { return c.visitStatus === 'want' ? 'want' : 'visited'; }
+    function cityKind(c) { return c.kind || 'domestic'; }
+    function getCustomCities() { return storageRead(); }
+    function getAllCities() { return getCustomCities(); }
 
-    const map = L.map('map', {
-      zoomControl: false,
-      attributionControl: false,
-      zoomAnimation: true,
-      fadeAnimation: true,
-      markerZoomAnimation: true,
-      zoomSnap: 0.25,
-      zoomDelta: 0.5,
-      wheelPxPerZoomLevel: 110,
-      preferCanvas: true,
-      minZoom: 2.5,
-      maxZoom: 8
-    }).setView([29, 109.5], 4.5);
+    const DOM = {};
+    ['pageTitle','pageSubtitle','topbarTitle','topbarSub','cityInput','addCityBtn','openSelectorBtn','resetProfileBtn','shareBtn','visitTypeGroup','statusText','cityPalette','paletteEmpty','customList','customEmpty','celebrationLayer','hoverCard','nameModal','nameModalInput','nameModalError','nameModalConfirm','provinceModal','provinceModalClose','provinceListPanel','cityListPanel','cityListTitle','cityListGrid','ticketCityInput','ticketDateInput','ticketColorGroup','ticketPhotoUpload','ticketPhotoFile','ticketCreateBtn','ticketGallery','topTabsName','topTabsEdit','tabMap','tabTicket','tabContentMap','tabContentTicket'].forEach(id => { DOM[id] = document.getElementById(id); });
+
+    const map = L.map('map', { zoomControl: false, attributionControl: false, zoomAnimation: true, fadeAnimation: true, preferCanvas: true, minZoom: 2.5, maxZoom: 8, zoomSnap: 0.25, zoomDelta: 0.5, wheelPxPerZoomLevel: 110 }).setView([29, 109.5], 4.5);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     let geoCache = { china: null, world: null };
@@ -2390,948 +2010,279 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
     let selectedTicketColor = TICKET_COLORS[0];
     let ticketPhotoData = null;
 
-    function normalizeText(value) {
-      return (value || '').trim().toLowerCase().replace(/\s+/g, '');
+    // === Tab Switching ===
+    function switchTab(tab) {
+      document.querySelectorAll('.top-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.dataset.tab === tab));
+      if (tab === 'map') setTimeout(() => map.invalidateSize(true), 100);
+      if (tab === 'ticket') { initTicketColorGroup(); renderTicketGallery(); DOM.ticketDateInput.value = new Date().toISOString().slice(0, 10); }
     }
+    DOM.tabMap.addEventListener('click', () => switchTab('map'));
+    DOM.tabTicket.addEventListener('click', () => switchTab('ticket'));
 
-    function slugify(value) {
-      return normalizeText(value).replace(/[^a-z0-9\u4e00-\u9fa5]/g, '');
-    }
+    // === Province Selector Modal ===
+    function openProvinceModal() { DOM.provinceModal.classList.add('show'); renderProvinceList(); }
+    function closeProvinceModal() { DOM.provinceModal.classList.remove('show'); }
+    DOM.openSelectorBtn.addEventListener('click', openProvinceModal);
+    DOM.provinceModalClose.addEventListener('click', closeProvinceModal);
+    DOM.provinceModal.addEventListener('click', e => { if (e.target === DOM.provinceModal) closeProvinceModal(); });
 
-    function hashColor(input) {
-      const text = slugify(input);
-      let hash = 0;
-      for (let i = 0; i < text.length; i += 1) hash = text.charCodeAt(i) + ((hash << 5) - hash);
-      return CITY_PALETTE[Math.abs(hash) % CITY_PALETTE.length];
-    }
-
-    function guessIcon(name, country = '') {
-      const value = `${name}${country}`;
-      if (/岛|island/i.test(value)) return '🏝️';
-      if (/香港/.test(value)) return '✨';
-      if (/海|港|厦门|三亚/.test(value)) return '🌊';
-      if (/山|丽江|大理|昆明|高原|峰/.test(value)) return '🏔️';
-      if (/bangkok|曼谷/i.test(value)) return '🌴';
-      if (/chiang|清迈/i.test(value)) return '🐘';
-      if (/北京|西安|运城/.test(value)) return '🏛️';
-      return '📍';
-    }
-
-    function normalizeRegionName(name) {
-      if (!name) return '未知区域';
-      const short = name.replace(/特别行政区|维吾尔自治区|壮族自治区|回族自治区|自治区|省|市$/g, '');
-      return short || name;
-    }
-
-    function isDomesticRegion(regionKey) {
-      return Boolean(regionKey && (matchChinaRegion(regionKey) || regionKey.endsWith('省') || regionKey.endsWith('市') || regionKey.includes('特别行政区') || regionKey.includes('自治区')));
-    }
-
-    function cityKind(city) {
-      if (city.kind) return city.kind;
-      return isDomesticRegion(city.region) ? 'domestic' : 'foreign';
-    }
-
-    function cityVisitStatus(city) {
-      return city.visitStatus === 'want' ? 'want' : 'visited';
-    }
-
-    function matchWorldCountry(rawName) {
-      if (!rawName) return null;
-      const key = normalizeText(rawName);
-      if (!key) return null;
-      if (COUNTRY_ALIASES[key]) return COUNTRY_ALIASES[key];
-      if (geoCache.world && Array.isArray(geoCache.world.features)) {
-        const norm = geoCache.world.features
-          .map(f => f && f.properties && f.properties.name)
-          .filter(Boolean);
-        let hit = norm.find(n => normalizeText(n) === key);
-        if (hit) return hit;
-        hit = norm.find(n => {
-          const nk = normalizeText(n);
-          return nk && (nk.includes(key) || key.includes(nk));
+    function renderProvinceList() {
+      DOM.provinceListPanel.innerHTML = '';
+      DOM.cityListTitle.textContent = '← 请先选择省份';
+      DOM.cityListGrid.innerHTML = '';
+      Object.keys(PROVINCE_CITIES).forEach(prov => {
+        const item = document.createElement('div');
+        item.className = 'province-list-item';
+        item.textContent = prov;
+        item.addEventListener('click', () => {
+          DOM.provinceListPanel.querySelectorAll('.province-list-item').forEach(el => el.classList.remove('active'));
+          item.classList.add('active');
+          renderCityList(prov);
         });
-        if (hit) return hit;
-      }
-      return null;
+        DOM.provinceListPanel.appendChild(item);
+      });
     }
 
-    function storageRead() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch { return []; }
+    function renderCityList(province) {
+      DOM.cityListTitle.textContent = province + ' — 选择城市';
+      DOM.cityListGrid.innerHTML = '';
+      (PROVINCE_CITIES[province] || []).forEach(city => {
+        const item = document.createElement('div');
+        item.className = 'city-select-item';
+        item.textContent = city;
+        item.addEventListener('click', () => {
+          DOM.cityInput.value = city;
+          closeProvinceModal();
+          handleAddCity();
+        });
+        DOM.cityListGrid.appendChild(item);
+      });
     }
 
-    function storageWrite(cities) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(cities));
-    }
-
-    function getProfileName() {
-      const saved = localStorage.getItem(NAME_KEY);
-      return (saved || '').trim() || '';
-    }
-
-    function setProfileName(name) {
-      localStorage.setItem(NAME_KEY, (name || '').trim());
-    }
-
-    function formatMapTitle(name) {
-      const safe = (name || '').trim() || '我的';
-      return `${safe}的地球 Online 地图`;
-    }
-
+    // === Name Modal ===
     function promptForProfileName(force = false) {
-      const current = getProfileName();
       DOM.nameModal.classList.add('show');
-      DOM.nameModal.setAttribute('aria-hidden', 'false');
-      DOM.nameModalInput.value = force ? '' : current;
-      DOM.nameModalInput.placeholder = '请输入你的名字';
+      DOM.nameModalInput.value = force ? '' : getProfileName();
       DOM.nameModalError.textContent = '';
-
       return new Promise(resolve => {
-        const cleanup = () => {
+        const confirm = () => {
+          const t = DOM.nameModalInput.value.trim();
+          if (!t) { DOM.nameModalError.textContent = '请输入名字'; DOM.nameModalInput.focus(); return; }
+          setProfileName(t);
           DOM.nameModal.classList.remove('show');
-          DOM.nameModal.setAttribute('aria-hidden', 'true');
-          DOM.nameModalConfirm.removeEventListener('click', handleConfirm);
-          DOM.nameModalInput.removeEventListener('keydown', handleKeydown);
+          DOM.nameModalConfirm.removeEventListener('click', confirm);
+          DOM.nameModalInput.removeEventListener('keydown', kd);
+          resolve(t);
         };
-
-        const handleConfirm = () => {
-          const trimmed = DOM.nameModalInput.value.trim();
-          if (!trimmed) {
-            DOM.nameModalError.textContent = '请输入名字';
-            DOM.nameModalInput.focus();
-            return;
-          }
-          setProfileName(trimmed);
-          cleanup();
-          resolve(trimmed);
-        };
-
-        const handleKeydown = event => {
-          if (event.key === 'Enter') {
-            event.preventDefault();
-            handleConfirm();
-          }
-        };
-
-        DOM.nameModalConfirm.addEventListener('click', handleConfirm);
-        DOM.nameModalInput.addEventListener('keydown', handleKeydown);
+        const kd = e => { if (e.key === 'Enter') { e.preventDefault(); confirm(); } };
+        DOM.nameModalConfirm.addEventListener('click', confirm);
+        DOM.nameModalInput.addEventListener('keydown', kd);
         requestAnimationFrame(() => DOM.nameModalInput.focus());
       });
     }
 
-    function getCustomCities() {
-      return storageRead();
+    DOM.topTabsEdit.addEventListener('click', async () => { await promptForProfileName(false); render(); });
+
+    // === Visit Type ===
+    function setVisitType(type) { currentVisitType = type === 'want' ? 'want' : 'visited'; DOM.visitTypeGroup.querySelectorAll('[data-value]').forEach(n => n.classList.toggle('active', n.dataset.value === currentVisitType)); }
+    DOM.visitTypeGroup.addEventListener('click', e => { const c = e.target.closest('[data-value]'); if (c) setVisitType(c.dataset.value); });
+
+    // === Geo Data ===
+    async function ensureGeoData() {
+      if (geoCache.china && geoCache.world) return;
+      if (window.__GEO_CHINA__ && window.__GEO_WORLD__) { geoCache.china = window.__GEO_CHINA__; geoCache.world = window.__GEO_WORLD__; return; }
+      const [c, w] = await Promise.all([fetch('data/china-provinces.json'), fetch('data/world.geo.json')]);
+      geoCache.china = await c.json(); geoCache.world = await w.json();
     }
 
-    function getAllCities() {
-      return getCustomCities();
+    // === Lookup City ===
+    async function lookupCity(query) {
+      const scenic = matchScenicSpot(query);
+      if (scenic) { const r = matchChinaRegion(scenic.city); await ensureGeoData(); const ctr = r ? getChinaRegionCenter(r) : null; return { id: `c-${slugify(scenic.city)}-${Date.now()}`, name: scenic.city, region: r, regionDisplay: r ? normalizeRegionName(r) : scenic.city, country: '中国', kind: 'domestic', lat: ctr?.lat || 35, lng: ctr?.lng || 104, icon: guessIcon(scenic.city), color: hashColor(scenic.city), source: 'custom', originalQuery: query.trim() }; }
+      const directReg = CHINA_REGION_LOOKUP[normalizeText(query)] || CHINA_CITY_LOOKUP[normalizeText(query)];
+      if (directReg) { await ensureGeoData(); const ctr = getChinaRegionCenter(directReg); return { id: `c-${slugify(query.trim())}-${Date.now()}`, name: query.trim(), region: directReg, regionDisplay: normalizeRegionName(directReg), country: '中国', kind: 'domestic', lat: ctr?.lat || 35, lng: ctr?.lng || 104, icon: guessIcon(query.trim()), color: hashColor(query.trim()), source: 'custom' }; }
+      const wc = matchWorldCountry(query);
+      if (wc) { return { id: `c-${slugify(query.trim())}-${Date.now()}`, name: query.trim(), region: wc, regionDisplay: countryDisplay(wc), country: wc, kind: 'foreign', lat: 0, lng: 0, icon: '🌍', color: hashColor(query.trim()), source: 'custom' }; }
+      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&accept-language=en&limit=1&q=${encodeURIComponent(query)}`;
+      const res = await fetch(url, { headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error('地理编码服务暂时不可用');
+      const results = await res.json();
+      if (!results.length) throw new Error('没有找到这个城市，请换个写法再试');
+      const r = results[0], addr = r.address || {};
+      const country = addr.country || '', state = addr.state || addr.province || '';
+      const isCN = /china|中国/i.test(country);
+      if (isCN) { const reg = matchChinaRegion(state) || matchChinaRegion(addr.city) || matchChinaRegion(addr.county); return { id: `c-${slugify(query.trim())}-${Date.now()}`, name: query.trim(), region: reg, regionDisplay: reg ? normalizeRegionName(reg) : normalizeRegionName(state), country: '中国', kind: 'domestic', lat: +r.lat, lng: +r.lon, icon: guessIcon(query.trim()), color: hashColor(query.trim()), source: 'custom' }; }
+      const geoN = matchWorldCountry(country) || country;
+      return { id: `c-${slugify(query.trim())}-${Date.now()}`, name: query.trim(), region: geoN, regionDisplay: countryDisplay(geoN), country: geoN, kind: 'foreign', lat: +r.lat, lng: +r.lon, icon: guessIcon(query.trim(), country), color: hashColor(query.trim()), source: 'custom' };
     }
 
-    function getRegionMeta(cities) {
-      const regionMap = new Map();
-      cities.forEach(city => {
-        if (!city.region) return;
-        const existing = regionMap.get(city.region) || {
-          display: city.regionDisplay || normalizeRegionName(city.region),
-          type: cityKind(city),
-          status: cityVisitStatus(city),
-          cities: [],
-          visitedCities: [],
-          wantCities: [],
-          accent: cityVisitStatus(city) === 'want' ? '#C86BFF' : (city.color || hashColor(city.name))
-        };
-        existing.cities.push(city.name);
-        if (cityVisitStatus(city) === 'want') {
-          existing.wantCities.push(city.name);
-        } else {
-          existing.visitedCities.push(city.name);
-          existing.status = 'visited';
-          existing.accent = city.color || existing.accent;
-        }
-        regionMap.set(city.region, existing);
-      });
-      return regionMap;
+    // === Add/Remove/Toggle City ===
+    function upsertCustomCity(city) { const l = getCustomCities(); if (l.some(i => normalizeText(i.name) === normalizeText(city.name))) return false; l.push(city); storageWrite(l); return true; }
+    function removeCustomCity(id) { storageWrite(getCustomCities().filter(i => i.id !== id)); }
+    function toggleCustomCityStatus(id) { storageWrite(getCustomCities().map(i => i.id === id ? { ...i, visitStatus: cityVisitStatus(i) === 'want' ? 'visited' : 'want' } : i)); }
+
+    async function handleAddCity() {
+      const v = DOM.cityInput.value.trim();
+      if (!v) { setStatus('先输入城市名吧', 'warning'); return; }
+      if (getAllCities().some(c => normalizeText(c.name) === normalizeText(v))) { setStatus('已存在', 'warning'); return; }
+      DOM.addCityBtn.disabled = true; DOM.addCityBtn.textContent = '...';
+      setStatus('查找中...', 'warning');
+      try {
+        const city = await lookupCity(v);
+        city.visitStatus = currentVisitType;
+        if (!upsertCustomCity(city)) { setStatus('已添加过', 'warning'); } else { lastAddedCityId = city.id; DOM.cityInput.value = ''; setStatus(currentVisitType === 'want' ? `${city.name} 已加入想去 🌟` : `${city.name} 已点亮 ✨`, 'success'); await render(); }
+      } catch (e) { setStatus(e.message || '添加失败', 'error'); }
+      finally { DOM.addCityBtn.disabled = false; DOM.addCityBtn.textContent = '添加'; }
     }
 
-    function buildStats(cities) {
-      const visited = cities.filter(city => cityVisitStatus(city) === 'visited').length;
-      const want = cities.filter(city => cityVisitStatus(city) === 'want').length;
-      const regionKeys = new Set(cities.filter(city => cityVisitStatus(city) === 'visited').map(city => city.region).filter(Boolean));
-      return { total: cities.length, regions: regionKeys.size, visited, want };
-    }
+    DOM.addCityBtn.addEventListener('click', handleAddCity);
+    DOM.cityInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleAddCity(); });
+    DOM.resetProfileBtn.addEventListener('click', () => { if (!confirm('确定清空所有足迹？')) return; storageWrite([]); lastAddedCityId = null; setStatus('已清空', 'warning'); render(); });
 
-    function setStatus(message = '', type = '') {
-      DOM.statusText.textContent = message;
-      DOM.statusText.className = 'status-text';
-      if (type) DOM.statusText.classList.add(type);
-    }
+    // === Status ===
+    function setStatus(msg = '', type = '') { DOM.statusText.textContent = msg; DOM.statusText.className = 'status-text' + (type ? ' ' + type : ''); }
 
-    function setHoverCard({ badge, title, sub, pills = [], accent = '#9CC2FF' }) {
-      DOM.hoverCard.classList.remove('dim');
-      DOM.hoverCard.style.borderColor = `${accent}55`;
-      DOM.hoverCard.style.boxShadow = `0 16px 40px rgba(0,0,0,.24), 0 0 0 1px ${accent}16 inset, 0 0 28px ${accent}1a`;
-      DOM.hoverCard.innerHTML = `
-        <div class="hover-badge" style="background:${accent}16;color:${accent};border-color:${accent}30;">${badge}</div>
-        <div class="hover-title">${title}</div>
-        <div class="hover-sub">${sub}</div>
-        <div class="hover-pills">${pills.map(item => `<span class="hover-pill" style="border-color:${accent}22;box-shadow: inset 0 0 0 1px ${accent}10;">${item}</span>`).join('')}</div>
-      `;
-    }
+    // === Render ===
+    function buildStats(cities) { const v = cities.filter(c => cityVisitStatus(c) === 'visited').length; const w = cities.filter(c => cityVisitStatus(c) === 'want').length; const rk = new Set(cities.filter(c => cityVisitStatus(c) === 'visited').map(c => c.region).filter(Boolean)); return { total: cities.length, regions: rk.size, visited: v, want: w }; }
 
-    function resetHoverCard() {
-      DOM.hoverCard.classList.add('dim');
-      DOM.hoverCard.style.borderColor = 'rgba(255,255,255,0.08)';
-      DOM.hoverCard.style.boxShadow = '0 16px 40px rgba(0,0,0,.24)';
-      DOM.hoverCard.innerHTML = `
-        <div class="hover-badge">Earth Online</div>
-        <div class="hover-title">地球 Online 地图</div>
-        <div class="hover-sub">我的足迹地图</div>
-        <div class="hover-pills">
-          <span class="hover-pill">城市</span>
-          <span class="hover-pill">点亮</span>
-          <span class="hover-pill">公开访问</span>
-        </div>
-      `;
-    }
+    function animateStats(ts) { document.querySelectorAll('.stat-number').forEach(n => { const k = n.dataset.stat, t = +(ts[k] || 0), f = +(n.dataset.value || 0), s = performance.now(), d = 800; function tick(now) { const p = Math.min((now - s) / d, 1), e = 1 - Math.pow(1 - p, 3); n.textContent = Math.round(f + (t - f) * e); if (p < 1) requestAnimationFrame(tick); else { n.dataset.value = t; n.textContent = t; } } requestAnimationFrame(tick); }); }
 
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
+    function getRegionMeta(cities) { const m = new Map(); cities.forEach(c => { if (!c.region) return; const e = m.get(c.region) || { display: c.regionDisplay || normalizeRegionName(c.region), type: cityKind(c), status: cityVisitStatus(c), cities: [], visitedCities: [], wantCities: [], accent: cityVisitStatus(c) === 'want' ? '#C86BFF' : (c.color || hashColor(c.name)) }; e.cities.push(c.name); if (cityVisitStatus(c) === 'want') e.wantCities.push(c.name); else { e.visitedCities.push(c.name); e.status = 'visited'; e.accent = c.color || e.accent; } m.set(c.region, e); }); return m; }
 
-    function tooltipHtml(title, sub) {
-      return `<div class="tooltip-inner"><div class="tooltip-title">${title}</div><div class="tooltip-sub">${sub}</div></div>`;
-    }
-
-    function regionStyle(active, type = 'domestic', status = 'visited') {
-      if (!active) {
-        return { color: 'rgba(123,141,164,.38)', weight: 1, fillColor: 'rgba(255,255,255,.04)', fillOpacity: 0.22 };
-      }
-      if (status === 'want') {
-        return { color: 'rgba(200,107,255,.94)', weight: 1.8, dashArray: '6 4', fillColor: 'rgba(200,107,255,.16)', fillOpacity: 0.48 };
-      }
-      return type === 'foreign'
-        ? { color: 'rgba(255,224,173,.92)', weight: 1.8, fillColor: 'rgba(255,202,112,.30)', fillOpacity: 0.62 }
-        : { color: 'rgba(176,208,255,.82)', weight: 1.8, fillColor: 'rgba(121,174,255,.26)', fillOpacity: 0.62 };
-    }
-
-    function playParticleCelebration(latlng, color) {
-      if (!latlng || !map) return;
-      const point = map.latLngToContainerPoint(latlng);
-      const ring = document.createElement('span');
-      ring.className = 'burst-ring';
-      ring.style.left = `${point.x}px`;
-      ring.style.top = `${point.y}px`;
-      ring.style.color = color;
-      DOM.celebrationLayer.appendChild(ring);
-      const core = document.createElement('span');
-      core.className = 'burst-core';
-      core.style.left = `${point.x}px`;
-      core.style.top = `${point.y}px`;
-      core.style.color = color;
-      DOM.celebrationLayer.appendChild(core);
-      for (let i = 0; i < 14; i += 1) {
-        const spark = document.createElement('span');
-        const angle = (Math.PI * 2 * i) / 14;
-        const distance = 36 + (i % 4) * 12;
-        spark.className = 'spark';
-        spark.style.left = `${point.x}px`;
-        spark.style.top = `${point.y}px`;
-        spark.style.color = color;
-        spark.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
-        spark.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
-        DOM.celebrationLayer.appendChild(spark);
-        setTimeout(() => spark.remove(), 1300);
-      }
-      setTimeout(() => ring.remove(), 1200);
-      setTimeout(() => core.remove(), 1000);
-    }
-
-    function animateRegionPulse(layer, type, status = 'visited') {
-      const base = regionStyle(true, type, status);
-      let frame = 0;
-      const total = 34;
-      function step() {
-        frame += 1;
-        const progress = frame / total;
-        const ease = 1 - Math.pow(1 - progress, 3);
-        layer.setStyle({ color: base.color, weight: base.weight + (1 - ease) * 1.5, fillColor: base.fillColor, fillOpacity: 0.18 + ease * 0.5 });
-        if (frame < total) requestAnimationFrame(step);
-        else layer.setStyle(base);
-      }
-      requestAnimationFrame(step);
-    }
-
-    function animateStats(targetStats) {
-      document.querySelectorAll('.stat-number').forEach(node => {
-        const key = node.dataset.stat;
-        const target = Number(targetStats[key] || 0);
-        const from = Number(node.dataset.value || 0);
-        const start = performance.now();
-        const duration = 950;
-        function tick(now) {
-          const progress = Math.min((now - start) / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          const value = Math.round(from + (target - from) * eased);
-          node.textContent = value;
-          if (progress < 1) requestAnimationFrame(tick);
-          else { node.dataset.value = String(target); node.textContent = target; }
-        }
-        requestAnimationFrame(tick);
-      });
-    }
-
-    function renderSidebar(cities, customCities, stats) {
-      const profileName = getProfileName();
-      DOM.pageTitle.textContent = formatMapTitle(profileName);
-      DOM.pageSubtitle.textContent = '地球 Online 地图';
-      DOM.topbarTitle.textContent = formatMapTitle(profileName);
+    function renderSidebar(cities, stats) {
+      const name = getProfileName();
+      DOM.pageTitle.textContent = formatMapTitle(name);
+      DOM.pageSubtitle.textContent = '足迹地图';
+      DOM.topbarTitle.textContent = formatMapTitle(name);
       DOM.topbarSub.textContent = '你的专属旅行地图';
+      DOM.topTabsName.textContent = name ? `👋 ${name}` : '';
       animateStats(stats);
-
+      // Palette
       DOM.cityPalette.innerHTML = '';
-      const sortedPalette = [...cities].sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
-      DOM.paletteEmpty.style.display = sortedPalette.length ? 'none' : 'block';
-      sortedPalette.forEach(city => {
-        const item = document.createElement('div');
-        item.className = 'city-chip';
-        const dotStyle = cityVisitStatus(city) === 'want'
-          ? `background:rgba(200,107,255,.18);border:1px dashed rgba(200,107,255,.62)`
-          : `background:${city.color}`;
-        item.innerHTML = `<span class="city-chip-dot" style="${dotStyle}"></span><span>${city.name}</span>`;
-        DOM.cityPalette.appendChild(item);
+      DOM.paletteEmpty.style.display = cities.length ? 'none' : 'block';
+      cities.slice().sort((a, b) => a.name.localeCompare(b.name, 'zh-CN')).forEach(c => {
+        const d = document.createElement('div'); d.className = 'city-chip';
+        const ds = cityVisitStatus(c) === 'want' ? 'background:rgba(200,107,255,.18);border:1px dashed rgba(200,107,255,.62)' : `background:${c.color}`;
+        d.innerHTML = `<span class="city-chip-dot" style="${ds}"></span><span>${c.name}</span>`; DOM.cityPalette.appendChild(d);
       });
-
+      // Custom list
       DOM.customList.innerHTML = '';
-      DOM.customEmpty.style.display = customCities.length ? 'none' : 'block';
-
-      customCities.forEach(city => {
-        const item = document.createElement('div');
-        item.className = 'custom-item';
-        const status = cityVisitStatus(city);
-        item.innerHTML = `
-          <div class="custom-meta">
-            <span class="city-chip-dot" style="${status === 'want' ? 'background:rgba(200,107,255,.18);border:1px dashed rgba(200,107,255,.62)' : `background:${city.color}`}"></span>
-            <div class="custom-text">
-              <div class="custom-name">${city.name}</div>
-              <div class="custom-sub">${city.regionDisplay || city.region || city.country || '未识别区域'}</div>
-              <div class="status-badge ${status}">${status === 'want' ? '🌟 想去' : '✅ 去过'}</div>
-            </div>
-          </div>
-          <div class="custom-actions">
-            <button class="ghost-btn toggle-btn ${status}" data-toggle-city-id="${city.id}" title="切换状态"><span class="toggle-btn-label">${status === 'want' ? '改成去过' : '改成想去'}</span></button>
-            <button class="delete-btn" data-city-id="${city.id}" title="删除 ${city.name}">×</button>
-          </div>
-        `;
+      DOM.customEmpty.style.display = cities.length ? 'none' : 'block';
+      cities.forEach(c => {
+        const st = cityVisitStatus(c);
+        const item = document.createElement('div'); item.className = 'custom-item';
+        item.innerHTML = `<div class="custom-meta"><span class="city-chip-dot" style="${st === 'want' ? 'background:rgba(200,107,255,.18);border:1px dashed rgba(200,107,255,.62)' : `background:${c.color}`}"></span><div class="custom-text"><div class="custom-name">${escapeHtml(c.name)}</div><div class="custom-sub">${escapeHtml(c.regionDisplay || c.region || c.country || '未知')}</div><span class="status-badge ${st}">${st === 'want' ? '🌟想去' : '✅去过'}</span></div></div><div class="custom-actions"><button class="toggle-btn ${st}" data-toggle-id="${c.id}">${st === 'want' ? '改去过' : '改想去'}</button><button class="delete-btn" data-del-id="${c.id}">×</button></div>`;
         DOM.customList.appendChild(item);
       });
     }
 
-    function upsertCustomCity(city) {
-      const list = getCustomCities();
-      const exists = list.some(item => normalizeText(item.name) === normalizeText(city.name));
-      if (exists) return false;
-      list.push(city);
-      storageWrite(list);
-      return true;
+    DOM.customList.addEventListener('click', e => {
+      const tog = e.target.closest('[data-toggle-id]'); if (tog) { toggleCustomCityStatus(tog.dataset.toggleId); render(); return; }
+      const del = e.target.closest('[data-del-id]'); if (del) { removeCustomCity(del.dataset.delId); setStatus('已删除', 'warning'); render(); }
+    });
+
+    function regionStyle(active, type = 'domestic', status = 'visited') {
+      if (!active) return { color: 'rgba(123,141,164,.38)', weight: 1, fillColor: 'rgba(255,255,255,.04)', fillOpacity: 0.22 };
+      if (status === 'want') return { color: 'rgba(200,107,255,.94)', weight: 1.8, dashArray: '6 4', fillColor: 'rgba(200,107,255,.16)', fillOpacity: 0.48 };
+      return type === 'foreign' ? { color: 'rgba(255,224,173,.92)', weight: 1.8, fillColor: 'rgba(255,202,112,.30)', fillOpacity: 0.62 } : { color: 'rgba(176,208,255,.82)', weight: 1.8, fillColor: 'rgba(121,174,255,.26)', fillOpacity: 0.62 };
     }
 
-    function removeCustomCity(cityId) {
-      const list = getCustomCities().filter(item => item.id !== cityId);
-      storageWrite(list);
-    }
+    function setHoverCard({ badge, title, sub, pills = [], accent = '#9CC2FF' }) { DOM.hoverCard.classList.remove('dim'); DOM.hoverCard.innerHTML = `<div class="hover-badge" style="background:${accent}16;color:${accent};border-color:${accent}30;">${badge}</div><div class="hover-title">${title}</div><div class="hover-sub">${sub}</div><div class="hover-pills">${pills.map(p => `<span class="hover-pill">${p}</span>`).join('')}</div>`; }
+    function resetHoverCard() { DOM.hoverCard.classList.add('dim'); DOM.hoverCard.innerHTML = '<div class="hover-badge">Earth Online</div><div class="hover-title">地球 Online</div><div class="hover-sub">我的足迹地图</div><div class="hover-pills"><span class="hover-pill">城市</span><span class="hover-pill">点亮</span></div>'; }
 
-    function toggleCustomCityStatus(cityId) {
-      const list = getCustomCities().map(item => item.id === cityId
-        ? { ...item, visitStatus: cityVisitStatus(item) === 'want' ? 'visited' : 'want' }
-        : item);
-      storageWrite(list);
-    }
-
-    function setVisitType(type) {
-      currentVisitType = type === 'want' ? 'want' : 'visited';
-      DOM.visitTypeGroup.querySelectorAll('[data-value]').forEach(node => {
-        node.classList.toggle('active', node.dataset.value === currentVisitType);
-      });
-    }
-
-    async function handleEditName() {
-      const name = await promptForProfileName(false);
-      if (!name) return;
-      setStatus(`已更新为「${name}的足迹地图」`, 'success');
-      render();
-    }
-
-    async function ensureGeoData() {
-      if (geoCache.china && geoCache.world) return geoCache;
-      if (window.__GEO_CHINA__ && window.__GEO_WORLD__) {
-        geoCache.china = window.__GEO_CHINA__;
-        geoCache.world = window.__GEO_WORLD__;
-        return geoCache;
-      }
-      const [chinaRes, worldRes] = await Promise.all([
-        fetch('data/china-provinces.json'),
-        fetch('data/world.geo.json')
-      ]);
-      geoCache.china = await chinaRes.json();
-      geoCache.world = await worldRes.json();
-      return geoCache;
-    }
-
-    function parseRegionKeyFromAddress(address = {}) {
-      const country = address.country || '';
-      const state = address.state || address.province || '';
-      const city = address.city || address.town || address.county || address.state_district || '';
-      if (/china|中国/i.test(country) || /china/i.test(address.country_code || '') || matchChinaRegion(country)) {
-        const normalizedState = matchChinaRegion(state) || matchChinaRegion(city) || matchChinaRegion(address.county) || matchChinaRegion(address.state_district) || matchChinaRegion(address.municipality) || matchChinaRegion(address.region) || null;
-        return { region: normalizedState, regionDisplay: normalizedState ? normalizeRegionName(normalizedState) : normalizeRegionName(state || city || '中国'), kind: 'domestic', country: '中国' };
-      }
-      if (/hong kong|香港/i.test(country) || /hong kong|香港/i.test(state)) {
-        return { region: '香港特别行政区', regionDisplay: '香港', kind: 'domestic', country: '中国' };
-      }
-      const geoName = matchWorldCountry(country) || matchWorldCountry(state);
-      if (geoName) return { region: geoName, regionDisplay: countryDisplay(geoName), kind: 'foreign', country: geoName };
-      return { region: country || state || '', regionDisplay: country || normalizeRegionName(state || city || '未知区域'), kind: 'foreign', country: country || '' };
-    }
-
-    async function lookupCity(query) {
-      const normalized = normalizeText(query);
-      const scenicHit = matchScenicSpot(query);
-      if (scenicHit) {
-        const scenicRegion = matchChinaRegion(scenicHit.city);
-        await ensureGeoData();
-        const center = scenicRegion ? getChinaRegionCenter(scenicRegion) : null;
-        return { id: `custom-${slugify(scenicHit.city)}-${Date.now()}`, name: scenicHit.city, region: scenicRegion, regionDisplay: scenicRegion ? normalizeRegionName(scenicRegion) : scenicHit.city, country: '中国', kind: 'domestic', lat: center ? center.lat : 35, lng: center ? center.lng : 104, icon: guessIcon(scenicHit.city, '中国'), color: hashColor(scenicHit.city), source: 'custom', originalQuery: query.trim() };
-      }
-
-      const directProvince = CHINA_REGION_LOOKUP[normalizeText(query)];
-      if (directProvince) {
-        await ensureGeoData();
-        const center = getChinaRegionCenter(directProvince);
-        return { id: `custom-${slugify(query.trim())}-${Date.now()}`, name: query.trim(), region: directProvince, regionDisplay: normalizeRegionName(directProvince), country: '中国', kind: 'domestic', lat: center ? center.lat : 35, lng: center ? center.lng : 104, icon: '🗺️', color: hashColor(query.trim()), source: 'custom' };
-      }
-
-      const fallbackRegionDirect = CHINA_CITY_LOOKUP[normalizeText(query)];
-      if (fallbackRegionDirect) {
-        await ensureGeoData();
-        const center = getChinaRegionCenter(fallbackRegionDirect);
-        return { id: `custom-${slugify(query.trim())}-${Date.now()}`, name: query.trim(), region: fallbackRegionDirect, regionDisplay: normalizeRegionName(fallbackRegionDirect), country: '中国', kind: 'domestic', lat: center ? center.lat : 35, lng: center ? center.lng : 104, icon: guessIcon(query.trim(), '中国'), color: hashColor(query.trim()), source: 'custom' };
-      }
-
-      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&accept-language=en&limit=1&q=${encodeURIComponent(query)}`;
-      const response = await fetch(url, { headers: { Accept: 'application/json' } });
-      if (!response.ok) throw new Error('地理编码服务暂时不可用');
-      const results = await response.json();
-      if (!Array.isArray(results) || !results.length) {
-        throw new Error('没有找到这个城市，请换个写法再试试');
-      }
-
-      const result = results[0];
-      const parsed = parseRegionKeyFromAddress(result.address || {});
-      const displayName = query.trim();
-      const fallbackChinaRegion = matchChinaRegion(displayName) || matchChinaRegion(result.address?.city) || matchChinaRegion(result.address?.state) || matchChinaRegion(result.address?.county);
-      const finalRegion = parsed.kind === 'domestic' ? (parsed.region || fallbackChinaRegion) : parsed.region;
-      const finalRegionDisplay = parsed.kind === 'domestic' ? normalizeRegionName(finalRegion || parsed.regionDisplay || '中国') : parsed.regionDisplay;
-      return { id: `custom-${slugify(displayName)}-${Date.now()}`, name: displayName, region: finalRegion, regionDisplay: finalRegionDisplay, country: parsed.country, kind: parsed.kind, lat: Number(result.lat), lng: Number(result.lon), icon: guessIcon(displayName, parsed.country), color: hashColor(displayName), source: 'custom' };
-    }
+    function playParticleCelebration(ll, color) { if (!ll) return; const p = map.latLngToContainerPoint(ll); const ce = DOM.celebrationLayer; const ring = document.createElement('span'); ring.className = 'burst-ring'; ring.style.cssText = `left:${p.x}px;top:${p.y}px;color:${color}`; ce.appendChild(ring); setTimeout(() => ring.remove(), 1200); const core = document.createElement('span'); core.className = 'burst-core'; core.style.cssText = `left:${p.x}px;top:${p.y}px;color:${color}`; ce.appendChild(core); setTimeout(() => core.remove(), 1000); for (let i = 0; i < 12; i++) { const s = document.createElement('span'); const a = (Math.PI * 2 * i) / 12, d = 30 + (i % 3) * 10; s.className = 'spark'; s.style.cssText = `left:${p.x}px;top:${p.y}px;color:${color};--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d}px`; ce.appendChild(s); setTimeout(() => s.remove(), 1300); } }
 
     function createRegionLayers(cities, regionMetaMap) {
-      const boundsList = [];
-      const chinaGeo = { ...geoCache.china, features: geoCache.china.features.filter(feature => feature.properties && feature.properties.name) };
-
-      L.geoJSON(chinaGeo, {
-        style: feature => {
-          const regionKey = feature.properties.name;
-          const meta = regionMetaMap.get(regionKey);
-          return regionStyle(Boolean(meta), meta?.type || 'domestic', meta?.status || 'visited');
-        },
-        onEachFeature: (feature, layer) => {
-          const regionKey = feature.properties.name;
-          const meta = regionMetaMap.get(regionKey);
-          const display = meta?.display || normalizeRegionName(regionKey);
-          layer.bindTooltip(tooltipHtml(display, meta ? `${meta.status === 'want' ? meta.wantCities.length : meta.visitedCities.length} 个${meta.status === 'want' ? '想去' : '已到访'}城市` : '未点亮区域'), { sticky: true, direction: 'top', className: 'region-tooltip' });
-          layer.on('mouseover', () => {
-            if (meta) {
-              layer.setStyle({ weight: 2.4, fillOpacity: meta.status === 'want' ? 0.58 : 0.76, color: meta.status === 'want' ? 'rgba(170,236,255,1)' : (meta.type === 'foreign' ? 'rgba(255,233,194,1)' : 'rgba(215,229,255,1)'), dashArray: meta.status === 'want' ? '6 4' : undefined });
-              setHoverCard({ badge: meta.status === 'want' ? '愿望清单' : (meta.type === 'foreign' ? '海外足迹' : '国内足迹'), title: display, sub: meta.status === 'want' ? '想去区域' : '已到访区域', pills: meta.status === 'want' ? meta.wantCities : meta.visitedCities, accent: meta.accent || '#9CC2FF' });
-            } else {
-              layer.setStyle({ weight: 1.35, fillOpacity: 0.28, color: 'rgba(168,182,201,.58)' });
-              setHoverCard({ badge: '区域信息', title: display, sub: '未点亮区域', pills: ['未点亮'], accent: '#8192A8' });
-            }
-          });
-          layer.on('mouseout', () => { layer.setStyle(regionStyle(Boolean(meta), meta?.type || 'domestic', meta?.status || 'visited')); resetHoverCard(); });
-          regionLayerGroup.addLayer(layer);
-          if (meta) boundsList.push(layer.getBounds());
-          if (meta && meta.justAdded) animateRegionPulse(layer, meta.type, meta.status);
-        }
+      const bl = [];
+      L.geoJSON({ ...geoCache.china, features: geoCache.china.features.filter(f => f.properties?.name) }, {
+        style: f => { const m = regionMetaMap.get(f.properties.name); return regionStyle(!!m, m?.type, m?.status); },
+        onEachFeature: (f, layer) => { const rk = f.properties.name, m = regionMetaMap.get(rk), d = m?.display || normalizeRegionName(rk); layer.bindTooltip(tooltipHtml(d, m ? `${m.visitedCities.length + m.wantCities.length} 个地点` : '未点亮'), { sticky: true, direction: 'top', className: 'region-tooltip' }); layer.on('mouseover', () => { if (m) { layer.setStyle({ weight: 2.4, fillOpacity: 0.76 }); setHoverCard({ badge: m.status === 'want' ? '愿望' : '足迹', title: d, sub: '已点亮', pills: m.cities, accent: m.accent }); } }); layer.on('mouseout', () => { layer.setStyle(regionStyle(!!m, m?.type, m?.status)); resetHoverCard(); }); regionLayerGroup.addLayer(layer); if (m) bl.push(layer.getBounds()); }
       });
-
-      const worldGeo = { type: 'FeatureCollection', features: (geoCache.world.features || []).filter(feature => feature.properties && feature.properties.name && !WORLD_EXCLUDE.has(feature.properties.name)) };
-
-      L.geoJSON(worldGeo, {
-        style: feature => {
-          const meta = regionMetaMap.get(feature.properties.name);
-          return regionStyle(Boolean(meta), 'foreign', meta?.status || 'visited');
-        },
-        onEachFeature: (feature, layer) => {
-          const geoName = feature.properties.name;
-          const meta = regionMetaMap.get(geoName);
-          const display = meta?.display || countryDisplay(geoName);
-          layer.bindTooltip(tooltipHtml(display, meta ? `${meta.visitedCities.length + meta.wantCities.length} 个地点` : '未点亮国家'), { sticky: true, direction: 'top', className: 'region-tooltip' });
-          layer.on('mouseover', () => {
-            if (meta) {
-              layer.setStyle({ weight: 2.6, fillOpacity: meta.status === 'want' ? 0.56 : 0.78, color: meta.status === 'want' ? 'rgba(170,236,255,1)' : 'rgba(255,232,191,1)', dashArray: meta.status === 'want' ? '6 4' : undefined });
-              setHoverCard({ badge: meta.status === 'want' ? '愿望清单' : '海外足迹', title: display, sub: '海外国家边界已点亮', pills: meta.status === 'want' ? meta.wantCities : meta.visitedCities, accent: meta.accent || '#D7A55D' });
-            } else {
-              layer.setStyle({ weight: 1.35, fillOpacity: 0.28, color: 'rgba(168,182,201,.58)' });
-            }
-          });
-          layer.on('mouseout', () => { layer.setStyle(regionStyle(Boolean(meta), 'foreign', meta?.status || 'visited')); resetHoverCard(); });
-          regionLayerGroup.addLayer(layer);
-          if (meta) boundsList.push(layer.getBounds());
-          if (meta && meta.justAdded) animateRegionPulse(layer, 'foreign', meta.status);
-        }
+      const wf = (geoCache.world?.features || []).filter(f => f.properties?.name && !WORLD_EXCLUDE.has(f.properties.name));
+      L.geoJSON({ type: 'FeatureCollection', features: wf }, {
+        style: f => { const m = regionMetaMap.get(f.properties.name); return regionStyle(!!m, 'foreign', m?.status); },
+        onEachFeature: (f, layer) => { const gn = f.properties.name, m = regionMetaMap.get(gn), d = m?.display || countryDisplay(gn); layer.bindTooltip(tooltipHtml(d, m ? '已点亮' : '未点亮'), { sticky: true, direction: 'top', className: 'region-tooltip' }); layer.on('mouseover', () => { if (m) { layer.setStyle({ weight: 2.6, fillOpacity: 0.78 }); setHoverCard({ badge: '海外', title: d, sub: '已点亮', pills: m.cities, accent: m.accent }); } }); layer.on('mouseout', () => { layer.setStyle(regionStyle(!!m, 'foreign', m?.status)); resetHoverCard(); }); regionLayerGroup.addLayer(layer); if (m) bl.push(layer.getBounds()); }
       });
-
-      return boundsList;
+      return bl;
     }
 
     function createCityLayers(cities) {
-      const boundsList = [];
-      cities.forEach(city => {
-        const regionType = city.kind === 'foreign' ? 'foreign' : 'domestic';
-        const status = cityVisitStatus(city);
-        const accent = status === 'want' ? '#C86BFF' : city.color;
-        const radius = regionType === 'foreign' ? 32000 : 23500;
-        const hotspot = L.circle([city.lat, city.lng], { radius, className: 'city-hit', color: accent, fillColor: accent, dashArray: status === 'want' ? '5 4' : undefined, weight: 0, opacity: 0, fillOpacity: 0 });
-        hotspot.bindTooltip(tooltipHtml(`${city.icon} ${city.name}`, `${city.regionDisplay || city.region || city.country || '未知区域'} · ${status === 'want' ? '想去' : '已到访'}`), { sticky: true, direction: 'top', className: 'city-tooltip' });
-        hotspot.on('mouseover', () => {
-          hotspot.setStyle({ color: accent, fillColor: accent, weight: 1.2, opacity: 0.96, fillOpacity: status === 'want' ? 0.16 : 0.24 });
-          setHoverCard({ badge: `${status === 'want' ? '愿望清单' : '旅行足迹'}`, title: `${city.icon} ${city.name}`, sub: `${city.regionDisplay || city.region || '未知区域'}`, pills: [`${regionType === 'foreign' ? '海外' : '国内'}`, `${status === 'want' ? '想去' : '去过'}`], accent });
-        });
-        hotspot.on('mouseout', () => { hotspot.setStyle({ weight: 0, opacity: 0, fillOpacity: 0 }); resetHoverCard(); });
-        cityLayerGroup.addLayer(hotspot);
-        boundsList.push(hotspot.getBounds());
-        if (city.id === lastAddedCityId) {
-          playParticleCelebration(L.latLng(city.lat, city.lng), accent);
-          let frame = 0;
-          const total = 26;
-          function pulse() {
-            frame += 1;
-            const progress = frame / total;
-            const wave = Math.sin(progress * Math.PI);
-            hotspot.setStyle({ color: accent, fillColor: accent, weight: wave * 1.6, opacity: 0.45 + wave * 0.35, fillOpacity: 0.06 + wave * 0.26 });
-            if (frame < total) requestAnimationFrame(pulse);
-            else hotspot.setStyle({ weight: 0, opacity: 0, fillOpacity: 0 });
-          }
-          requestAnimationFrame(pulse);
-        }
+      const bl = [];
+      cities.forEach(c => {
+        const st = cityVisitStatus(c), accent = st === 'want' ? '#C86BFF' : c.color, r = c.kind === 'foreign' ? 32000 : 23500;
+        const hot = L.circle([c.lat, c.lng], { radius: r, className: 'city-hit', color: accent, fillColor: accent, weight: 0, opacity: 0, fillOpacity: 0 });
+        hot.bindTooltip(tooltipHtml(`${c.icon || '📍'} ${c.name}`, `${c.regionDisplay || '未知'} · ${st === 'want' ? '想去' : '去过'}`), { sticky: true, direction: 'top', className: 'city-tooltip' });
+        hot.on('mouseover', () => { hot.setStyle({ weight: 1.2, opacity: 0.96, fillOpacity: 0.2 }); setHoverCard({ badge: st === 'want' ? '愿望' : '足迹', title: `${c.icon || '📍'} ${c.name}`, sub: c.regionDisplay || '', pills: [c.kind === 'foreign' ? '海外' : '国内', st === 'want' ? '想去' : '去过'], accent }); });
+        hot.on('mouseout', () => { hot.setStyle({ weight: 0, opacity: 0, fillOpacity: 0 }); resetHoverCard(); });
+        // Click to open ticket creation
+        hot.on('click', () => { if (st === 'visited') { switchTab('ticket'); DOM.ticketCityInput.value = c.name; } });
+        cityLayerGroup.addLayer(hot);
+        bl.push(hot.getBounds());
+        if (c.id === lastAddedCityId) playParticleCelebration(L.latLng(c.lat, c.lng), accent);
       });
-      return boundsList;
+      return bl;
     }
 
     async function render() {
-      const cities = getAllCities();
-      const customCities = getCustomCities();
-      const stats = buildStats(cities);
-      const regionMetaMap = getRegionMeta(cities);
-
-      renderSidebar(cities, customCities, stats);
+      const cities = getAllCities(), stats = buildStats(cities), regionMetaMap = getRegionMeta(cities);
+      renderSidebar(cities, stats);
       await ensureGeoData();
-
-      regionLayerGroup.clearLayers();
-      cityLayerGroup.clearLayers();
-
-      const justAddedCity = cities.find(city => city.id === lastAddedCityId);
-      if (justAddedCity?.region && regionMetaMap.has(justAddedCity.region)) {
-        regionMetaMap.get(justAddedCity.region).justAdded = true;
-      }
-
-      const regionBounds = createRegionLayers(cities, regionMetaMap);
-      const cityBounds = createCityLayers(cities);
-      const boundsList = [...regionBounds, ...cityBounds];
-
-      if (boundsList.length) {
-        const merged = boundsList.reduce((acc, cur) => acc.extend(cur), L.latLngBounds(boundsList[0].getSouthWest(), boundsList[0].getNorthEast()));
-        map.fitBounds(merged, { padding: [48, 48] });
-      }
-
-      if (!cities.length) {
-        map.setView([30, 104], 3.5);
-        resetHoverCard();
-      }
-
-      setTimeout(() => { map.invalidateSize(true); lastAddedCityId = null; }, 260);
+      regionLayerGroup.clearLayers(); cityLayerGroup.clearLayers();
+      if (lastAddedCityId) { const jc = cities.find(c => c.id === lastAddedCityId); if (jc?.region && regionMetaMap.has(jc.region)) regionMetaMap.get(jc.region).justAdded = true; }
+      const rb = createRegionLayers(cities, regionMetaMap), cb = createCityLayers(cities), all = [...rb, ...cb];
+      if (all.length) { const merged = all.reduce((a, c) => a.extend(c), L.latLngBounds(all[0].getSouthWest(), all[0].getNorthEast())); map.fitBounds(merged, { padding: [40, 40] }); }
+      else { map.setView([30, 104], 3.5); resetHoverCard(); }
+      setTimeout(() => { map.invalidateSize(true); lastAddedCityId = null; }, 200);
     }
 
-    async function exportShareImage() {
-      if (!window.html2canvas) { setStatus('截图组件还没准备好，请稍后再试。', 'error'); return; }
-      const mapTarget = document.getElementById('map');
-      if (!mapTarget) return;
-      DOM.shareBtn.disabled = true;
-      DOM.shareBtn.textContent = '生成中...';
-      setStatus('正在生成旅行数据卡片...', 'warning');
+    // === Share Screenshot ===
+    DOM.shareBtn.addEventListener('click', async () => {
+      if (!window.html2canvas) { setStatus('截图组件未就绪', 'error'); return; }
+      DOM.shareBtn.disabled = true; DOM.shareBtn.textContent = '生成中...'; setStatus('正在生成...', 'warning');
       try {
-        const mapCanvas = await window.html2canvas(mapTarget, { backgroundColor: '#081220', useCORS: true, scale: Math.min(2, window.devicePixelRatio || 1.5) });
-        const allCities = getAllCities();
-        const profileName = getProfileName();
-        const shareTitle = formatMapTitle(profileName);
-        const visitedCities = allCities.filter(city => cityVisitStatus(city) === 'visited');
-        const visitedStats = buildStats(allCities);
-        const visitedRegions = Array.from(new Set(visitedCities.map(city => city.regionDisplay || normalizeRegionName(city.region)).filter(Boolean)));
-        const visitedNames = visitedCities.map(city => city.name);
-
-        const shareCard = document.createElement('div');
-        shareCard.style.cssText = 'position:fixed;left:-99999px;top:0;width:1240px;padding:24px;box-sizing:border-box;border-radius:28px;background:radial-gradient(circle at top left, rgba(126,166,255,.18), transparent 32%), linear-gradient(180deg, #091424 0%, #08111d 100%);color:#eaf2ff;font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;box-shadow:0 28px 80px rgba(0,0,0,.38)';
-        const regionBadges = visitedRegions.map(name => `<span style="display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:11px;line-height:1;color:#dbe8ff;">${escapeHtml(name)}</span>`).join('');
-        const cityBadges = visitedNames.slice(0, 42).map(name => `<span style="display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:rgba(122,173,255,.10);border:1px solid rgba(122,173,255,.16);font-size:11px;line-height:1;color:#eff5ff;">${escapeHtml(name)}</span>`).join('');
-
-        shareCard.innerHTML = `<div style="display:grid;grid-template-columns:1.65fr .95fr;gap:20px;align-items:stretch;"><div style="border-radius:22px;overflow:hidden;background:#081220;border:1px solid rgba(255,255,255,.08);"><img src="${mapCanvas.toDataURL('image/png')}" style="display:block;width:100%;height:100%;object-fit:cover;" /></div><div style="display:flex;flex-direction:column;gap:14px;"><div style="padding:16px;border-radius:20px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(226,238,255,.56);">Earth Online · Travel Data Card</div><div style="margin-top:8px;font-size:24px;font-weight:800;line-height:1.2;">${escapeHtml(shareTitle)}</div><div style="margin-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;"><div style="padding:10px 12px;border-radius:16px;background:rgba(122,173,255,.09);border:1px solid rgba(122,173,255,.14);"><div style="font-size:11px;color:rgba(226,238,255,.6);">去过城市</div><div style="margin-top:4px;font-size:24px;font-weight:800;">${visitedStats.visited}</div></div><div style="padding:10px 12px;border-radius:16px;background:rgba(255,208,137,.09);border:1px solid rgba(255,208,137,.14);"><div style="font-size:11px;color:rgba(226,238,255,.6);">覆盖区域</div><div style="margin-top:4px;font-size:24px;font-weight:800;">${visitedStats.regions}</div></div></div></div><div style="padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);"><div style="font-size:11px;font-weight:800;color:#dce9ff;">去过的省份/地区</div><div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">${regionBadges || '暂无'}</div></div><div style="padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);"><div style="font-size:11px;font-weight:800;color:#dce9ff;">去过的城市（共${visitedNames.length}个）</div><div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">${cityBadges || '暂无'}</div></div><div style="padding:0 4px;font-size:10px;color:rgba(226,238,255,.42);display:flex;justify-content:space-between;"><span>Generated by Earth Online Map</span><span>${new Date().toLocaleDateString('zh-CN')}</span></div></div></div>`;
-        document.body.appendChild(shareCard);
-        const finalCanvas = await window.html2canvas(shareCard, { backgroundColor: null, useCORS: true, scale: 2 });
-        shareCard.remove();
-        const link = document.createElement('a');
-        link.download = `earth-online-map-card-${new Date().toISOString().slice(0, 10)}.png`;
-        link.href = finalCanvas.toDataURL('image/png');
-        link.click();
-        setStatus('旅行数据卡片已生成并开始下载 ✨', 'success');
-      } catch (error) {
-        setStatus('卡片生成失败，请稍后再试。', 'error');
-      } finally {
-        DOM.shareBtn.disabled = false;
-        DOM.shareBtn.textContent = '📸 截图分享';
-      }
-    }
-
-    async function handleAddCity() {
-      const value = DOM.cityInput.value.trim();
-      if (!value) { setStatus('先输入一个城市名吧。', 'warning'); return; }
-      const currentNames = new Set(getAllCities().map(city => normalizeText(city.name)));
-      if (currentNames.has(normalizeText(value))) { setStatus('这个城市已经在地图里啦。', 'warning'); return; }
-      DOM.addCityBtn.disabled = true;
-      DOM.addCityBtn.textContent = currentVisitType === 'want' ? '加入中...' : '点亮中...';
-      setStatus('正在为你查找城市位置...', 'warning');
-      try {
-        const city = await lookupCity(value);
-        city.visitStatus = currentVisitType;
-        const saved = upsertCustomCity(city);
-        if (!saved) { setStatus('这个城市已经添加过了。', 'warning'); }
-        else {
-          lastAddedCityId = city.id;
-          DOM.cityInput.value = '';
-          setStatus(currentVisitType === 'want' ? `已把 ${city.name} 加入想去清单 🌟` : `已成功点亮 ${city.name} ✨`, 'success');
-          await render();
-        }
-      } catch (error) {
-        setStatus(error.message || '添加失败，请稍后再试。', 'error');
-      } finally {
-        DOM.addCityBtn.disabled = false;
-        DOM.addCityBtn.textContent = '添加城市';
-      }
-    }
-
-    function handleDeleteCity(cityId) {
-      removeCustomCity(cityId);
-      setStatus('已删除该城市。', 'warning');
-      render();
-    }
-
-    function handleToggleCityStatus(cityId) {
-      toggleCustomCityStatus(cityId);
-      lastAddedCityId = cityId;
-      setStatus('已切换城市状态。', 'success');
-      render();
-    }
-
-    function handleResetProfile() {
-      if (!confirm('确定要清空你的足迹地图吗？这个操作会删除当前保存的所有城市。')) return;
-      storageWrite([]);
-      lastAddedCityId = null;
-      setStatus('已清空足迹地图，可以重新开始。', 'warning');
-      render();
-    }
-
-    // ===== Province Selector Logic =====
-    let provinceSelectorState = 'provinces'; // 'provinces' | 'cities'
-
-    function showProvinces() {
-      provinceSelectorState = 'provinces';
-      DOM.provinceSelectorTitle.textContent = '选择省份';
-      DOM.provinceSelectorBack.classList.remove('show');
-      DOM.provinceGrid.innerHTML = '';
-      const provinces = Object.keys(PROVINCE_CITIES);
-      provinces.forEach(prov => {
-        const item = document.createElement('div');
-        item.className = 'province-item';
-        item.textContent = prov;
-        item.addEventListener('click', (e) => {
-          e.stopPropagation();
-          showCitiesForProvince(prov);
-        });
-        DOM.provinceGrid.appendChild(item);
-      });
-    }
-
-    function showCitiesForProvince(province) {
-      provinceSelectorState = 'cities';
-      DOM.provinceSelectorTitle.textContent = province;
-      DOM.provinceSelectorBack.classList.add('show');
-      DOM.provinceGrid.innerHTML = '';
-      const cities = PROVINCE_CITIES[province] || [];
-      cities.forEach(city => {
-        const item = document.createElement('div');
-        item.className = 'city-select-item';
-        item.textContent = city;
-        item.addEventListener('click', (e) => {
-          e.stopPropagation();
-          DOM.cityInput.value = city;
-          hideProvinceSelector();
-          handleAddCity();
-        });
-        DOM.provinceGrid.appendChild(item);
-      });
-    }
-
-    function showProvinceSelector() {
-      showProvinces();
-      DOM.provinceSelector.classList.add('show');
-    }
-
-    function hideProvinceSelector() {
-      DOM.provinceSelector.classList.remove('show');
-    }
-
-    DOM.cityInput.addEventListener('click', () => {
-      showProvinceSelector();
+        const canvas = await window.html2canvas(document.getElementById('map'), { backgroundColor: '#081220', useCORS: true, scale: 2 });
+        const link = document.createElement('a'); link.download = `earth-online-${new Date().toISOString().slice(0, 10)}.png`; link.href = canvas.toDataURL('image/png'); link.click();
+        setStatus('截图已下载 ✨', 'success');
+      } catch { setStatus('截图失败', 'error'); }
+      finally { DOM.shareBtn.disabled = false; DOM.shareBtn.textContent = '📸 截图分享'; }
     });
 
-    DOM.cityInput.addEventListener('focus', () => {
-      showProvinceSelector();
-    });
+    // === Ticket Logic ===
+    function initTicketColorGroup() { DOM.ticketColorGroup.innerHTML = ''; TICKET_COLORS.forEach((c, i) => { const s = document.createElement('div'); s.className = 'ticket-color-swatch' + (i === 0 ? ' active' : ''); s.style.background = c.bg; s.title = c.name; s.addEventListener('click', () => { DOM.ticketColorGroup.querySelectorAll('.ticket-color-swatch').forEach(x => x.classList.remove('active')); s.classList.add('active'); selectedTicketColor = c; }); DOM.ticketColorGroup.appendChild(s); }); }
+    function getTickets() { try { return JSON.parse(localStorage.getItem(TICKET_KEY)) || []; } catch { return []; } }
+    function saveTickets(t) { localStorage.setItem(TICKET_KEY, JSON.stringify(t)); }
+    function generateBarcode() { let b = ''; for (let i = 0; i < 35; i++) b += `<div class="ticket-barcode-bar" style="width:${Math.random() > .5 ? 2 : 1}px;margin-right:${Math.random() > .6 ? 2 : 1}px;"></div>`; return b; }
 
-    DOM.provinceSelectorBack.addEventListener('click', (e) => {
-      e.stopPropagation();
-      showProvinces();
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!DOM.inputWrap.contains(e.target)) {
-        hideProvinceSelector();
-      }
-    });
-
-    // ===== Ticket Stub Logic =====
-    function initTicketColorGroup() {
-      DOM.ticketColorGroup.innerHTML = '';
-      TICKET_COLORS.forEach((color, i) => {
-        const swatch = document.createElement('div');
-        swatch.className = 'ticket-color-swatch' + (i === 0 ? ' active' : '');
-        swatch.style.background = color.bg;
-        swatch.title = color.name;
-        swatch.addEventListener('click', () => {
-          DOM.ticketColorGroup.querySelectorAll('.ticket-color-swatch').forEach(s => s.classList.remove('active'));
-          swatch.classList.add('active');
-          selectedTicketColor = color;
-        });
-        DOM.ticketColorGroup.appendChild(swatch);
-      });
+    function renderTicketStub(t) {
+      const d = t.date ? new Date(t.date) : new Date(), y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
+      const ph = t.photo ? `<img src="${t.photo}" alt="${escapeHtml(t.city)}" />` : '<div class="ticket-no-photo">🌍</div>';
+      return `<div class="ticket-stub" style="background:${t.bgColor};color:${t.textColor};"><div class="ticket-stub-left"><div><div class="ticket-next-label">NEXT STATION</div><div class="ticket-city-name">${escapeHtml(t.city)}</div></div><div><div class="ticket-date-row"><div class="ticket-date-field"><div class="ticket-date-label">YEAR</div><div class="ticket-date-value">${y}</div></div><div class="ticket-date-field"><div class="ticket-date-label">DATE</div><div class="ticket-date-value">${m}/${day}</div></div></div><div class="ticket-barcode">${generateBarcode()}</div></div></div><div class="ticket-stub-divider"></div><div class="ticket-stub-notch-top"></div><div class="ticket-stub-notch-bottom"></div><div class="ticket-stub-right">${ph}</div></div><div class="ticket-stub-actions"><button class="ticket-action-btn" data-ticket-dl="${t.id}">📥 下载</button><button class="ticket-action-btn delete" data-ticket-rm="${t.id}">🗑️ 删除</button></div>`;
     }
 
-    function getTickets() {
-      try {
-        const raw = localStorage.getItem(TICKET_KEY);
-        if (!raw) return [];
-        return JSON.parse(raw) || [];
-      } catch { return []; }
-    }
+    function renderTicketGallery() { const ts = getTickets(); DOM.ticketGallery.innerHTML = ts.length ? ts.map(t => `<div class="ticket-stub-wrapper" data-tid="${t.id}">${renderTicketStub(t)}</div>`).join('') : '<div class="empty-text">还没有票根，去上方创建第一张吧 🎫</div>'; }
 
-    function saveTickets(tickets) {
-      localStorage.setItem(TICKET_KEY, JSON.stringify(tickets));
-    }
-
-    function generateBarcode() {
-      const bars = [];
-      for (let i = 0; i < 40; i++) {
-        const width = Math.random() > 0.5 ? 2 : 1;
-        bars.push(`<div class="ticket-barcode-bar" style="width:${width}px;margin-right:${Math.random() > 0.6 ? 2 : 1}px;"></div>`);
-      }
-      return bars.join('');
-    }
-
-    function renderTicketStub(ticket) {
-      const dateObj = ticket.date ? new Date(ticket.date) : new Date();
-      const year = dateObj.getFullYear();
-      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-      const day = String(dateObj.getDate()).padStart(2, '0');
-
-      const photoHtml = ticket.photo
-        ? `<img src="${ticket.photo}" alt="${escapeHtml(ticket.city)}" />`
-        : `<div class="ticket-no-photo">🌍</div>`;
-
-      return `
-        <div class="ticket-stub" style="background:${ticket.bgColor}; color:${ticket.textColor};">
-          <div class="ticket-stub-left">
-            <div>
-              <div class="ticket-next-label">NEXT STATION</div>
-              <div class="ticket-city-name">${escapeHtml(ticket.city)}</div>
-            </div>
-            <div>
-              <div class="ticket-date-row">
-                <div class="ticket-date-field">
-                  <div class="ticket-date-label">YEAR</div>
-                  <div class="ticket-date-value">${year}</div>
-                </div>
-                <div class="ticket-date-field">
-                  <div class="ticket-date-label">DATE</div>
-                  <div class="ticket-date-value">${month}/${day}</div>
-                </div>
-              </div>
-              <div class="ticket-barcode">${generateBarcode()}</div>
-            </div>
-          </div>
-          <div class="ticket-stub-divider"></div>
-          <div class="ticket-stub-notch-top"></div>
-          <div class="ticket-stub-notch-bottom"></div>
-          <div class="ticket-stub-right">
-            ${photoHtml}
-          </div>
-        </div>
-        <div class="ticket-stub-actions">
-          <button class="ticket-action-btn" data-ticket-download="${ticket.id}">📥 下载</button>
-          <button class="ticket-action-btn delete" data-ticket-delete="${ticket.id}">🗑️ 删除</button>
-        </div>
-      `;
-    }
-
-    function renderTicketGallery() {
-      const tickets = getTickets();
-      if (!tickets.length) {
-        DOM.ticketGallery.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px 0;font-size:14px;">还没有票根，去上方创建你的第一张旅行票根吧 🎫</div>';
-        return;
-      }
-      DOM.ticketGallery.innerHTML = tickets.map(t => `<div class="ticket-stub-wrapper" data-ticket-id="${t.id}">${renderTicketStub(t)}</div>`).join('');
-    }
-
-    DOM.ticketPageBtn.addEventListener('click', () => {
-      DOM.ticketPage.classList.add('show');
-      document.body.style.overflow = 'hidden';
-      initTicketColorGroup();
-      renderTicketGallery();
-      // Set default date to today
-      DOM.ticketDateInput.value = new Date().toISOString().slice(0, 10);
-    });
-
-    DOM.ticketBackBtn.addEventListener('click', () => {
-      DOM.ticketPage.classList.remove('show');
-      document.body.style.overflow = '';
-    });
-
-    DOM.ticketPhotoUpload.addEventListener('click', () => {
-      DOM.ticketPhotoFile.click();
-    });
-
-    DOM.ticketPhotoFile.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        ticketPhotoData = ev.target.result;
-        DOM.ticketPhotoUpload.textContent = '✅ 照片已选择';
-        DOM.ticketPhotoUpload.classList.add('has-photo');
-      };
-      reader.readAsDataURL(file);
-    });
+    DOM.ticketPhotoUpload.addEventListener('click', () => DOM.ticketPhotoFile.click());
+    DOM.ticketPhotoFile.addEventListener('change', e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = ev => { ticketPhotoData = ev.target.result; DOM.ticketPhotoUpload.textContent = '✅ 照片已选'; DOM.ticketPhotoUpload.classList.add('has-photo'); }; r.readAsDataURL(f); });
 
     DOM.ticketCreateBtn.addEventListener('click', () => {
-      const city = DOM.ticketCityInput.value.trim();
-      if (!city) { alert('请输入城市/地点名称'); return; }
-      const date = DOM.ticketDateInput.value;
-      const ticket = {
-        id: `ticket-${Date.now()}`,
-        city,
-        date: date || new Date().toISOString().slice(0, 10),
-        bgColor: selectedTicketColor.bg,
-        textColor: selectedTicketColor.text,
-        photo: ticketPhotoData || null
-      };
-      const tickets = getTickets();
-      tickets.unshift(ticket);
-      saveTickets(tickets);
-      renderTicketGallery();
-      // Reset form
-      DOM.ticketCityInput.value = '';
-      ticketPhotoData = null;
-      DOM.ticketPhotoUpload.textContent = '📷 点击上传照片';
-      DOM.ticketPhotoUpload.classList.remove('has-photo');
-      DOM.ticketPhotoFile.value = '';
+      const city = DOM.ticketCityInput.value.trim(); if (!city) { alert('请输入城市名'); return; }
+      const ticket = { id: `tk-${Date.now()}`, city, date: DOM.ticketDateInput.value || new Date().toISOString().slice(0, 10), bgColor: selectedTicketColor.bg, textColor: selectedTicketColor.text, photo: ticketPhotoData };
+      const ts = getTickets(); ts.unshift(ticket); saveTickets(ts); renderTicketGallery();
+      DOM.ticketCityInput.value = ''; ticketPhotoData = null; DOM.ticketPhotoUpload.textContent = '📷 点击上传照片'; DOM.ticketPhotoUpload.classList.remove('has-photo'); DOM.ticketPhotoFile.value = '';
     });
 
-    DOM.ticketGallery.addEventListener('click', async (e) => {
-      const deleteBtn = e.target.closest('[data-ticket-delete]');
-      if (deleteBtn) {
-        const id = deleteBtn.dataset.ticketDelete;
-        const tickets = getTickets().filter(t => t.id !== id);
-        saveTickets(tickets);
-        renderTicketGallery();
-        return;
-      }
-      const downloadBtn = e.target.closest('[data-ticket-download]');
-      if (downloadBtn && window.html2canvas) {
-        const id = downloadBtn.dataset.ticketDownload;
-        const wrapper = DOM.ticketGallery.querySelector(`[data-ticket-id="${id}"] .ticket-stub`);
-        if (!wrapper) return;
-        downloadBtn.textContent = '⏳';
-        try {
-          const canvas = await window.html2canvas(wrapper, { backgroundColor: null, useCORS: true, scale: 2 });
-          const link = document.createElement('a');
-          link.download = `ticket-${id}.png`;
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-        } catch (err) { console.error(err); }
-        downloadBtn.textContent = '📥 下载';
-      }
+    DOM.ticketGallery.addEventListener('click', async e => {
+      const rm = e.target.closest('[data-ticket-rm]'); if (rm) { saveTickets(getTickets().filter(t => t.id !== rm.dataset.ticketRm)); renderTicketGallery(); return; }
+      const dl = e.target.closest('[data-ticket-dl]'); if (dl && window.html2canvas) { const w = DOM.ticketGallery.querySelector(`[data-tid="${dl.dataset.ticketDl}"] .ticket-stub`); if (!w) return; dl.textContent = '⏳'; try { const cv = await window.html2canvas(w, { backgroundColor: null, useCORS: true, scale: 2 }); const a = document.createElement('a'); a.download = `ticket-${dl.dataset.ticketDl}.png`; a.href = cv.toDataURL('image/png'); a.click(); } catch {} dl.textContent = '📥 下载'; }
     });
 
-    // ===== Event Listeners =====
-    DOM.addCityBtn.addEventListener('click', handleAddCity);
-    DOM.shareBtn.addEventListener('click', exportShareImage);
-    DOM.visitTypeGroup.addEventListener('click', event => {
-      const chip = event.target.closest('[data-value]');
-      if (!chip) return;
-      setVisitType(chip.dataset.value);
-    });
-    DOM.cityInput.addEventListener('keydown', event => {
-      if (event.key === 'Enter') { hideProvinceSelector(); handleAddCity(); }
-    });
-    DOM.resetProfileBtn.addEventListener('click', handleResetProfile);
-    DOM.editNameBtn.addEventListener('click', handleEditName);
-    DOM.customList.addEventListener('click', event => {
-      const toggle = event.target.closest('[data-toggle-city-id]');
-      if (toggle) { handleToggleCityStatus(toggle.dataset.toggleCityId); return; }
-      const button = event.target.closest('[data-city-id]');
-      if (!button) return;
-      handleDeleteCity(button.dataset.cityId);
-    });
-
-    // ===== Init =====
+    // === Init ===
     setVisitType('visited');
-
     (async function init() {
-      // If no name is set, prompt for name
-      if (!getProfileName()) {
-        await promptForProfileName(true);
-      }
+      if (!getProfileName()) await promptForProfileName(true);
       await render();
-      setStatus('地图已加载完成。添加你去过的城市开始点亮吧！', 'success');
+      setStatus('地图已加载，添加城市开始点亮 ✨', 'success');
     })();
   </script>
 </body>
