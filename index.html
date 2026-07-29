@@ -727,44 +727,73 @@ svg.leaflet-image-layer.leaflet-interactive path {
     .top-tabs {
       display: flex;
       align-items: center;
-      gap: 4px;
-      padding: 12px 24px;
+      gap: 12px;
+      padding: 14px 24px;
       background: rgba(6, 17, 31, 0.92);
       border-bottom: 1px solid rgba(255,255,255,.06);
       flex-shrink: 0;
       z-index: 100;
     }
 
+    .top-tab-group {
+      display: flex;
+      gap: 10px;
+      flex: 1;
+      max-width: 720px;
+    }
+
     .top-tab {
-      padding: 10px 24px;
-      border-radius: 12px;
-      font-size: 15px;
-      font-weight: 800;
+      flex: 1;
+      padding: 16px 28px;
+      border-radius: 16px;
+      font-size: 17px;
+      font-weight: 900;
       color: var(--muted);
-      background: transparent;
-      border: 1px solid transparent;
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border: 1px solid rgba(255,255,255,.08);
       cursor: pointer;
       transition: all .2s ease;
-      letter-spacing: .2px;
+      letter-spacing: .3px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 56px;
+      text-align: center;
     }
 
     .top-tab:hover {
       color: #eaf1fb;
-      background: rgba(255,255,255,.04);
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.14);
+      transform: translateY(-1px);
     }
 
     .top-tab.active {
       color: #fff;
-      background: rgba(122,173,255,.14);
-      border-color: rgba(176,208,255,.24);
-      box-shadow: 0 4px 16px rgba(122,173,255,.1);
+      background: linear-gradient(135deg, rgba(122,173,255,.28), rgba(200,107,255,.16));
+      border-color: rgba(176,208,255,.4);
+      box-shadow: 0 8px 24px rgba(122,173,255,.2), inset 0 1px 0 rgba(255,255,255,.08);
+      transform: translateY(-1px);
+    }
+
+    .top-tab .tab-icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .top-tab .tab-label {
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: .4px;
     }
 
     .top-tabs-right {
-      margin-left: auto;
+      margin-left: 12px;
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-shrink: 0;
     }
 
     .top-tabs-name {
@@ -1071,46 +1100,64 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     .custom-item {
       display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 10px 12px;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 12px;
       border-radius: 14px;
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .custom-meta {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      flex: 1;
       min-width: 0;
     }
 
-    .custom-meta > .city-chip-dot {
-      margin-top: 5px;
+    .custom-item-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .custom-item-top > .city-chip-dot {
       flex-shrink: 0;
     }
 
-    .custom-text {
+    .custom-name {
       flex: 1;
       min-width: 0;
+      font-size: 14px;
+      font-weight: 800;
+      color: #eaf1fb;
+      line-height: 1.35;
+      overflow-wrap: break-word;
+      word-break: normal;
+      white-space: normal;
+      letter-spacing: -.1px;
     }
 
-    .custom-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: #eaf1fb;
-      word-break: break-all;
-      line-height: 1.4;
+    .custom-item-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .custom-item-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      flex: 1;
+      min-width: 0;
     }
 
     .custom-sub {
       color: var(--muted);
       font-size: 11px;
-      line-height: 1.4;
-      margin-top: 2px;
-      word-break: break-all;
+      line-height: 1.35;
+      overflow-wrap: break-word;
+      word-break: normal;
     }
 
     .custom-actions {
@@ -1118,28 +1165,29 @@ svg.leaflet-image-layer.leaflet-interactive path {
       gap: 6px;
       align-items: center;
       flex-shrink: 0;
-      padding-top: 2px;
     }
 
     .toggle-btn {
-      padding: 5px 10px;
+      padding: 6px 10px;
       border-radius: 8px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,.1);
       color: #d6e8fa;
-      font-size: 10px;
-      font-weight: 700;
+      font-size: 11px;
+      font-weight: 800;
       cursor: pointer;
       white-space: nowrap;
+      flex-shrink: 0;
       transition: all .15s ease;
     }
 
-    .toggle-btn:hover { background: rgba(255,255,255,.08); }
+    .toggle-btn:hover { background: rgba(255,255,255,.1); border-color: rgba(176,208,255,.28); }
 
     .toggle-btn.want {
       border-style: dashed;
-      border-color: rgba(200,107,255,.42);
+      border-color: rgba(200,107,255,.5);
       color: #f5ddff;
+      background: rgba(200,107,255,.08);
     }
 
     .delete-btn {
@@ -1303,12 +1351,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
     .province-modal.show { display: flex; }
 
     .province-dialog {
-      width: min(680px, 95vw);
-      max-height: 80vh;
+      width: min(820px, 95vw);
+      height: min(620px, 88vh);
+      min-width: 420px;
+      min-height: 520px;
       border-radius: 24px;
       background: linear-gradient(180deg, rgba(12,22,39,.98) 0%, rgba(8,17,30,.99) 100%);
-      border: 1px solid rgba(255,255,255,.09);
-      box-shadow: 0 28px 80px rgba(0,0,0,.5);
+      border: 1px solid rgba(255,255,255,.1);
+      box-shadow: 0 32px 80px rgba(0,0,0,.55);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -1318,22 +1368,27 @@ svg.leaflet-image-layer.leaflet-interactive path {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 22px;
+      padding: 18px 24px;
       border-bottom: 1px solid rgba(255,255,255,.06);
       flex-shrink: 0;
+      background: linear-gradient(180deg, rgba(122,173,255,.06), transparent);
     }
 
     .province-dialog-title {
-      font-size: 16px;
-      font-weight: 800;
-      color: #eef4ff;
+      font-size: 17px;
+      font-weight: 900;
+      color: #f5f8ff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: -.2px;
     }
 
     .province-dialog-close {
-      width: 34px; height: 34px;
+      width: 36px; height: 36px;
       border-radius: 10px;
       background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.1);
       color: #cfdaf0;
       font-size: 18px;
       cursor: pointer;
@@ -1343,11 +1398,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
       transition: all .15s ease;
     }
 
-    .province-dialog-close:hover { background: rgba(255,100,100,.1); color: #ff9b9b; }
+    .province-dialog-close:hover { background: rgba(255,100,100,.14); color: #ff9b9b; border-color: rgba(255,100,100,.28); }
 
     .province-dialog-body {
       display: grid;
-      grid-template-columns: 180px 1fr;
+      grid-template-columns: 220px 1fr;
       flex: 1;
       min-height: 0;
       overflow: hidden;
@@ -1356,74 +1411,86 @@ svg.leaflet-image-layer.leaflet-interactive path {
     .province-list-panel {
       border-right: 1px solid rgba(255,255,255,.06);
       overflow-y: auto;
-      padding: 12px 8px;
+      padding: 14px 10px;
+      background: rgba(255,255,255,.015);
     }
 
     .province-list-panel::-webkit-scrollbar { width: 4px; }
     .province-list-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
 
     .province-list-item {
-      padding: 9px 12px;
+      padding: 11px 14px;
       border-radius: 10px;
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 700;
       color: #dce8ff;
       cursor: pointer;
       transition: all .12s ease;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
+      border: 1px solid transparent;
     }
 
-    .province-list-item:hover { background: rgba(122,173,255,.08); color: #fff; }
-    .province-list-item.active { background: rgba(122,173,255,.16); color: #fff; border: 1px solid rgba(176,208,255,.24); }
+    .province-list-item:hover { background: rgba(122,173,255,.1); color: #fff; border-color: rgba(255,255,255,.06); }
+    .province-list-item.active { background: rgba(122,173,255,.2); color: #fff; border-color: rgba(176,208,255,.36); box-shadow: 0 4px 12px rgba(122,173,255,.14); }
 
     .city-list-panel {
       overflow-y: auto;
-      padding: 16px;
+      padding: 18px 20px;
     }
 
     .city-list-panel::-webkit-scrollbar { width: 4px; }
     .city-list-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
 
     .city-list-title {
-      font-size: 13px;
-      font-weight: 800;
+      font-size: 14px;
+      font-weight: 900;
       color: #cfe0ff;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       padding-left: 4px;
-    }
-
-    .city-list-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      display: flex;
+      align-items: center;
       gap: 8px;
     }
 
+    .city-list-title-empty { color: var(--muted); font-weight: 700; }
+
+    .city-list-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+      gap: 10px;
+    }
+
     .city-select-item {
-      padding: 10px 8px;
+      padding: 11px 10px;
       border-radius: 10px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       color: #dce8ff;
       background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
       cursor: pointer;
       text-align: center;
       transition: all .12s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .city-select-item:hover {
-      background: rgba(122,173,255,.14);
-      border-color: rgba(176,208,255,.3);
+      background: rgba(122,173,255,.18);
+      border-color: rgba(176,208,255,.36);
       color: #fff;
       transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(122,173,255,.14);
     }
 
     .province-dialog-hint {
-      padding: 12px 22px;
+      padding: 14px 24px;
       border-top: 1px solid rgba(255,255,255,.06);
-      font-size: 11px;
+      font-size: 12px;
       color: var(--muted);
       flex-shrink: 0;
+      background: rgba(255,255,255,.015);
     }
 
     /* === Name Modal === */
@@ -1549,6 +1616,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     .ticket-gallery { display: grid; grid-template-columns: 1fr; gap: 18px; }
 
+    .ticket-stub-wrapper { transition: box-shadow .3s ease, transform .3s ease; border-radius: 18px; }
+    .ticket-stub-wrapper.ticket-highlight {
+      box-shadow: 0 0 0 3px rgba(156,194,255,.6), 0 20px 40px rgba(122,173,255,.35);
+      transform: scale(1.015);
+    }
+
     .ticket-stub {
       display: flex;
       border-radius: 18px;
@@ -1598,17 +1671,54 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     /* === City Action Popup on Map === */
     .city-action-popup .leaflet-popup-content-wrapper {
-      background: rgba(12, 20, 35, 0.96);
-      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(12, 20, 35, 0.98);
+      border: 1px solid rgba(255,255,255,.12);
       border-radius: 14px;
-      box-shadow: 0 12px 32px rgba(0,0,0,.3);
+      box-shadow: 0 14px 36px rgba(0,0,0,.4);
       color: #eaf1fb;
+      padding: 4px;
     }
-    .city-action-popup .leaflet-popup-tip { background: rgba(12, 20, 35, 0.96); }
-    .city-action-popup .leaflet-popup-content { margin: 10px 12px; }
-    .city-popup-title { font-size: 14px; font-weight: 800; margin-bottom: 8px; }
-    .city-popup-btn { display: block; width: 100%; padding: 8px 12px; margin-bottom: 4px; border-radius: 8px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.04); color: #eaf1fb; font-size: 12px; font-weight: 700; cursor: pointer; text-align: left; transition: all .12s ease; }
-    .city-popup-btn:hover { background: rgba(122,173,255,.14); border-color: rgba(176,208,255,.3); }
+    .city-action-popup .leaflet-popup-tip { background: rgba(12, 20, 35, 0.98); box-shadow: 0 3px 12px rgba(0,0,0,.3); }
+    .city-action-popup .leaflet-popup-content { margin: 12px 14px; min-width: 200px; }
+    .city-action-popup .leaflet-popup-close-button { color: #cfdaf0 !important; font-size: 20px !important; padding: 6px 8px 0 0 !important; }
+    .city-popup-title {
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 4px;
+      color: #f5f8ff;
+      letter-spacing: -.2px;
+    }
+    .city-popup-sub { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
+    .city-popup-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 10px 14px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: linear-gradient(135deg, rgba(122,173,255,.22), rgba(122,173,255,.08));
+      color: #f4f8ff;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+      transition: all .15s ease;
+      letter-spacing: .2px;
+    }
+    .city-popup-btn:hover {
+      background: linear-gradient(135deg, rgba(122,173,255,.36), rgba(200,107,255,.18));
+      border-color: rgba(176,208,255,.42);
+      transform: translateY(-1px);
+    }
+    .city-popup-btn.secondary {
+      background: rgba(255,255,255,.04);
+    }
+    .city-popup-btn.secondary:hover {
+      background: rgba(255,255,255,.08);
+    }
     .city-popup-btn:last-child { margin-bottom: 0; }
 
     /* === Leaflet Overrides === */
@@ -1656,8 +1766,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
   <div class="app-container">
     <!-- Top Tab Navigation -->
     <nav class="top-tabs">
-      <button class="top-tab active" id="tabMap" data-tab="map">🗺️ 我的足迹</button>
-      <button class="top-tab" id="tabTicket" data-tab="ticket">🎫 旅行票根</button>
+      <div class="top-tab-group">
+        <button class="top-tab active" id="tabMap" data-tab="map">
+          <span class="tab-icon">🗺️</span><span class="tab-label">我的足迹</span>
+        </button>
+        <button class="top-tab" id="tabTicket" data-tab="ticket">
+          <span class="tab-icon">🎫</span><span class="tab-label">旅行票根</span>
+        </button>
+      </div>
       <div class="top-tabs-right">
         <span class="top-tabs-name" id="topTabsName"></span>
         <button class="top-tabs-edit" id="topTabsEdit">✏️ 改名</button>
@@ -1775,17 +1891,17 @@ svg.leaflet-image-layer.leaflet-interactive path {
   <div class="province-modal" id="provinceModal">
     <div class="province-dialog">
       <div class="province-dialog-header">
-        <div class="province-dialog-title">选择省份和城市</div>
-        <button class="province-dialog-close" id="provinceModalClose">✕</button>
+        <div class="province-dialog-title">🗂️ 选择省份 / 城市</div>
+        <button class="province-dialog-close" id="provinceModalClose" title="关闭">✕</button>
       </div>
       <div class="province-dialog-body">
         <div class="province-list-panel" id="provinceListPanel"></div>
         <div class="city-list-panel" id="cityListPanel">
-          <div class="city-list-title" id="cityListTitle">← 请先选择省份</div>
+          <div class="city-list-title city-list-title-empty" id="cityListTitle">👈 请先在左侧选择省份</div>
           <div class="city-list-grid" id="cityListGrid"></div>
         </div>
       </div>
-      <div class="province-dialog-hint">💡 也可以直接在输入框手动输入海外城市或景点名称</div>
+      <div class="province-dialog-hint">💡 覆盖全国 34 个省级行政区；海外城市 / 特殊景点请直接在输入框手动输入</div>
     </div>
   </div>
 
@@ -2029,7 +2145,8 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
 
     function renderProvinceList() {
       DOM.provinceListPanel.innerHTML = '';
-      DOM.cityListTitle.textContent = '← 请先选择省份';
+      DOM.cityListTitle.textContent = '👈 请先在左侧选择省份';
+      DOM.cityListTitle.classList.add('city-list-title-empty');
       DOM.cityListGrid.innerHTML = '';
       Object.keys(PROVINCE_CITIES).forEach(prov => {
         const item = document.createElement('div');
@@ -2045,12 +2162,14 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
     }
 
     function renderCityList(province) {
-      DOM.cityListTitle.textContent = province + ' — 选择城市';
+      DOM.cityListTitle.textContent = `📍 ${province} · 选择城市`;
+      DOM.cityListTitle.classList.remove('city-list-title-empty');
       DOM.cityListGrid.innerHTML = '';
       (PROVINCE_CITIES[province] || []).forEach(city => {
         const item = document.createElement('div');
         item.className = 'city-select-item';
         item.textContent = city;
+        item.title = city;
         item.addEventListener('click', () => {
           DOM.cityInput.value = city;
           closeProvinceModal();
@@ -2171,8 +2290,26 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       DOM.customEmpty.style.display = cities.length ? 'none' : 'block';
       cities.forEach(c => {
         const st = cityVisitStatus(c);
-        const item = document.createElement('div'); item.className = 'custom-item';
-        item.innerHTML = `<div class="custom-meta"><span class="city-chip-dot" style="${st === 'want' ? 'background:rgba(200,107,255,.18);border:1px dashed rgba(200,107,255,.62)' : `background:${c.color}`}"></span><div class="custom-text"><div class="custom-name">${escapeHtml(c.name)}</div><div class="custom-sub">${escapeHtml(c.regionDisplay || c.region || c.country || '未知')}</div><span class="status-badge ${st}">${st === 'want' ? '🌟想去' : '✅去过'}</span></div></div><div class="custom-actions"><button class="toggle-btn ${st}" data-toggle-id="${c.id}">${st === 'want' ? '改去过' : '改想去'}</button><button class="delete-btn" data-del-id="${c.id}">×</button></div>`;
+        const dotStyle = st === 'want'
+          ? 'background:rgba(200,107,255,.18);border:1px dashed rgba(200,107,255,.62)'
+          : `background:${c.color}`;
+        const item = document.createElement('div');
+        item.className = 'custom-item';
+        item.innerHTML = `
+          <div class="custom-item-top">
+            <span class="city-chip-dot" style="${dotStyle}"></span>
+            <div class="custom-name">${escapeHtml(c.name)}</div>
+          </div>
+          <div class="custom-item-bottom">
+            <div class="custom-item-info">
+              <span class="custom-sub">${escapeHtml(c.regionDisplay || c.region || c.country || '未知')}</span>
+              <span class="status-badge ${st}">${st === 'want' ? '🌟想去' : '✅去过'}</span>
+            </div>
+            <div class="custom-actions">
+              <button class="toggle-btn ${st}" data-toggle-id="${c.id}">${st === 'want' ? '改成去过' : '改成想去'}</button>
+              <button class="delete-btn" data-del-id="${c.id}" title="删除">×</button>
+            </div>
+          </div>`;
         DOM.customList.appendChild(item);
       });
     }
@@ -2193,16 +2330,119 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
 
     function playParticleCelebration(ll, color) { if (!ll) return; const p = map.latLngToContainerPoint(ll); const ce = DOM.celebrationLayer; const ring = document.createElement('span'); ring.className = 'burst-ring'; ring.style.cssText = `left:${p.x}px;top:${p.y}px;color:${color}`; ce.appendChild(ring); setTimeout(() => ring.remove(), 1200); const core = document.createElement('span'); core.className = 'burst-core'; core.style.cssText = `left:${p.x}px;top:${p.y}px;color:${color}`; ce.appendChild(core); setTimeout(() => core.remove(), 1000); for (let i = 0; i < 12; i++) { const s = document.createElement('span'); const a = (Math.PI * 2 * i) / 12, d = 30 + (i % 3) * 10; s.className = 'spark'; s.style.cssText = `left:${p.x}px;top:${p.y}px;color:${color};--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d}px`; ce.appendChild(s); setTimeout(() => s.remove(), 1300); } }
 
+    // === City Action Popup (制作/查看票根) ===
+    function findTicketsByCity(cityName) {
+      const key = normalizeText(cityName);
+      return getTickets().filter(t => normalizeText(t.city) === key);
+    }
+
+    function openCityActionPopup(city, latlng) {
+      const st = cityVisitStatus(city);
+      const matched = findTicketsByCity(city.name);
+      const hasTicket = matched.length > 0;
+      const isVisited = st === 'visited';
+
+      let btnsHtml = '';
+      if (isVisited) {
+        btnsHtml += `<button class="city-popup-btn" data-popup-action="create" data-city="${escapeHtml(city.name)}">🎫 制作票根</button>`;
+        if (hasTicket) {
+          btnsHtml += `<button class="city-popup-btn secondary" data-popup-action="view" data-city="${escapeHtml(city.name)}">📖 查看票根 (${matched.length})</button>`;
+        }
+      } else {
+        btnsHtml += `<button class="city-popup-btn" data-popup-action="mark-visited" data-city-id="${city.id}">✅ 标记为已去过</button>`;
+        btnsHtml += `<button class="city-popup-btn secondary" data-popup-action="create" data-city="${escapeHtml(city.name)}">🎫 直接制作票根</button>`;
+      }
+
+      const subLabel = isVisited ? '已去过 · 制作专属票根' : '想去 · 打卡后可留念';
+      const html = `
+        <div>
+          <div class="city-popup-title">${city.icon || '📍'} ${escapeHtml(city.name)}</div>
+          <div class="city-popup-sub">${escapeHtml(city.regionDisplay || city.country || '')} · ${subLabel}</div>
+          ${btnsHtml}
+        </div>`;
+
+      L.popup({ className: 'city-action-popup', closeButton: true, autoClose: true, closeOnClick: true, maxWidth: 260, offset: [0, -6] })
+        .setLatLng(latlng)
+        .setContent(html)
+        .openOn(map);
+    }
+
+    function openRegionActionPopup(regionKey, regionMeta, latlng) {
+      if (!regionMeta) return;
+      const cities = getAllCities().filter(c => c.region === regionKey);
+      if (!cities.length) return;
+      const chips = cities.map(c => {
+        const st = cityVisitStatus(c);
+        return `<button class="city-popup-btn ${st === 'want' ? 'secondary' : ''}" data-popup-action="pick-city" data-city-id="${c.id}">${c.icon || '📍'} ${escapeHtml(c.name)} <span style="opacity:.6;font-weight:600;margin-left:4px;">${st === 'want' ? '想去' : '去过'}</span></button>`;
+      }).join('');
+      const html = `
+        <div>
+          <div class="city-popup-title">${escapeHtml(regionMeta.display)}</div>
+          <div class="city-popup-sub">${cities.length} 个城市 · 选择一个制作票根</div>
+          ${chips}
+        </div>`;
+      L.popup({ className: 'city-action-popup', closeButton: true, autoClose: true, closeOnClick: true, maxWidth: 280, offset: [0, -6] })
+        .setLatLng(latlng)
+        .setContent(html)
+        .openOn(map);
+    }
+
+    // Delegate clicks inside popups (Leaflet popups are appended to map container)
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('.city-popup-btn');
+      if (!btn) return;
+      const action = btn.dataset.popupAction;
+      if (action === 'create') {
+        const cityName = btn.dataset.city || '';
+        map.closePopup();
+        switchTab('ticket');
+        setTimeout(() => {
+          DOM.ticketCityInput.value = cityName;
+          if (!DOM.ticketDateInput.value) DOM.ticketDateInput.value = new Date().toISOString().slice(0, 10);
+          DOM.ticketCityInput.focus();
+          document.querySelector('.ticket-create-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 60);
+      } else if (action === 'view') {
+        const cityName = btn.dataset.city || '';
+        map.closePopup();
+        switchTab('ticket');
+        setTimeout(() => scrollToTicketByCity(cityName), 120);
+      } else if (action === 'mark-visited') {
+        const id = btn.dataset.cityId;
+        storageWrite(getCustomCities().map(i => i.id === id ? { ...i, visitStatus: 'visited' } : i));
+        map.closePopup();
+        render();
+        setStatus('已标记为去过 ✨', 'success');
+      } else if (action === 'pick-city') {
+        const id = btn.dataset.cityId;
+        const c = getAllCities().find(x => x.id === id);
+        map.closePopup();
+        if (c) setTimeout(() => openCityActionPopup(c, L.latLng(c.lat, c.lng)), 40);
+      }
+    });
+
+    function scrollToTicketByCity(cityName) {
+      const key = normalizeText(cityName);
+      const tickets = getTickets();
+      const target = tickets.find(t => normalizeText(t.city) === key);
+      if (!target) return;
+      const el = DOM.ticketGallery.querySelector(`[data-tid="${target.id}"]`);
+      if (!el) return;
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.add('ticket-highlight');
+      setTimeout(() => el.classList.remove('ticket-highlight'), 2000);
+    }
+
     function createRegionLayers(cities, regionMetaMap) {
       const bl = [];
       L.geoJSON({ ...geoCache.china, features: geoCache.china.features.filter(f => f.properties?.name) }, {
         style: f => { const m = regionMetaMap.get(f.properties.name); return regionStyle(!!m, m?.type, m?.status); },
-        onEachFeature: (f, layer) => { const rk = f.properties.name, m = regionMetaMap.get(rk), d = m?.display || normalizeRegionName(rk); layer.bindTooltip(tooltipHtml(d, m ? `${m.visitedCities.length + m.wantCities.length} 个地点` : '未点亮'), { sticky: true, direction: 'top', className: 'region-tooltip' }); layer.on('mouseover', () => { if (m) { layer.setStyle({ weight: 2.4, fillOpacity: 0.76 }); setHoverCard({ badge: m.status === 'want' ? '愿望' : '足迹', title: d, sub: '已点亮', pills: m.cities, accent: m.accent }); } }); layer.on('mouseout', () => { layer.setStyle(regionStyle(!!m, m?.type, m?.status)); resetHoverCard(); }); regionLayerGroup.addLayer(layer); if (m) bl.push(layer.getBounds()); }
+        onEachFeature: (f, layer) => { const rk = f.properties.name, m = regionMetaMap.get(rk), d = m?.display || normalizeRegionName(rk); layer.bindTooltip(tooltipHtml(d, m ? `${m.visitedCities.length + m.wantCities.length} 个地点` : '未点亮'), { sticky: true, direction: 'top', className: 'region-tooltip' }); layer.on('mouseover', () => { if (m) { layer.setStyle({ weight: 2.4, fillOpacity: 0.76 }); setHoverCard({ badge: m.status === 'want' ? '愿望' : '足迹', title: d, sub: '已点亮', pills: m.cities, accent: m.accent }); } }); layer.on('mouseout', () => { layer.setStyle(regionStyle(!!m, m?.type, m?.status)); resetHoverCard(); }); layer.on('click', e => { if (m) openRegionActionPopup(rk, m, e.latlng); }); regionLayerGroup.addLayer(layer); if (m) bl.push(layer.getBounds()); }
       });
       const wf = (geoCache.world?.features || []).filter(f => f.properties?.name && !WORLD_EXCLUDE.has(f.properties.name));
       L.geoJSON({ type: 'FeatureCollection', features: wf }, {
         style: f => { const m = regionMetaMap.get(f.properties.name); return regionStyle(!!m, 'foreign', m?.status); },
-        onEachFeature: (f, layer) => { const gn = f.properties.name, m = regionMetaMap.get(gn), d = m?.display || countryDisplay(gn); layer.bindTooltip(tooltipHtml(d, m ? '已点亮' : '未点亮'), { sticky: true, direction: 'top', className: 'region-tooltip' }); layer.on('mouseover', () => { if (m) { layer.setStyle({ weight: 2.6, fillOpacity: 0.78 }); setHoverCard({ badge: '海外', title: d, sub: '已点亮', pills: m.cities, accent: m.accent }); } }); layer.on('mouseout', () => { layer.setStyle(regionStyle(!!m, 'foreign', m?.status)); resetHoverCard(); }); regionLayerGroup.addLayer(layer); if (m) bl.push(layer.getBounds()); }
+        onEachFeature: (f, layer) => { const gn = f.properties.name, m = regionMetaMap.get(gn), d = m?.display || countryDisplay(gn); layer.bindTooltip(tooltipHtml(d, m ? '已点亮' : '未点亮'), { sticky: true, direction: 'top', className: 'region-tooltip' }); layer.on('mouseover', () => { if (m) { layer.setStyle({ weight: 2.6, fillOpacity: 0.78 }); setHoverCard({ badge: '海外', title: d, sub: '已点亮', pills: m.cities, accent: m.accent }); } }); layer.on('mouseout', () => { layer.setStyle(regionStyle(!!m, 'foreign', m?.status)); resetHoverCard(); }); layer.on('click', e => { if (m) openRegionActionPopup(gn, m, e.latlng); }); regionLayerGroup.addLayer(layer); if (m) bl.push(layer.getBounds()); }
       });
       return bl;
     }
@@ -2215,8 +2455,8 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
         hot.bindTooltip(tooltipHtml(`${c.icon || '📍'} ${c.name}`, `${c.regionDisplay || '未知'} · ${st === 'want' ? '想去' : '去过'}`), { sticky: true, direction: 'top', className: 'city-tooltip' });
         hot.on('mouseover', () => { hot.setStyle({ weight: 1.2, opacity: 0.96, fillOpacity: 0.2 }); setHoverCard({ badge: st === 'want' ? '愿望' : '足迹', title: `${c.icon || '📍'} ${c.name}`, sub: c.regionDisplay || '', pills: [c.kind === 'foreign' ? '海外' : '国内', st === 'want' ? '想去' : '去过'], accent }); });
         hot.on('mouseout', () => { hot.setStyle({ weight: 0, opacity: 0, fillOpacity: 0 }); resetHoverCard(); });
-        // Click to open ticket creation
-        hot.on('click', () => { if (st === 'visited') { switchTab('ticket'); DOM.ticketCityInput.value = c.name; } });
+        // Click to open ticket action popup
+        hot.on('click', e => { openCityActionPopup(c, e.latlng || L.latLng(c.lat, c.lng)); });
         cityLayerGroup.addLayer(hot);
         bl.push(hot.getBounds());
         if (c.id === lastAddedCityId) playParticleCelebration(L.latLng(c.lat, c.lng), accent);
