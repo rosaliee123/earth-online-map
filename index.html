@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>莫静柔 · 足迹地图</title>
+  <title>地球 Online 地图</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;800;900&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
@@ -776,37 +776,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
       font-size: 14px;
     }
 
-    .switcher {
-      display: flex;
-      gap: 10px;
-    }
-
-    .switch-btn {
-      flex: 1;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
-      color: #eaf1fb;
-      border-radius: 16px;
-      padding: 12px 14px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
-    }
-
-    .switch-btn:hover {
-      transform: translateY(-1px);
-      border-color: rgba(151, 186, 255, 0.22);
-      box-shadow: 0 12px 24px rgba(0,0,0,.18);
-    }
-
-    .switch-btn.active {
-      background: linear-gradient(135deg, rgba(125,167,255,.18), rgba(125,167,255,.06));
-      border-color: rgba(166, 198, 255, 0.32);
-      color: #ffffff;
-      box-shadow: 0 0 0 1px rgba(166,198,255,.12) inset, 0 12px 28px rgba(88, 118, 177, 0.18);
-    }
-
     .stats {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -997,6 +966,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     .share-btn {
       background: linear-gradient(135deg, rgba(255,209,137,.16), rgba(255,255,255,.04));
+    }
+
+    .ticket-btn {
+      background: linear-gradient(135deg, rgba(255,160,200,.16), rgba(255,255,255,.04));
     }
 
     .status-text { min-height: 20px; }
@@ -1410,6 +1383,422 @@ svg.leaflet-image-layer.leaflet-interactive path {
       margin-top: 10px;
     }
 
+    /* Province Selector */
+    .province-selector {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 6px;
+      max-height: 320px;
+      overflow-y: auto;
+      border-radius: 18px;
+      background: rgba(12, 22, 39, 0.98);
+      border: 1px solid rgba(255,255,255,.1);
+      box-shadow: 0 20px 50px rgba(0,0,0,.4);
+      z-index: 1000;
+      display: none;
+      padding: 12px;
+    }
+
+    .province-selector.show { display: block; }
+
+    .province-selector-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding: 0 4px;
+    }
+
+    .province-selector-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #cfe0ff;
+    }
+
+    .province-selector-back {
+      font-size: 11px;
+      color: #9cc2ff;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      background: rgba(122,173,255,.1);
+      border: none;
+      font-weight: 700;
+      display: none;
+    }
+
+    .province-selector-back.show { display: inline-block; }
+
+    .province-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .province-item, .city-select-item {
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #dce8ff;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      cursor: pointer;
+      text-align: center;
+      transition: all .15s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .province-item:hover, .city-select-item:hover {
+      background: rgba(122,173,255,.14);
+      border-color: rgba(176,208,255,.3);
+      color: #fff;
+    }
+
+    /* Ticket Stub Page */
+    .ticket-page {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      background:
+        radial-gradient(circle at 14% 18%, rgba(116, 164, 255, 0.12), transparent 24%),
+        radial-gradient(circle at 82% 80%, rgba(255, 197, 109, 0.08), transparent 24%),
+        linear-gradient(135deg, #06111f 0%, #0b1728 54%, #122239 100%);
+      overflow-y: auto;
+    }
+
+    .ticket-page.show { display: block; }
+
+    .ticket-page-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .ticket-page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    .ticket-page-title {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .ticket-back-btn {
+      padding: 10px 18px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      color: #eaf1fb;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
+
+    .ticket-back-btn:hover {
+      background: rgba(255,255,255,.1);
+      border-color: rgba(170,200,255,.24);
+    }
+
+    .ticket-create-section {
+      padding: 24px;
+      border-radius: 24px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      margin-bottom: 32px;
+    }
+
+    .ticket-form-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: #eef4ff;
+    }
+
+    .ticket-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .ticket-form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ticket-form-field label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .ticket-form-field input,
+    .ticket-form-field select {
+      padding: 11px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.09);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: border-color .2s ease;
+    }
+
+    .ticket-form-field input:focus,
+    .ticket-form-field select:focus {
+      border-color: rgba(157, 193, 255, 0.34);
+    }
+
+    .ticket-form-field select option {
+      background: #0b1728;
+      color: #fff;
+    }
+
+    .ticket-color-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .ticket-color-swatch {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all .2s ease;
+    }
+
+    .ticket-color-swatch.active {
+      border-color: #fff;
+      box-shadow: 0 0 0 3px rgba(255,255,255,.2);
+      transform: scale(1.1);
+    }
+
+    .ticket-photo-upload {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 80px;
+      border-radius: 14px;
+      border: 2px dashed rgba(255,255,255,.15);
+      background: rgba(255,255,255,.02);
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      transition: all .2s ease;
+    }
+
+    .ticket-photo-upload:hover {
+      border-color: rgba(157, 193, 255, 0.34);
+      background: rgba(255,255,255,.04);
+    }
+
+    .ticket-photo-upload.has-photo {
+      border-style: solid;
+      border-color: rgba(143,216,191,.4);
+      color: var(--success);
+    }
+
+    .ticket-create-btn {
+      padding: 14px 28px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(118,164,255,.28), rgba(118,164,255,.12));
+      border: 1px solid rgba(176,208,255,.3);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
+
+    .ticket-create-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(0,0,0,.2);
+    }
+
+    .ticket-gallery {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .ticket-stub {
+      display: flex;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      min-height: 180px;
+    }
+
+    .ticket-stub-left {
+      flex: 0 0 38%;
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .ticket-stub-right {
+      flex: 1;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .ticket-stub-right img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+      max-height: 160px;
+    }
+
+    .ticket-stub-right .ticket-no-photo {
+      width: 100%;
+      height: 140px;
+      border-radius: 12px;
+      background: rgba(0,0,0,.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      opacity: .5;
+    }
+
+    .ticket-stub-divider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 38%;
+      width: 1px;
+      border-left: 1px dashed rgba(0,0,0,.2);
+    }
+
+    .ticket-stub-notch-top,
+    .ticket-stub-notch-bottom {
+      position: absolute;
+      left: 38%;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--bg-1);
+      transform: translateX(-50%);
+    }
+
+    .ticket-stub-notch-top { top: -9px; }
+    .ticket-stub-notch-bottom { bottom: -9px; }
+
+    .ticket-next-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: .7;
+      margin-bottom: 4px;
+    }
+
+    .ticket-city-name {
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -.3px;
+      margin-bottom: 12px;
+    }
+
+    .ticket-date-row {
+      display: flex;
+      gap: 16px;
+    }
+
+    .ticket-date-field {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .ticket-date-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      opacity: .6;
+    }
+
+    .ticket-date-value {
+      font-size: 16px;
+      font-weight: 800;
+      font-family: Outfit, sans-serif;
+    }
+
+    .ticket-barcode {
+      margin-top: 12px;
+      height: 28px;
+      background: rgba(255,255,255,.9);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      padding: 4px 6px;
+      overflow: hidden;
+    }
+
+    .ticket-barcode-bar {
+      width: 2px;
+      height: 100%;
+      background: #1a1a1a;
+      border-radius: 1px;
+    }
+
+    .ticket-stub-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      justify-content: flex-end;
+    }
+
+    .ticket-action-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.06);
+      color: #eaf1fb;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+
+    .ticket-action-btn:hover {
+      background: rgba(255,255,255,.1);
+    }
+
+    .ticket-action-btn.delete {
+      color: #ff9b9b;
+      border-color: rgba(255,155,155,.2);
+    }
+
     .leaflet-container { font: inherit; }
     .leaflet-control-zoom {
       border: 0 !important;
@@ -1483,20 +1872,21 @@ svg.leaflet-image-layer.leaflet-interactive path {
       .custom-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .form-grid { grid-template-columns: 1fr; }
       .primary-btn { min-height: 46px; }
+      .ticket-form-grid { grid-template-columns: 1fr; }
+      .ticket-stub { flex-direction: column; }
+      .ticket-stub-left { flex: none; }
+      .ticket-stub-divider,
+      .ticket-stub-notch-top,
+      .ticket-stub-notch-bottom { display: none; }
     }
   </style>
 </head>
 <body>
   <main class="shell">
     <aside class="panel sidebar">
-      <div class="eyebrow">FORMAL EDITION · SIS MOJINGROU</div>
+      <div class="eyebrow">EARTH ONLINE · 足迹地图</div>
       <h1 id="pageTitle">地球 Online 地图</h1>
       <p class="subtitle" id="pageSubtitle">我的足迹地图</p>
-
-      <section class="switcher">
-        <button class="switch-btn active" id="moguModeBtn">蘑菇的地图</button>
-        <button class="switch-btn" id="visitorModeBtn">✨ 制作我的足迹地图</button>
-      </section>
 
       <section class="stats">
         <div class="stat-card">
@@ -1524,8 +1914,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
           <button class="type-chip" type="button" data-value="want">🌟 想去</button>
         </div>
         <div class="form-grid">
-          <div class="input-wrap">
-            <input id="cityInput" class="city-input" type="text" placeholder="输入城市名，例如：苏州、东京、纽约" />
+          <div class="input-wrap" id="inputWrap">
+            <input id="cityInput" class="city-input" type="text" placeholder="输入城市名，例如：苏州、东京、纽约" autocomplete="off" />
+            <div class="province-selector" id="provinceSelector">
+              <div class="province-selector-header">
+                <span class="province-selector-title" id="provinceSelectorTitle">选择省份</span>
+                <button class="province-selector-back" id="provinceSelectorBack">← 返回省份</button>
+              </div>
+              <div class="province-grid" id="provinceGrid"></div>
+            </div>
           </div>
           <button id="addCityBtn" class="primary-btn">添加城市</button>
         </div>
@@ -1533,6 +1930,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
           <button id="resetProfileBtn" class="ghost-btn">重置当前地图</button>
           <button id="editNameBtn" class="ghost-btn">✏️ 修改名字</button>
           <button id="shareBtn" class="ghost-btn share-btn">📸 截图分享</button>
+          <button id="ticketPageBtn" class="ghost-btn ticket-btn">🎫 旅行票根</button>
         </div>
         <div class="status-text" id="statusText"></div>
       </section>
@@ -1541,9 +1939,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
         <h2 class="card-title">地图图例</h2>
         <div class="legend-list">
           <div class="legend-row"><span class="swatch visited"></span><span>去过：彩色高亮真实边界</span></div>
-          <div class="legend-row"><span class="swatch.want"></span><span>想去：亮紫色高亮 / 虚线标记</span></div>
-          <div class="legend-row"><span class="swatch.foreign"></span><span>海外国家：按国家边界显示</span></div>
-          <div class="legend-row"><span class="swatch.new"></span><span>新添加城市：会触发点亮动效</span></div>
+          <div class="legend-row"><span class="swatch want"></span><span>想去：亮紫色高亮 / 虚线标记</span></div>
+          <div class="legend-row"><span class="swatch foreign"></span><span>海外国家：按国家边界显示</span></div>
+          <div class="legend-row"><span class="swatch new"></span><span>新添加城市：会触发点亮动效</span></div>
         </div>
       </section>
 
@@ -1554,9 +1952,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
       </section>
 
       <section class="card">
-        <h2 class="card-title">我新增的城市</h2>
+        <h2 class="card-title">我添加的城市</h2>
         <div class="custom-list" id="customList"></div>
-        <div class="empty-text" id="customEmpty">暂无新增城市</div>
+        <div class="empty-text" id="customEmpty">暂无城市</div>
       </section>
     </aside>
 
@@ -1595,6 +1993,40 @@ svg.leaflet-image-layer.leaflet-interactive path {
     </div>
   </div>
 
+  <!-- Ticket Page -->
+  <div class="ticket-page" id="ticketPage">
+    <div class="ticket-page-inner">
+      <div class="ticket-page-header">
+        <div class="ticket-page-title">🎫 旅行票根</div>
+        <button class="ticket-back-btn" id="ticketBackBtn">← 返回地图</button>
+      </div>
+      <div class="ticket-create-section">
+        <div class="ticket-form-title">制作新票根</div>
+        <div class="ticket-form-grid">
+          <div class="ticket-form-field">
+            <label>城市 / 地点名称</label>
+            <input id="ticketCityInput" type="text" placeholder="例如：上海、巴黎" />
+          </div>
+          <div class="ticket-form-field">
+            <label>日期</label>
+            <input id="ticketDateInput" type="date" />
+          </div>
+        </div>
+        <div class="ticket-form-field" style="margin-bottom:14px;">
+          <label>票根配色</label>
+          <div class="ticket-color-group" id="ticketColorGroup"></div>
+        </div>
+        <div class="ticket-form-field" style="margin-bottom:16px;">
+          <label>旅行照片（可选）</label>
+          <div class="ticket-photo-upload" id="ticketPhotoUpload">📷 点击上传照片</div>
+          <input type="file" id="ticketPhotoFile" accept="image/*" style="display:none;" />
+        </div>
+        <button class="ticket-create-btn" id="ticketCreateBtn">生成票根 🎫</button>
+      </div>
+      <div class="ticket-gallery" id="ticketGallery"></div>
+    </div>
+  </div>
+
   <script>
 /*!
  * html2canvas 1.4.1 <https://html2canvas.hertzen.com>
@@ -1625,6 +2057,17 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
     const CITY_PALETTE = [
       '#7FA6FF', '#D97C96', '#6BB89A', '#D7A45F', '#62B2C8', '#A183D8',
       '#DC8F6A', '#8BC16A', '#C26B72', '#5F9FDB', '#56B8A6', '#C7A256'
+    ];
+
+    const TICKET_COLORS = [
+      { name: '米色', bg: '#f5e6d3', text: '#4a3520' },
+      { name: '棕色', bg: '#c8855c', text: '#ffffff' },
+      { name: '浅灰', bg: '#e8e4df', text: '#3a3632' },
+      { name: '粉色', bg: '#f2c4b3', text: '#5a3028' },
+      { name: '薄荷', bg: '#c8e6d8', text: '#2a4a3a' },
+      { name: '天蓝', bg: '#b8d8e8', text: '#2a3e4a' },
+      { name: '淡紫', bg: '#d8c8e8', text: '#3a2a4a' },
+      { name: '鹅黄', bg: '#f5e8b8', text: '#4a4020' }
     ];
 
     const CHINA_REGION_ALIASES = {
@@ -1682,20 +2125,58 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       '武汉': '湖北省', '黄石': '湖北省', '十堰': '湖北省', '宜昌': '湖北省', '襄阳': '湖北省', '鄂州': '湖北省', '荆门': '湖北省', '孝感': '湖北省', '荆州': '湖北省', '黄冈': '湖北省', '咸宁': '湖北省', '随州': '湖北省', '恩施': '湖北省', '仙桃': '湖北省', '潜江': '湖北省', '天门': '湖北省', '神农架': '湖北省',
       '长沙': '湖南省', '株洲': '湖南省', '湘潭': '湖南省', '衡阳': '湖南省', '邵阳': '湖南省', '岳阳': '湖南省', '常德': '湖南省', '张家界': '湖南省', '益阳': '湖南省', '郴州': '湖南省', '永州': '湖南省', '怀化': '湖南省', '娄底': '湖南省', '湘西': '湖南省',
       '广州': '广东省', '深圳': '广东省', '珠海': '广东省', '汕头': '广东省', '佛山': '广东省', '韶关': '广东省', '湛江': '广东省', '肇庆': '广东省', '江门': '广东省', '茂名': '广东省', '惠州': '广东省', '梅州': '广东省', '汕尾': '广东省', '河源': '广东省', '阳江': '广东省', '清远': '广东省', '东莞': '广东省', '中山': '广东省', '潮州': '广东省', '揭阳': '广东省', '云浮': '广东省',
-      '海口': '海南省', '三亚': '海南省', '三沙': '海南省', '儋州': '海南省', '五指山': '海南省', '琼海': '海南省', '文昌': '海南省', '万宁': '海南省', '东方': '海南省', '定安': '海南省', '屯昌': '海南省', '澄迈': '海南省', '临高': '海南省', '白沙': '海南省', '昌江': '海南省', '乐东': '海南省', '陵水': '海南省', '保亭': '海南省', '琼中': '海南省',
+      '海口': '海南省', '三亚': '海南省', '三沙': '海南省', '儋州': '海南省', '五指山': '海南省', '琼海': '海南省', '文昌': '海南省', '万宁': '海南省', '东方': '海南省',
       '成都': '四川省', '自贡': '四川省', '攀枝花': '四川省', '泸州': '四川省', '德阳': '四川省', '绵阳': '四川省', '广元': '四川省', '遂宁': '四川省', '内江': '四川省', '乐山': '四川省', '南充': '四川省', '眉山': '四川省', '宜宾': '四川省', '广安': '四川省', '达州': '四川省', '雅安': '四川省', '巴中': '四川省', '资阳': '四川省', '阿坝': '四川省', '甘孜': '四川省', '凉山': '四川省',
       '贵阳': '贵州省', '六盘水': '贵州省', '遵义': '贵州省', '安顺': '贵州省', '毕节': '贵州省', '铜仁': '贵州省', '兴义': '贵州省', '凯里': '贵州省', '都匀': '贵州省',
       '昆明': '云南省', '曲靖': '云南省', '玉溪': '云南省', '保山': '云南省', '昭通': '云南省', '丽江': '云南省', '普洱': '云南省', '临沧': '云南省', '楚雄': '云南省', '红河': '云南省', '文山': '云南省', '西双版纳': '云南省', '大理': '云南省', '德宏': '云南省', '怒江': '云南省', '迪庆': '云南省',
       '西安': '陕西省', '铜川': '陕西省', '宝鸡': '陕西省', '咸阳': '陕西省', '渭南': '陕西省', '延安': '陕西省', '汉中': '陕西省', '榆林': '陕西省', '安康': '陕西省', '商洛': '陕西省',
       '兰州': '甘肃省', '嘉峪关': '甘肃省', '金昌': '甘肃省', '白银': '甘肃省', '天水': '甘肃省', '武威': '甘肃省', '张掖': '甘肃省', '平凉': '甘肃省', '酒泉': '甘肃省', '庆阳': '甘肃省', '定西': '甘肃省', '陇南': '甘肃省', '临夏': '甘肃省', '甘南': '甘肃省',
       '西宁': '青海省', '海东': '青海省', '海北': '青海省', '黄南': '青海省', '海南藏族自治州': '青海省', '果洛': '青海省', '玉树': '青海省', '海西': '青海省',
-      '台北': '台湾省', '新北': '台湾省', '桃园': '台湾省', '台中': '台湾省', '台南': '台湾省', '高雄': '台湾省', '基隆': '台湾省', '新竹': '台湾省', '嘉义': '台湾省', '宜兰': '台湾省', '苗栗': '台湾省', '彰化': '台湾省', '南投': '台湾省', '云林': '台湾省', '屏东': '台湾省', '台东': '台湾省', '花莲': '台湾省', '澎湖': '台湾省',
-      '呼和浩特': '内蒙古自治区', '包头': '内蒙古自治区', '乌海': '内蒙古自治区', '赤峰': '内蒙古自治区', '通辽': '内蒙古自治区', '鄂尔多斯': '内蒙古自治区', '呼伦贝尔': '内蒙古自治区', '巴彦淖尔': '内蒙古自治区', '乌兰察布': '内蒙古自治区', '兴安盟': '内蒙古自治区', '锡林郭勒': '内蒙古自治区', '阿拉善盟': '内蒙古自治区',
+      '台北': '台湾省', '新北': '台湾省', '桃园': '台湾省', '台中': '台湾省', '台南': '台湾省', '高雄': '台湾省', '基隆': '台湾省', '新竹': '台湾省', '嘉义': '台湾省',
+      '呼和浩特': '内蒙古自治区', '包头': '内蒙古自治区', '乌海': '内蒙古自治区', '赤峰': '内蒙古自治区', '通辽': '内蒙古自治区', '鄂尔多斯': '内蒙古自治区', '呼伦贝尔': '内蒙古自治区', '巴彦淖尔': '内蒙古自治区', '乌兰察布': '内蒙古自治区',
       '南宁': '广西壮族自治区', '柳州': '广西壮族自治区', '桂林': '广西壮族自治区', '梧州': '广西壮族自治区', '北海': '广西壮族自治区', '防城港': '广西壮族自治区', '钦州': '广西壮族自治区', '贵港': '广西壮族自治区', '玉林': '广西壮族自治区', '百色': '广西壮族自治区', '贺州': '广西壮族自治区', '河池': '广西壮族自治区', '来宾': '广西壮族自治区', '崇左': '广西壮族自治区',
       '拉萨': '西藏自治区', '日喀则': '西藏自治区', '昌都': '西藏自治区', '林芝': '西藏自治区', '山南': '西藏自治区', '那曲': '西藏自治区', '阿里': '西藏自治区',
       '银川': '宁夏回族自治区', '石嘴山': '宁夏回族自治区', '吴忠': '宁夏回族自治区', '固原': '宁夏回族自治区', '中卫': '宁夏回族自治区',
-      '乌鲁木齐': '新疆维吾尔自治区', '克拉玛依': '新疆维吾尔自治区', '吐鲁番': '新疆维吾尔自治区', '哈密': '新疆维吾尔自治区', '昌吉': '新疆维吾尔自治区', '博尔塔拉': '新疆维吾尔自治区', '巴音郭楞': '新疆维吾尔自治区', '阿克苏': '新疆维吾尔自治区', '克孜勒苏': '新疆维吾尔自治区', '喀什': '新疆维吾尔自治区', '和田': '新疆维吾尔自治区', '伊犁': '新疆维吾尔自治区', '塔城': '新疆维吾尔自治区', '阿勒泰': '新疆维吾尔自治区', '石河子': '新疆维吾尔自治区', '阿拉尔': '新疆维吾尔自治区', '图木舒克': '新疆维吾尔自治区', '五家渠': '新疆维吾尔自治区', '北屯': '新疆维吾尔自治区',
+      '乌鲁木齐': '新疆维吾尔自治区', '克拉玛依': '新疆维吾尔自治区', '吐鲁番': '新疆维吾尔自治区', '哈密': '新疆维吾尔自治区', '昌吉': '新疆维吾尔自治区', '阿克苏': '新疆维吾尔自治区', '喀什': '新疆维吾尔自治区', '和田': '新疆维吾尔自治区', '伊犁': '新疆维吾尔自治区', '塔城': '新疆维吾尔自治区', '阿勒泰': '新疆维吾尔自治区',
       '香港': '香港特别行政区', '澳门': '澳门特别行政区'
+    };
+
+    // Province -> cities for the selector
+    const PROVINCE_CITIES = {
+      '北京': ['北京'],
+      '天津': ['天津'],
+      '上海': ['上海'],
+      '重庆': ['重庆', '万州', '涪陵', '江津', '合川', '永川'],
+      '河北': ['石家庄', '唐山', '秦皇岛', '邯郸', '保定', '张家口', '承德', '沧州', '廊坊'],
+      '山西': ['太原', '大同', '阳泉', '长治', '晋城', '晋中', '运城', '临汾'],
+      '辽宁': ['沈阳', '大连', '鞍山', '抚顺', '丹东', '锦州', '营口', '盘锦'],
+      '吉林': ['长春', '吉林', '四平', '通化', '白山', '松原', '延边'],
+      '黑龙江': ['哈尔滨', '齐齐哈尔', '大庆', '佳木斯', '牡丹江', '绥化'],
+      '江苏': ['南京', '无锡', '徐州', '常州', '苏州', '南通', '连云港', '淮安', '盐城', '扬州', '镇江', '泰州', '宿迁'],
+      '浙江': ['杭州', '宁波', '温州', '嘉兴', '湖州', '绍兴', '金华', '衢州', '舟山', '台州', '丽水'],
+      '安徽': ['合肥', '芜湖', '蚌埠', '淮南', '马鞍山', '安庆', '黄山', '滁州', '阜阳', '宿州', '六安', '宣城'],
+      '福建': ['福州', '厦门', '莆田', '三明', '泉州', '漳州', '南平', '龙岩', '宁德'],
+      '江西': ['南昌', '景德镇', '九江', '赣州', '吉安', '宜春', '抚州', '上饶'],
+      '山东': ['济南', '青岛', '淄博', '枣庄', '东营', '烟台', '潍坊', '济宁', '泰安', '威海', '日照', '临沂', '德州', '聊城', '滨州', '菏泽'],
+      '河南': ['郑州', '开封', '洛阳', '平顶山', '安阳', '新乡', '焦作', '许昌', '南阳', '商丘', '信阳', '周口', '驻马店'],
+      '湖北': ['武汉', '黄石', '十堰', '宜昌', '襄阳', '荆门', '孝感', '荆州', '黄冈', '咸宁', '随州', '恩施'],
+      '湖南': ['长沙', '株洲', '湘潭', '衡阳', '邵阳', '岳阳', '常德', '张家界', '益阳', '郴州', '永州', '怀化', '娄底', '湘西'],
+      '广东': ['广州', '深圳', '珠海', '汕头', '佛山', '韶关', '湛江', '肇庆', '江门', '茂名', '惠州', '梅州', '东莞', '中山', '潮州', '揭阳'],
+      '海南': ['海口', '三亚', '三沙', '儋州', '琼海', '文昌', '万宁'],
+      '四川': ['成都', '自贡', '攀枝花', '泸州', '德阳', '绵阳', '广元', '遂宁', '内江', '乐山', '南充', '眉山', '宜宾', '广安', '达州', '雅安', '巴中'],
+      '贵州': ['贵阳', '六盘水', '遵义', '安顺', '毕节', '铜仁', '兴义', '凯里', '都匀'],
+      '云南': ['昆明', '曲靖', '玉溪', '保山', '昭通', '丽江', '普洱', '临沧', '大理', '西双版纳', '德宏', '迪庆'],
+      '陕西': ['西安', '铜川', '宝鸡', '咸阳', '渭南', '延安', '汉中', '榆林', '安康', '商洛'],
+      '甘肃': ['兰州', '嘉峪关', '金昌', '天水', '武威', '张掖', '酒泉', '庆阳', '定西', '陇南'],
+      '青海': ['西宁', '海东', '海北', '黄南', '果洛', '玉树', '海西'],
+      '台湾': ['台北', '新北', '桃园', '台中', '台南', '高雄', '基隆', '新竹'],
+      '内蒙古': ['呼和浩特', '包头', '乌海', '赤峰', '通辽', '鄂尔多斯', '呼伦贝尔', '巴彦淖尔', '乌兰察布'],
+      '广西': ['南宁', '柳州', '桂林', '梧州', '北海', '防城港', '钦州', '贵港', '玉林', '百色', '贺州', '河池', '来宾', '崇左'],
+      '西藏': ['拉萨', '日喀则', '昌都', '林芝', '山南', '那曲'],
+      '宁夏': ['银川', '石嘴山', '吴忠', '固原', '中卫'],
+      '新疆': ['乌鲁木齐', '克拉玛依', '吐鲁番', '哈密', '昌吉', '阿克苏', '喀什', '和田', '伊犁', '塔城', '阿勒泰'],
+      '香港': ['香港'],
+      '澳门': ['澳门']
     };
 
     const CHINA_SCENIC_TO_CITY = {
@@ -1745,7 +2226,6 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       Object.entries(CHINA_REGION_ALIASES).flatMap(([canonical, aliases]) => aliases.map(alias => [alias, canonical]))
     );
 
-    // 世界地图国家英文名 -> 中文显示名（覆盖常见旅行目的地，其余回退英文名）
     const COUNTRY_ZH = {
       'Thailand': '泰国', 'Japan': '日本', 'South Korea': '韩国', 'North Korea': '朝鲜',
       'Vietnam': '越南', 'Cambodia': '柬埔寨', 'Laos': '老挝', 'Myanmar': '缅甸',
@@ -1765,46 +2245,35 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       'United Republic of Tanzania': '坦桑尼亚', 'Australia': '澳大利亚', 'New Zealand': '新西兰', 'Fiji': '斐济'
     };
 
-    // 输入别名（中/英，标准化后）-> 世界地图国家英文名，用于匹配 GeoJSON 边界
     const COUNTRY_ALIASES = {
       '泰国': 'Thailand', 'thailand': 'Thailand',
       '日本': 'Japan', 'japan': 'Japan',
-      '韩国': 'South Korea', '南韩': 'South Korea', 'korea': 'South Korea', 'southkorea': 'South Korea', 'republicofkorea': 'South Korea',
-      '朝鲜': 'North Korea', 'northkorea': 'North Korea',
+      '韩国': 'South Korea', '南韩': 'South Korea', 'korea': 'South Korea', 'southkorea': 'South Korea',
       '越南': 'Vietnam', 'vietnam': 'Vietnam',
       '柬埔寨': 'Cambodia', 'cambodia': 'Cambodia',
       '老挝': 'Laos', 'laos': 'Laos',
-      '缅甸': 'Myanmar', 'myanmar': 'Myanmar', 'burma': 'Myanmar',
+      '缅甸': 'Myanmar', 'myanmar': 'Myanmar',
       '马来西亚': 'Malaysia', 'malaysia': 'Malaysia',
       '印尼': 'Indonesia', '印度尼西亚': 'Indonesia', 'indonesia': 'Indonesia',
       '菲律宾': 'Philippines', 'philippines': 'Philippines',
-      '文莱': 'Brunei', 'brunei': 'Brunei',
       '印度': 'India', 'india': 'India',
       '尼泊尔': 'Nepal', 'nepal': 'Nepal',
-      '不丹': 'Bhutan', 'bhutan': 'Bhutan',
       '斯里兰卡': 'Sri Lanka', 'srilanka': 'Sri Lanka',
-      '孟加拉国': 'Bangladesh', '孟加拉': 'Bangladesh', 'bangladesh': 'Bangladesh',
       '巴基斯坦': 'Pakistan', 'pakistan': 'Pakistan',
       '蒙古': 'Mongolia', 'mongolia': 'Mongolia',
-      '哈萨克斯坦': 'Kazakhstan', 'kazakhstan': 'Kazakhstan',
-      '美国': 'United States of America', '美利坚': 'United States of America', 'usa': 'United States of America', 'us': 'United States of America', 'unitedstates': 'United States of America', 'unitedstatesofamerica': 'United States of America', 'america': 'United States of America',
+      '美国': 'United States of America', 'usa': 'United States of America', 'us': 'United States of America', 'america': 'United States of America',
       '加拿大': 'Canada', 'canada': 'Canada',
       '墨西哥': 'Mexico', 'mexico': 'Mexico',
-      '古巴': 'Cuba', 'cuba': 'Cuba',
       '巴西': 'Brazil', 'brazil': 'Brazil',
       '阿根廷': 'Argentina', 'argentina': 'Argentina',
-      '智利': 'Chile', 'chile': 'Chile',
-      '秘鲁': 'Peru', 'peru': 'Peru',
-      '哥伦比亚': 'Colombia', 'colombia': 'Colombia',
-      '英国': 'United Kingdom', '英格兰': 'United Kingdom', 'uk': 'United Kingdom', 'unitedkingdom': 'United Kingdom', 'england': 'United Kingdom', 'britain': 'United Kingdom', 'greatbritain': 'United Kingdom',
+      '英国': 'United Kingdom', 'uk': 'United Kingdom', 'england': 'United Kingdom',
       '爱尔兰': 'Ireland', 'ireland': 'Ireland',
       '法国': 'France', 'france': 'France',
       '德国': 'Germany', 'germany': 'Germany',
       '意大利': 'Italy', 'italy': 'Italy',
       '西班牙': 'Spain', 'spain': 'Spain',
       '葡萄牙': 'Portugal', 'portugal': 'Portugal',
-      '荷兰': 'Netherlands', 'netherlands': 'Netherlands', 'holland': 'Netherlands',
-      '比利时': 'Belgium', 'belgium': 'Belgium',
+      '荷兰': 'Netherlands', 'netherlands': 'Netherlands',
       '瑞士': 'Switzerland', 'switzerland': 'Switzerland',
       '奥地利': 'Austria', 'austria': 'Austria',
       '希腊': 'Greece', 'greece': 'Greece',
@@ -1813,18 +2282,11 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       '芬兰': 'Finland', 'finland': 'Finland',
       '丹麦': 'Denmark', 'denmark': 'Denmark',
       '冰岛': 'Iceland', 'iceland': 'Iceland',
-      '波兰': 'Poland', 'poland': 'Poland',
-      '捷克': 'Czech Republic', 'czech': 'Czech Republic', 'czechrepublic': 'Czech Republic',
-      '匈牙利': 'Hungary', 'hungary': 'Hungary',
-      '克罗地亚': 'Croatia', 'croatia': 'Croatia',
-      '俄罗斯': 'Russia', 'russia': 'Russia', 'russianfederation': 'Russia',
-      '乌克兰': 'Ukraine', 'ukraine': 'Ukraine',
+      '俄罗斯': 'Russia', 'russia': 'Russia',
       '土耳其': 'Turkey', 'turkey': 'Turkey',
       '以色列': 'Israel', 'israel': 'Israel',
-      '阿联酋': 'United Arab Emirates', '阿拉伯联合酋长国': 'United Arab Emirates', 'uae': 'United Arab Emirates', 'unitedarabemirates': 'United Arab Emirates', 'dubai': 'United Arab Emirates', '迪拜': 'United Arab Emirates', '阿布扎比': 'United Arab Emirates',
-      '沙特阿拉伯': 'Saudi Arabia', '沙特': 'Saudi Arabia', 'saudiarabia': 'Saudi Arabia',
-      '卡塔尔': 'Qatar', 'qatar': 'Qatar',
-      '伊朗': 'Iran', 'iran': 'Iran',
+      '阿联酋': 'United Arab Emirates', '迪拜': 'United Arab Emirates', 'uae': 'United Arab Emirates',
+      '沙特': 'Saudi Arabia', 'saudiarabia': 'Saudi Arabia',
       '埃及': 'Egypt', 'egypt': 'Egypt',
       '摩洛哥': 'Morocco', 'morocco': 'Morocco',
       '南非': 'South Africa', 'southafrica': 'South Africa',
@@ -1835,7 +2297,6 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       '斐济': 'Fiji', 'fiji': 'Fiji'
     };
 
-    // 世界图层需要排除的区域（中国大陆与台湾由中国省份图层负责，避免重复覆盖）
     const WORLD_EXCLUDE = new Set(['China', 'Taiwan']);
 
     function countryDisplay(geoName) {
@@ -1862,61 +2323,10 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       return bounds.isValid() ? bounds.getCenter() : null;
     }
 
-    const BASE_CITIES = [
-      { name: '长春', region: '吉林省', regionDisplay: '吉林', lat: 43.8171, lng: 125.3235, icon: '❄️', color: '#6C91D9', source: 'base' },
-      { name: '北京', region: '北京市', regionDisplay: '北京', lat: 39.9042, lng: 116.4074, icon: '🏯', color: '#E36D82', source: 'base' },
-      { name: '运城', region: '山西省', regionDisplay: '山西', lat: 35.0264, lng: 111.0075, icon: '🏛️', color: '#C78A48', source: 'base' },
-      { name: '西安', region: '陕西省', regionDisplay: '陕西', lat: 34.3416, lng: 108.9398, icon: '🏮', color: '#C45D55', source: 'base' },
-      { name: '上海', region: '上海市', regionDisplay: '上海', lat: 31.2304, lng: 121.4737, icon: '🌃', color: '#5DA9E9', source: 'base' },
-      { name: '杭州', region: '浙江省', regionDisplay: '浙江', lat: 30.2741, lng: 120.1551, icon: '🌿', color: '#55B690', source: 'base' },
-      { name: '厦门', region: '福建省', regionDisplay: '福建', lat: 24.4798, lng: 118.0894, icon: '🌊', color: '#4FA8B8', source: 'base' },
-      { name: '香港', region: '香港特别行政区', regionDisplay: '香港', lat: 22.3193, lng: 114.1694, icon: '✨', color: '#9A78D3', source: 'base' },
-      { name: '惠州', region: '广东省', regionDisplay: '广东', lat: 23.1115, lng: 114.4152, icon: '🌴', color: '#8EBC66', source: 'base' },
-      { name: '深圳', region: '广东省', regionDisplay: '广东', lat: 22.5431, lng: 114.0579, icon: '🚀', color: '#4FB29A', source: 'base' },
-      { name: '广州', region: '广东省', regionDisplay: '广东', lat: 23.1291, lng: 113.2644, icon: '🦁', color: '#D58A4D', source: 'base' },
-      { name: '重庆', region: '重庆市', regionDisplay: '重庆', lat: 29.5630, lng: 106.5516, icon: '🌉', color: '#D97B93', source: 'base' },
-      { name: '成都', region: '四川省', regionDisplay: '四川', lat: 30.5728, lng: 104.0668, icon: '🐼', color: '#56B8A6', source: 'base' },
-      { name: '绵阳', region: '四川省', regionDisplay: '四川', lat: 31.4675, lng: 104.6796, icon: '🌤️', color: '#6BBFC0', source: 'base' },
-      { name: '乐山', region: '四川省', regionDisplay: '四川', lat: 29.5521, lng: 103.7654, icon: '🗿', color: '#C6A851', source: 'base' },
-      { name: '贵阳', region: '贵州省', regionDisplay: '贵州', lat: 26.6470, lng: 106.6302, icon: '⛰️', color: '#4D9C92', source: 'base' },
-      { name: '六盘水', region: '贵州省', regionDisplay: '贵州', lat: 26.5944, lng: 104.8302, icon: '🌫️', color: '#6A80D2', source: 'base' },
-      { name: '兴义', region: '贵州省', regionDisplay: '贵州', lat: 25.0881, lng: 104.8955, icon: '🏞️', color: '#8A6CCB', source: 'base' },
-      { name: '昆明', region: '云南省', regionDisplay: '云南', lat: 25.0406, lng: 102.7122, icon: '💐', color: '#D66F9A', source: 'base' },
-      { name: '大理', region: '云南省', regionDisplay: '云南', lat: 25.6065, lng: 100.2676, icon: '🌙', color: '#5F9FDB', source: 'base' },
-      { name: '丽江', region: '云南省', regionDisplay: '云南', lat: 26.8721, lng: 100.2297, icon: '🏔️', color: '#88B95A', source: 'base' },
-      { name: '曼谷', region: 'Thailand', regionDisplay: '泰国', country: 'Thailand', kind: 'foreign', lat: 13.7563, lng: 100.5018, icon: '🌴', color: '#D7A55D', source: 'base' },
-      { name: '清迈', region: 'Thailand', regionDisplay: '泰国', country: 'Thailand', kind: 'foreign', lat: 18.7883, lng: 98.9853, icon: '🐘', color: '#7EB67A', source: 'base' },
-      { name: '沙美岛', region: 'Thailand', regionDisplay: '泰国', country: 'Thailand', kind: 'foreign', lat: 12.5681, lng: 101.4530, icon: '🏝️', color: '#62B7CE', source: 'base' }
-    ];
-
-    const PROFILE_CONFIG = {
-      mogu: {
-        key: 'mogu',
-        storageKey: 'footprint_map_mogu_custom_v2',
-        nameKey: 'footprint_map_mogu_name_v1',
-        defaultName: '蘑菇',
-        title: '地球 Online 地图',
-        subtitle: '我的足迹地图',
-        topbarTitle: '地球 Online 地图',
-        topbarSub: '我的足迹地图',
-        emptyHint: '',
-        baseCities: BASE_CITIES,
-        resetConfirm: '确定要清空蘑菇地图里“后来新增”的城市吗？原始足迹不会受影响。'
-      },
-      visitor: {
-        key: 'visitor',
-        storageKey: 'footprint_map_visitor_custom_v2',
-        nameKey: 'footprint_map_visitor_name_v1',
-        defaultName: '我的',
-        title: '地球 Online 地图',
-        subtitle: '我的足迹地图',
-        topbarTitle: '地球 Online 地图',
-        topbarSub: '我的足迹地图',
-        emptyHint: '',
-        baseCities: [],
-        resetConfirm: '确定要清空你自己的足迹地图吗？这个操作会删除你当前保存的所有自定义城市。'
-      }
-    };
+    // Universal profile - no more mogu/visitor distinction
+    const STORAGE_KEY = 'footprint_map_universal_custom_v2';
+    const NAME_KEY = 'footprint_map_universal_name_v1';
+    const TICKET_KEY = 'footprint_map_tickets_v1';
 
     const DOM = {
       pageTitle: document.getElementById('pageTitle'),
@@ -1928,6 +2338,7 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       resetProfileBtn: document.getElementById('resetProfileBtn'),
       editNameBtn: document.getElementById('editNameBtn'),
       shareBtn: document.getElementById('shareBtn'),
+      ticketPageBtn: document.getElementById('ticketPageBtn'),
       visitTypeGroup: document.getElementById('visitTypeGroup'),
       statusText: document.getElementById('statusText'),
       cityPalette: document.getElementById('cityPalette'),
@@ -1936,12 +2347,24 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       customEmpty: document.getElementById('customEmpty'),
       celebrationLayer: document.getElementById('celebrationLayer'),
       hoverCard: document.getElementById('hoverCard'),
-      moguModeBtn: document.getElementById('moguModeBtn'),
-      visitorModeBtn: document.getElementById('visitorModeBtn'),
       nameModal: document.getElementById('nameModal'),
       nameModalInput: document.getElementById('nameModalInput'),
       nameModalError: document.getElementById('nameModalError'),
-      nameModalConfirm: document.getElementById('nameModalConfirm')
+      nameModalConfirm: document.getElementById('nameModalConfirm'),
+      inputWrap: document.getElementById('inputWrap'),
+      provinceSelector: document.getElementById('provinceSelector'),
+      provinceSelectorTitle: document.getElementById('provinceSelectorTitle'),
+      provinceSelectorBack: document.getElementById('provinceSelectorBack'),
+      provinceGrid: document.getElementById('provinceGrid'),
+      ticketPage: document.getElementById('ticketPage'),
+      ticketBackBtn: document.getElementById('ticketBackBtn'),
+      ticketCityInput: document.getElementById('ticketCityInput'),
+      ticketDateInput: document.getElementById('ticketDateInput'),
+      ticketColorGroup: document.getElementById('ticketColorGroup'),
+      ticketPhotoUpload: document.getElementById('ticketPhotoUpload'),
+      ticketPhotoFile: document.getElementById('ticketPhotoFile'),
+      ticketCreateBtn: document.getElementById('ticketCreateBtn'),
+      ticketGallery: document.getElementById('ticketGallery')
     };
 
     const map = L.map('map', {
@@ -1960,11 +2383,12 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     let geoCache = { china: null, world: null };
-    let activeProfile = location.hash === '#visitor' ? 'visitor' : 'mogu';
     let regionLayerGroup = L.layerGroup().addTo(map);
     let cityLayerGroup = L.layerGroup().addTo(map);
     let lastAddedCityId = null;
     let currentVisitType = 'visited';
+    let selectedTicketColor = TICKET_COLORS[0];
+    let ticketPhotoData = null;
 
     function normalizeText(value) {
       return (value || '').trim().toLowerCase().replace(/\s+/g, '');
@@ -2003,7 +2427,6 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       return Boolean(regionKey && (matchChinaRegion(regionKey) || regionKey.endsWith('省') || regionKey.endsWith('市') || regionKey.includes('特别行政区') || regionKey.includes('自治区')));
     }
 
-    // 判断城市属于国内还是海外
     function cityKind(city) {
       if (city.kind) return city.kind;
       return isDomesticRegion(city.region) ? 'domestic' : 'foreign';
@@ -2013,13 +2436,11 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       return city.visitStatus === 'want' ? 'want' : 'visited';
     }
 
-    // 将任意国家名（中/英）匹配到世界地图 GeoJSON 的国家英文名
     function matchWorldCountry(rawName) {
       if (!rawName) return null;
       const key = normalizeText(rawName);
       if (!key) return null;
       if (COUNTRY_ALIASES[key]) return COUNTRY_ALIASES[key];
-      // 直接与 GeoJSON 国家名比对（标准化后的精确 / 包含匹配）
       if (geoCache.world && Array.isArray(geoCache.world.features)) {
         const norm = geoCache.world.features
           .map(f => f && f.properties && f.properties.name)
@@ -2035,34 +2456,26 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       return null;
     }
 
-    function storageRead(profileKey) {
+    function storageRead() {
       try {
-        const raw = localStorage.getItem(PROFILE_CONFIG[profileKey].storageKey);
+        const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return [];
         const parsed = JSON.parse(raw);
         return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        return [];
-      }
+      } catch { return []; }
     }
 
-    function storageWrite(profileKey, cities) {
-      localStorage.setItem(PROFILE_CONFIG[profileKey].storageKey, JSON.stringify(cities));
+    function storageWrite(cities) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cities));
     }
 
-    function getCurrentProfileConfig() {
-      return PROFILE_CONFIG[activeProfile];
+    function getProfileName() {
+      const saved = localStorage.getItem(NAME_KEY);
+      return (saved || '').trim() || '';
     }
 
-    function getProfileName(profileKey = activeProfile) {
-      const config = PROFILE_CONFIG[profileKey];
-      const saved = localStorage.getItem(config.nameKey);
-      return (saved || config.defaultName || '').trim() || config.defaultName;
-    }
-
-    function setProfileName(profileKey, name) {
-      const config = PROFILE_CONFIG[profileKey];
-      localStorage.setItem(config.nameKey, (name || '').trim());
+    function setProfileName(name) {
+      localStorage.setItem(NAME_KEY, (name || '').trim());
     }
 
     function formatMapTitle(name) {
@@ -2070,13 +2483,12 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       return `${safe}的地球 Online 地图`;
     }
 
-    function promptForProfileName(profileKey = activeProfile, force = false) {
-      const current = getProfileName(profileKey);
-      const isVisitor = profileKey === 'visitor';
+    function promptForProfileName(force = false) {
+      const current = getProfileName();
       DOM.nameModal.classList.add('show');
       DOM.nameModal.setAttribute('aria-hidden', 'false');
       DOM.nameModalInput.value = force ? '' : current;
-      DOM.nameModalInput.placeholder = isVisitor ? '请输入你的名字' : '请输入地图显示的名字';
+      DOM.nameModalInput.placeholder = '请输入你的名字';
       DOM.nameModalError.textContent = '';
 
       return new Promise(resolve => {
@@ -2094,7 +2506,7 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
             DOM.nameModalInput.focus();
             return;
           }
-          setProfileName(profileKey, trimmed);
+          setProfileName(trimmed);
           cleanup();
           resolve(trimmed);
         };
@@ -2112,13 +2524,12 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       });
     }
 
-    function getCustomCities(profileKey = activeProfile) {
-      return storageRead(profileKey);
+    function getCustomCities() {
+      return storageRead();
     }
 
-    function getAllCities(profileKey = activeProfile) {
-      const config = PROFILE_CONFIG[profileKey];
-      return [...config.baseCities, ...getCustomCities(profileKey)];
+    function getAllCities() {
+      return getCustomCities();
     }
 
     function getRegionMeta(cities) {
@@ -2151,12 +2562,7 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       const visited = cities.filter(city => cityVisitStatus(city) === 'visited').length;
       const want = cities.filter(city => cityVisitStatus(city) === 'want').length;
       const regionKeys = new Set(cities.filter(city => cityVisitStatus(city) === 'visited').map(city => city.region).filter(Boolean));
-      return {
-        total: cities.length,
-        regions: regionKeys.size,
-        visited,
-        want
-      };
+      return { total: cities.length, regions: regionKeys.size, visited, want };
     }
 
     function setStatus(message = '', type = '') {
@@ -2208,35 +2614,14 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
 
     function regionStyle(active, type = 'domestic', status = 'visited') {
       if (!active) {
-        return {
-          color: 'rgba(123,141,164,.38)',
-          weight: 1,
-          fillColor: 'rgba(255,255,255,.04)',
-          fillOpacity: 0.22
-        };
+        return { color: 'rgba(123,141,164,.38)', weight: 1, fillColor: 'rgba(255,255,255,.04)', fillOpacity: 0.22 };
       }
       if (status === 'want') {
-        return {
-          color: 'rgba(200,107,255,.94)',
-          weight: 1.8,
-          dashArray: '6 4',
-          fillColor: 'rgba(200,107,255,.16)',
-          fillOpacity: 0.48
-        };
+        return { color: 'rgba(200,107,255,.94)', weight: 1.8, dashArray: '6 4', fillColor: 'rgba(200,107,255,.16)', fillOpacity: 0.48 };
       }
       return type === 'foreign'
-        ? {
-            color: 'rgba(255,224,173,.92)',
-            weight: 1.8,
-            fillColor: 'rgba(255,202,112,.30)',
-            fillOpacity: 0.62
-          }
-        : {
-            color: 'rgba(176,208,255,.82)',
-            weight: 1.8,
-            fillColor: 'rgba(121,174,255,.26)',
-            fillOpacity: 0.62
-          };
+        ? { color: 'rgba(255,224,173,.92)', weight: 1.8, fillColor: 'rgba(255,202,112,.30)', fillOpacity: 0.62 }
+        : { color: 'rgba(176,208,255,.82)', weight: 1.8, fillColor: 'rgba(121,174,255,.26)', fillOpacity: 0.62 };
     }
 
     function playParticleCelebration(latlng, color) {
@@ -2248,14 +2633,12 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       ring.style.top = `${point.y}px`;
       ring.style.color = color;
       DOM.celebrationLayer.appendChild(ring);
-
       const core = document.createElement('span');
       core.className = 'burst-core';
       core.style.left = `${point.x}px`;
       core.style.top = `${point.y}px`;
       core.style.color = color;
       DOM.celebrationLayer.appendChild(core);
-
       for (let i = 0; i < 14; i += 1) {
         const spark = document.createElement('span');
         const angle = (Math.PI * 2 * i) / 14;
@@ -2269,7 +2652,6 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
         DOM.celebrationLayer.appendChild(spark);
         setTimeout(() => spark.remove(), 1300);
       }
-
       setTimeout(() => ring.remove(), 1200);
       setTimeout(() => core.remove(), 1000);
     }
@@ -2282,17 +2664,9 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
         frame += 1;
         const progress = frame / total;
         const ease = 1 - Math.pow(1 - progress, 3);
-        layer.setStyle({
-          color: base.color,
-          weight: base.weight + (1 - ease) * 1.5,
-          fillColor: base.fillColor,
-          fillOpacity: 0.18 + ease * 0.5
-        });
-        if (frame < total) {
-          requestAnimationFrame(step);
-        } else {
-          layer.setStyle(base);
-        }
+        layer.setStyle({ color: base.color, weight: base.weight + (1 - ease) * 1.5, fillColor: base.fillColor, fillOpacity: 0.18 + ease * 0.5 });
+        if (frame < total) requestAnimationFrame(step);
+        else layer.setStyle(base);
       }
       requestAnimationFrame(step);
     }
@@ -2309,29 +2683,19 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
           const eased = 1 - Math.pow(1 - progress, 3);
           const value = Math.round(from + (target - from) * eased);
           node.textContent = value;
-          if (progress < 1) {
-            requestAnimationFrame(tick);
-          } else {
-            node.dataset.value = String(target);
-            node.textContent = target;
-          }
+          if (progress < 1) requestAnimationFrame(tick);
+          else { node.dataset.value = String(target); node.textContent = target; }
         }
         requestAnimationFrame(tick);
       });
     }
 
     function renderSidebar(cities, customCities, stats) {
-      const config = getCurrentProfileConfig();
       const profileName = getProfileName();
       DOM.pageTitle.textContent = formatMapTitle(profileName);
       DOM.pageSubtitle.textContent = '地球 Online 地图';
       DOM.topbarTitle.textContent = formatMapTitle(profileName);
-      DOM.topbarSub.textContent = config.key === 'visitor' ? '你的专属旅行地图' : '地球 Online 地图';
-      DOM.editNameBtn.textContent = config.key === 'visitor' ? '✏️ 修改我的名字' : '✏️ 修改地图名字';
-      DOM.cityInput.placeholder = activeProfile === 'visitor' ? '输入你的第一座城市，例如：苏州、巴黎、首尔' : '输入新增城市，例如：苏州、东京、纽约';
-      DOM.moguModeBtn.classList.toggle('active', activeProfile === 'mogu');
-      DOM.visitorModeBtn.classList.toggle('active', activeProfile === 'visitor');
-
+      DOM.topbarSub.textContent = '你的专属旅行地图';
       animateStats(stats);
 
       DOM.cityPalette.innerHTML = '';
@@ -2348,7 +2712,6 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       });
 
       DOM.customList.innerHTML = '';
-      DOM.customEmpty.textContent = activeProfile === 'visitor' ? '暂无城市' : '暂无新增城市';
       DOM.customEmpty.style.display = customCities.length ? 'none' : 'block';
 
       customCities.forEach(city => {
@@ -2357,7 +2720,7 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
         const status = cityVisitStatus(city);
         item.innerHTML = `
           <div class="custom-meta">
-            <span class="city-chip-dot" style="${status === 'want' ? 'background:rgba(200,107,255,.18);border:1px dashed rgba(200,107,255,.62)' : `background:${city.color}`}\"></span>
+            <span class="city-chip-dot" style="${status === 'want' ? 'background:rgba(200,107,255,.18);border:1px dashed rgba(200,107,255,.62)' : `background:${city.color}`}"></span>
             <div class="custom-text">
               <div class="custom-name">${city.name}</div>
               <div class="custom-sub">${city.regionDisplay || city.region || city.country || '未识别区域'}</div>
@@ -2378,20 +2741,20 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       const exists = list.some(item => normalizeText(item.name) === normalizeText(city.name));
       if (exists) return false;
       list.push(city);
-      storageWrite(activeProfile, list);
+      storageWrite(list);
       return true;
     }
 
     function removeCustomCity(cityId) {
       const list = getCustomCities().filter(item => item.id !== cityId);
-      storageWrite(activeProfile, list);
+      storageWrite(list);
     }
 
     function toggleCustomCityStatus(cityId) {
       const list = getCustomCities().map(item => item.id === cityId
         ? { ...item, visitStatus: cityVisitStatus(item) === 'want' ? 'visited' : 'want' }
         : item);
-      storageWrite(activeProfile, list);
+      storageWrite(list);
     }
 
     function setVisitType(type) {
@@ -2401,22 +2764,8 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       });
     }
 
-    async function switchProfile(profileKey) {
-      if (profileKey === 'visitor' && !localStorage.getItem(PROFILE_CONFIG.visitor.nameKey)) {
-        const created = await promptForProfileName('visitor', true);
-        if (!created) return;
-      }
-      activeProfile = profileKey;
-      location.hash = profileKey === 'visitor' ? 'visitor' : 'mogu';
-      DOM.cityInput.value = '';
-      setStatus(PROFILE_CONFIG[profileKey].emptyHint, 'warning');
-      lastAddedCityId = null;
-      resetHoverCard();
-      render();
-    }
-
     async function handleEditName() {
-      const name = await promptForProfileName(activeProfile, false);
+      const name = await promptForProfileName(false);
       if (!name) return;
       setStatus(`已更新为「${name}的足迹地图」`, 'success');
       render();
@@ -2424,7 +2773,6 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
 
     async function ensureGeoData() {
       if (geoCache.china && geoCache.world) return geoCache;
-      // 优先使用内联到页面里的数据（单文件模式），否则回退到 fetch 本地数据文件
       if (window.__GEO_CHINA__ && window.__GEO_WORLD__) {
         geoCache.china = window.__GEO_CHINA__;
         geoCache.world = window.__GEO_WORLD__;
@@ -2444,45 +2792,15 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       const state = address.state || address.province || '';
       const city = address.city || address.town || address.county || address.state_district || '';
       if (/china|中国/i.test(country) || /china/i.test(address.country_code || '') || matchChinaRegion(country)) {
-        const normalizedState =
-          matchChinaRegion(state) ||
-          matchChinaRegion(city) ||
-          matchChinaRegion(address.county) ||
-          matchChinaRegion(address.state_district) ||
-          matchChinaRegion(address.municipality) ||
-          matchChinaRegion(address.region) ||
-          null;
-        return {
-          region: normalizedState,
-          regionDisplay: normalizedState ? normalizeRegionName(normalizedState) : normalizeRegionName(state || city || '中国'),
-          kind: 'domestic',
-          country: '中国'
-        };
+        const normalizedState = matchChinaRegion(state) || matchChinaRegion(city) || matchChinaRegion(address.county) || matchChinaRegion(address.state_district) || matchChinaRegion(address.municipality) || matchChinaRegion(address.region) || null;
+        return { region: normalizedState, regionDisplay: normalizedState ? normalizeRegionName(normalizedState) : normalizeRegionName(state || city || '中国'), kind: 'domestic', country: '中国' };
       }
       if (/hong kong|香港/i.test(country) || /hong kong|香港/i.test(state)) {
-        return {
-          region: '香港特别行政区',
-          regionDisplay: '香港',
-          kind: 'domestic',
-          country: '中国'
-        };
+        return { region: '香港特别行政区', regionDisplay: '香港', kind: 'domestic', country: '中国' };
       }
-      // 海外：把国家名（英文/中文）匹配到世界地图国家边界，任何国家都能被点亮
       const geoName = matchWorldCountry(country) || matchWorldCountry(state);
-      if (geoName) {
-        return {
-          region: geoName,
-          regionDisplay: countryDisplay(geoName),
-          kind: 'foreign',
-          country: geoName
-        };
-      }
-      return {
-        region: country || state || '',
-        regionDisplay: country || normalizeRegionName(state || city || '未知区域'),
-        kind: 'foreign',
-        country: country || ''
-      };
+      if (geoName) return { region: geoName, regionDisplay: countryDisplay(geoName), kind: 'foreign', country: geoName };
+      return { region: country || state || '', regionDisplay: country || normalizeRegionName(state || city || '未知区域'), kind: 'foreign', country: country || '' };
     }
 
     async function lookupCity(query) {
@@ -2492,48 +2810,21 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
         const scenicRegion = matchChinaRegion(scenicHit.city);
         await ensureGeoData();
         const center = scenicRegion ? getChinaRegionCenter(scenicRegion) : null;
-        return {
-          id: `custom-${slugify(scenicHit.city)}-${Date.now()}`,
-          name: scenicHit.city,
-          region: scenicRegion,
-          regionDisplay: scenicRegion ? normalizeRegionName(scenicRegion) : scenicHit.city,
-          country: '中国',
-          kind: 'domestic',
-          lat: center ? center.lat : 35,
-          lng: center ? center.lng : 104,
-          icon: guessIcon(scenicHit.city, '中国'),
-          color: hashColor(scenicHit.city),
-          source: 'custom',
-          originalQuery: query.trim()
-        };
-      }
-
-      const existing = BASE_CITIES.find(city => normalizeText(city.name) === normalized);
-      if (existing) {
-        return {
-          ...existing,
-          id: `custom-${slugify(existing.name)}-${Date.now()}`,
-          source: 'custom'
-        };
+        return { id: `custom-${slugify(scenicHit.city)}-${Date.now()}`, name: scenicHit.city, region: scenicRegion, regionDisplay: scenicRegion ? normalizeRegionName(scenicRegion) : scenicHit.city, country: '中国', kind: 'domestic', lat: center ? center.lat : 35, lng: center ? center.lng : 104, icon: guessIcon(scenicHit.city, '中国'), color: hashColor(scenicHit.city), source: 'custom', originalQuery: query.trim() };
       }
 
       const directProvince = CHINA_REGION_LOOKUP[normalizeText(query)];
       if (directProvince) {
         await ensureGeoData();
         const center = getChinaRegionCenter(directProvince);
-        return {
-          id: `custom-${slugify(query.trim())}-${Date.now()}`,
-          name: query.trim(),
-          region: directProvince,
-          regionDisplay: normalizeRegionName(directProvince),
-          country: '中国',
-          kind: 'domestic',
-          lat: center ? center.lat : 35,
-          lng: center ? center.lng : 104,
-          icon: '🗺️',
-          color: hashColor(query.trim()),
-          source: 'custom'
-        };
+        return { id: `custom-${slugify(query.trim())}-${Date.now()}`, name: query.trim(), region: directProvince, regionDisplay: normalizeRegionName(directProvince), country: '中国', kind: 'domestic', lat: center ? center.lat : 35, lng: center ? center.lng : 104, icon: '🗺️', color: hashColor(query.trim()), source: 'custom' };
+      }
+
+      const fallbackRegionDirect = CHINA_CITY_LOOKUP[normalizeText(query)];
+      if (fallbackRegionDirect) {
+        await ensureGeoData();
+        const center = getChinaRegionCenter(fallbackRegionDirect);
+        return { id: `custom-${slugify(query.trim())}-${Date.now()}`, name: query.trim(), region: fallbackRegionDirect, regionDisplay: normalizeRegionName(fallbackRegionDirect), country: '中国', kind: 'domestic', lat: center ? center.lat : 35, lng: center ? center.lng : 104, icon: guessIcon(query.trim(), '中国'), color: hashColor(query.trim()), source: 'custom' };
       }
 
       const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&accept-language=en&limit=1&q=${encodeURIComponent(query)}`;
@@ -2541,24 +2832,6 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       if (!response.ok) throw new Error('地理编码服务暂时不可用');
       const results = await response.json();
       if (!Array.isArray(results) || !results.length) {
-        const fallbackRegion = CHINA_CITY_LOOKUP[normalizeText(query)];
-        if (fallbackRegion) {
-          await ensureGeoData();
-          const center = getChinaRegionCenter(fallbackRegion);
-          return {
-            id: `custom-${slugify(query.trim())}-${Date.now()}`,
-            name: query.trim(),
-            region: fallbackRegion,
-            regionDisplay: normalizeRegionName(fallbackRegion),
-            country: '中国',
-            kind: 'domestic',
-            lat: center ? center.lat : 35,
-            lng: center ? center.lng : 104,
-            icon: guessIcon(query.trim(), '中国'),
-            color: hashColor(query.trim()),
-            source: 'custom'
-          };
-        }
         throw new Error('没有找到这个城市，请换个写法再试试');
       }
 
@@ -2568,29 +2841,14 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       const fallbackChinaRegion = matchChinaRegion(displayName) || matchChinaRegion(result.address?.city) || matchChinaRegion(result.address?.state) || matchChinaRegion(result.address?.county);
       const finalRegion = parsed.kind === 'domestic' ? (parsed.region || fallbackChinaRegion) : parsed.region;
       const finalRegionDisplay = parsed.kind === 'domestic' ? normalizeRegionName(finalRegion || parsed.regionDisplay || '中国') : parsed.regionDisplay;
-      return {
-        id: `custom-${slugify(displayName)}-${Date.now()}`,
-        name: displayName,
-        region: finalRegion,
-        regionDisplay: finalRegionDisplay,
-        country: parsed.country,
-        kind: parsed.kind,
-        lat: Number(result.lat),
-        lng: Number(result.lon),
-        icon: guessIcon(displayName, parsed.country),
-        color: hashColor(displayName),
-        source: 'custom'
-      };
+      return { id: `custom-${slugify(displayName)}-${Date.now()}`, name: displayName, region: finalRegion, regionDisplay: finalRegionDisplay, country: parsed.country, kind: parsed.kind, lat: Number(result.lat), lng: Number(result.lon), icon: guessIcon(displayName, parsed.country), color: hashColor(displayName), source: 'custom' };
     }
 
     function createRegionLayers(cities, regionMetaMap) {
       const boundsList = [];
-      const chinaGeo = {
-        ...geoCache.china,
-        features: geoCache.china.features.filter(feature => feature.properties && feature.properties.name)
-      };
+      const chinaGeo = { ...geoCache.china, features: geoCache.china.features.filter(feature => feature.properties && feature.properties.name) };
 
-      const chinaLayer = L.geoJSON(chinaGeo, {
+      L.geoJSON(chinaGeo, {
         style: feature => {
           const regionKey = feature.properties.name;
           const meta = regionMetaMap.get(regionKey);
@@ -2600,60 +2858,26 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
           const regionKey = feature.properties.name;
           const meta = regionMetaMap.get(regionKey);
           const display = meta?.display || normalizeRegionName(regionKey);
-          layer.bindTooltip(
-            tooltipHtml(display, meta ? `${meta.status === 'want' ? meta.wantCities.length : meta.visitedCities.length} 个${meta.status === 'want' ? '想去' : '已到访'}城市` : '未点亮区域'),
-            { sticky: true, direction: 'top', className: 'region-tooltip' }
-          );
-
+          layer.bindTooltip(tooltipHtml(display, meta ? `${meta.status === 'want' ? meta.wantCities.length : meta.visitedCities.length} 个${meta.status === 'want' ? '想去' : '已到访'}城市` : '未点亮区域'), { sticky: true, direction: 'top', className: 'region-tooltip' });
           layer.on('mouseover', () => {
             if (meta) {
-              layer.setStyle({
-                weight: 2.4,
-                fillOpacity: meta.status === 'want' ? 0.58 : 0.76,
-                color: meta.status === 'want' ? 'rgba(170,236,255,1)' : (meta.type === 'foreign' ? 'rgba(255,233,194,1)' : 'rgba(215,229,255,1)'),
-                dashArray: meta.status === 'want' ? '6 4' : undefined
-              });
-              setHoverCard({
-                badge: meta.status === 'want' ? '愿望清单' : (meta.type === 'foreign' ? '海外足迹' : '国内足迹'),
-                title: display,
-                sub: meta.status === 'want'
-                  ? '这个区域已被加入想去清单，地图会用亮紫色和虚线样式显示。'
-                  : (meta.type === 'foreign' ? '该国家边界已被点亮，内部包含已到访的海外地点。' : '该真实行政区域已被点亮，继续将鼠标移到城市热点区域可查看具体城市卡片。'),
-                pills: meta.status === 'want' ? meta.wantCities : meta.visitedCities,
-                accent: meta.accent || '#9CC2FF'
-              });
+              layer.setStyle({ weight: 2.4, fillOpacity: meta.status === 'want' ? 0.58 : 0.76, color: meta.status === 'want' ? 'rgba(170,236,255,1)' : (meta.type === 'foreign' ? 'rgba(255,233,194,1)' : 'rgba(215,229,255,1)'), dashArray: meta.status === 'want' ? '6 4' : undefined });
+              setHoverCard({ badge: meta.status === 'want' ? '愿望清单' : (meta.type === 'foreign' ? '海外足迹' : '国内足迹'), title: display, sub: meta.status === 'want' ? '想去区域' : '已到访区域', pills: meta.status === 'want' ? meta.wantCities : meta.visitedCities, accent: meta.accent || '#9CC2FF' });
             } else {
               layer.setStyle({ weight: 1.35, fillOpacity: 0.28, color: 'rgba(168,182,201,.58)' });
-              setHoverCard({
-                badge: '区域信息',
-                title: display,
-                sub: '当前尚未去过这个区域，但 hover 也可以直接查看地名，方便辨认地图位置。',
-                pills: ['未点亮', '仅显示区域名称'],
-                accent: '#8192A8'
-              });
+              setHoverCard({ badge: '区域信息', title: display, sub: '未点亮区域', pills: ['未点亮'], accent: '#8192A8' });
             }
           });
-
-          layer.on('mouseout', () => {
-            layer.setStyle(regionStyle(Boolean(meta), meta?.type || 'domestic', meta?.status || 'visited'));
-            resetHoverCard();
-          });
-
+          layer.on('mouseout', () => { layer.setStyle(regionStyle(Boolean(meta), meta?.type || 'domestic', meta?.status || 'visited')); resetHoverCard(); });
           regionLayerGroup.addLayer(layer);
           if (meta) boundsList.push(layer.getBounds());
           if (meta && meta.justAdded) animateRegionPulse(layer, meta.type, meta.status);
         }
       });
 
-      // 世界国家图层：任何海外国家都能被点亮（排除中国大陆与台湾，避免与省份图层重复）
-      const worldGeo = {
-        type: 'FeatureCollection',
-        features: (geoCache.world.features || []).filter(feature =>
-          feature.properties && feature.properties.name && !WORLD_EXCLUDE.has(feature.properties.name)
-        )
-      };
+      const worldGeo = { type: 'FeatureCollection', features: (geoCache.world.features || []).filter(feature => feature.properties && feature.properties.name && !WORLD_EXCLUDE.has(feature.properties.name)) };
 
-      const worldLayer = L.geoJSON(worldGeo, {
+      L.geoJSON(worldGeo, {
         style: feature => {
           const meta = regionMetaMap.get(feature.properties.name);
           return regionStyle(Boolean(meta), 'foreign', meta?.status || 'visited');
@@ -2662,38 +2886,16 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
           const geoName = feature.properties.name;
           const meta = regionMetaMap.get(geoName);
           const display = meta?.display || countryDisplay(geoName);
-          layer.bindTooltip(
-            tooltipHtml(display, meta ? `${meta.status === 'want' ? meta.wantCities.length : meta.visitedCities.length} 个${meta.status === 'want' ? '想去' : '已到访'}地点` : '未点亮国家 / 地区'),
-            { sticky: true, direction: 'top', className: 'region-tooltip' }
-          );
-
+          layer.bindTooltip(tooltipHtml(display, meta ? `${meta.visitedCities.length + meta.wantCities.length} 个地点` : '未点亮国家'), { sticky: true, direction: 'top', className: 'region-tooltip' });
           layer.on('mouseover', () => {
             if (meta) {
               layer.setStyle({ weight: 2.6, fillOpacity: meta.status === 'want' ? 0.56 : 0.78, color: meta.status === 'want' ? 'rgba(170,236,255,1)' : 'rgba(255,232,191,1)', dashArray: meta.status === 'want' ? '6 4' : undefined });
-              setHoverCard({
-                badge: meta.status === 'want' ? '愿望清单' : '海外足迹',
-                title: display,
-                sub: meta.status === 'want' ? '这个国家已加入想去清单，当前包含想去的海外地点。' : '海外足迹采用真实国家边界高亮，当前包含已录入的所有该国地点。',
-                pills: meta.status === 'want' ? meta.wantCities : meta.visitedCities,
-                accent: meta.accent || '#D7A55D'
-              });
+              setHoverCard({ badge: meta.status === 'want' ? '愿望清单' : '海外足迹', title: display, sub: '海外国家边界已点亮', pills: meta.status === 'want' ? meta.wantCities : meta.visitedCities, accent: meta.accent || '#D7A55D' });
             } else {
               layer.setStyle({ weight: 1.35, fillOpacity: 0.28, color: 'rgba(168,182,201,.58)' });
-              setHoverCard({
-                badge: '区域信息',
-                title: display,
-                sub: '当前还没有点亮这个国家 / 地区。在左侧输入该国的城市即可点亮它。',
-                pills: ['未点亮', '可通过输入城市加入'],
-                accent: '#8192A8'
-              });
             }
           });
-
-          layer.on('mouseout', () => {
-            layer.setStyle(regionStyle(Boolean(meta), 'foreign', meta?.status || 'visited'));
-            resetHoverCard();
-          });
-
+          layer.on('mouseout', () => { layer.setStyle(regionStyle(Boolean(meta), 'foreign', meta?.status || 'visited')); resetHoverCard(); });
           regionLayerGroup.addLayer(layer);
           if (meta) boundsList.push(layer.getBounds());
           if (meta && meta.justAdded) animateRegionPulse(layer, 'foreign', meta.status);
@@ -2710,45 +2912,15 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
         const status = cityVisitStatus(city);
         const accent = status === 'want' ? '#C86BFF' : city.color;
         const radius = regionType === 'foreign' ? 32000 : 23500;
-        const hotspot = L.circle([city.lat, city.lng], {
-          radius,
-          className: 'city-hit',
-          color: accent,
-          fillColor: accent,
-          dashArray: status === 'want' ? '5 4' : undefined,
-          weight: 0,
-          opacity: 0,
-          fillOpacity: 0
-        });
-
-        hotspot.bindTooltip(
-          tooltipHtml(`${city.icon} ${city.name}`, `${city.regionDisplay || city.region || city.country || '未知区域'} · ${status === 'want' ? '想去地点' : '已到访地点'}`),
-          { sticky: true, direction: 'top', className: 'city-tooltip' }
-        );
-
+        const hotspot = L.circle([city.lat, city.lng], { radius, className: 'city-hit', color: accent, fillColor: accent, dashArray: status === 'want' ? '5 4' : undefined, weight: 0, opacity: 0, fillOpacity: 0 });
+        hotspot.bindTooltip(tooltipHtml(`${city.icon} ${city.name}`, `${city.regionDisplay || city.region || city.country || '未知区域'} · ${status === 'want' ? '想去' : '已到访'}`), { sticky: true, direction: 'top', className: 'city-tooltip' });
         hotspot.on('mouseover', () => {
-          hotspot.setStyle({ color: accent, fillColor: accent, dashArray: status === 'want' ? '5 4' : undefined, weight: 1.2, opacity: 0.96, fillOpacity: status === 'want' ? 0.16 : 0.24 });
-          setHoverCard({
-            badge: `${status === 'want' ? '愿望清单' : '旅行信息卡片'} · ${regionType === 'foreign' ? '海外' : '国内'}`,
-            title: `${city.icon} ${city.name}`,
-            sub: `${city.regionDisplay || city.region || city.country || '未知区域'} · ${status === 'want' ? '想去城市 / 地点，已加入愿望清单。' : '已到访城市 / 地点。'} ${status === 'want' ? '地图会用亮紫色和虚线效果标记。' : '该地点使用独立高级配色进行标注，与整体风格保持协调。'}`,
-            pills: [
-              `所在区域：${city.regionDisplay || city.region || city.country || '未知区域'}`,
-              `地点类型：${regionType === 'foreign' ? '海外地点' : '国内城市'}`,
-              `状态：${status === 'want' ? '想去' : '去过'}`
-            ],
-            accent
-          });
+          hotspot.setStyle({ color: accent, fillColor: accent, weight: 1.2, opacity: 0.96, fillOpacity: status === 'want' ? 0.16 : 0.24 });
+          setHoverCard({ badge: `${status === 'want' ? '愿望清单' : '旅行足迹'}`, title: `${city.icon} ${city.name}`, sub: `${city.regionDisplay || city.region || '未知区域'}`, pills: [`${regionType === 'foreign' ? '海外' : '国内'}`, `${status === 'want' ? '想去' : '去过'}`], accent });
         });
-
-        hotspot.on('mouseout', () => {
-          hotspot.setStyle({ color: accent, fillColor: accent, dashArray: status === 'want' ? '5 4' : undefined, weight: 0, opacity: 0, fillOpacity: 0 });
-          resetHoverCard();
-        });
-
+        hotspot.on('mouseout', () => { hotspot.setStyle({ weight: 0, opacity: 0, fillOpacity: 0 }); resetHoverCard(); });
         cityLayerGroup.addLayer(hotspot);
         boundsList.push(hotspot.getBounds());
-
         if (city.id === lastAddedCityId) {
           playParticleCelebration(L.latLng(city.lat, city.lng), accent);
           let frame = 0;
@@ -2757,19 +2929,9 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
             frame += 1;
             const progress = frame / total;
             const wave = Math.sin(progress * Math.PI);
-            hotspot.setStyle({
-              color: accent,
-              fillColor: accent,
-              dashArray: status === 'want' ? '5 4' : undefined,
-              weight: wave * 1.6,
-              opacity: 0.45 + wave * 0.35,
-              fillOpacity: (status === 'want' ? 0.03 : 0.06) + wave * (status === 'want' ? 0.18 : 0.26)
-            });
-            if (frame < total) {
-              requestAnimationFrame(pulse);
-            } else {
-              hotspot.setStyle({ color: accent, fillColor: accent, dashArray: status === 'want' ? '5 4' : undefined, weight: 0, opacity: 0, fillOpacity: 0 });
-            }
+            hotspot.setStyle({ color: accent, fillColor: accent, weight: wave * 1.6, opacity: 0.45 + wave * 0.35, fillOpacity: 0.06 + wave * 0.26 });
+            if (frame < total) requestAnimationFrame(pulse);
+            else hotspot.setStyle({ weight: 0, opacity: 0, fillOpacity: 0 });
           }
           requestAnimationFrame(pulse);
         }
@@ -2778,7 +2940,6 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
     }
 
     async function render() {
-      const config = getCurrentProfileConfig();
       const cities = getAllCities();
       const customCities = getCustomCities();
       const stats = buildStats(cities);
@@ -2807,44 +2968,20 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       if (!cities.length) {
         map.setView([30, 104], 3.5);
         resetHoverCard();
-        if (activeProfile === 'visitor') {
-        setHoverCard({
-          badge: 'Earth Online',
-          title: '地球 Online 地图',
-          sub: '我的足迹地图',
-          pills: ['空白版本', '城市', '点亮'],
-          accent: '#9CC2FF'
-        });
-        }
       }
 
-      setTimeout(() => {
-        map.invalidateSize(true);
-        lastAddedCityId = null;
-      }, 260);
-
-      if (!customCities.length && activeProfile === 'visitor') {
-        setStatus(config.emptyHint, 'warning');
-      }
+      setTimeout(() => { map.invalidateSize(true); lastAddedCityId = null; }, 260);
     }
 
     async function exportShareImage() {
-      if (!window.html2canvas) {
-        setStatus('截图组件还没准备好，请稍后再试。', 'error');
-        return;
-      }
+      if (!window.html2canvas) { setStatus('截图组件还没准备好，请稍后再试。', 'error'); return; }
       const mapTarget = document.getElementById('map');
       if (!mapTarget) return;
       DOM.shareBtn.disabled = true;
       DOM.shareBtn.textContent = '生成中...';
       setStatus('正在生成旅行数据卡片...', 'warning');
       try {
-        const mapCanvas = await window.html2canvas(mapTarget, {
-          backgroundColor: '#081220',
-          useCORS: true,
-          scale: Math.min(2, window.devicePixelRatio || 1.5)
-        });
-
+        const mapCanvas = await window.html2canvas(mapTarget, { backgroundColor: '#081220', useCORS: true, scale: Math.min(2, window.devicePixelRatio || 1.5) });
         const allCities = getAllCities();
         const profileName = getProfileName();
         const shareTitle = formatMapTitle(profileName);
@@ -2854,80 +2991,21 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
         const visitedNames = visitedCities.map(city => city.name);
 
         const shareCard = document.createElement('div');
-        shareCard.style.cssText = [
-          'position:fixed',
-          'left:-99999px',
-          'top:0',
-          'width:1240px',
-          'padding:24px',
-          'box-sizing:border-box',
-          'border-radius:28px',
-          'background:radial-gradient(circle at top left, rgba(126,166,255,.18), transparent 32%), linear-gradient(180deg, #091424 0%, #08111d 100%)',
-          'color:#eaf2ff',
-          'font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif',
-          'box-shadow:0 28px 80px rgba(0,0,0,.38)'
-        ].join(';');
-
+        shareCard.style.cssText = 'position:fixed;left:-99999px;top:0;width:1240px;padding:24px;box-sizing:border-box;border-radius:28px;background:radial-gradient(circle at top left, rgba(126,166,255,.18), transparent 32%), linear-gradient(180deg, #091424 0%, #08111d 100%);color:#eaf2ff;font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;box-shadow:0 28px 80px rgba(0,0,0,.38)';
         const regionBadges = visitedRegions.map(name => `<span style="display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:11px;line-height:1;color:#dbe8ff;">${escapeHtml(name)}</span>`).join('');
         const cityBadges = visitedNames.slice(0, 42).map(name => `<span style="display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:rgba(122,173,255,.10);border:1px solid rgba(122,173,255,.16);font-size:11px;line-height:1;color:#eff5ff;">${escapeHtml(name)}</span>`).join('');
-        const extraCount = Math.max(visitedNames.length - 42, 0);
 
-        shareCard.innerHTML = `
-          <div style="display:grid;grid-template-columns:1.65fr .95fr;gap:20px;align-items:stretch;">
-            <div style="border-radius:22px;overflow:hidden;background:#081220;border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);">
-              <img src="${mapCanvas.toDataURL('image/png')}" style="display:block;width:100%;height:100%;object-fit:cover;" />
-            </div>
-            <div style="display:flex;flex-direction:column;gap:14px;">
-              <div style="padding:16px 16px 14px;border-radius:20px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);">
-                <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(226,238,255,.56);">Earth Online · Travel Data Card</div>
-                <div style="margin-top:8px;font-size:24px;font-weight:800;line-height:1.2;">${escapeHtml(shareTitle)}</div>
-                <div style="margin-top:4px;font-size:12px;color:rgba(222,235,255,.72);">地球 Online 地图 · 旅行足迹分享卡</div>
-                <div style="margin-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
-                  <div style="padding:10px 12px;border-radius:16px;background:rgba(122,173,255,.09);border:1px solid rgba(122,173,255,.14);">
-                    <div style="font-size:11px;color:rgba(226,238,255,.6);">已去过城市 / 地点</div>
-                    <div style="margin-top:4px;font-size:24px;font-weight:800;color:#ffffff;">${visitedStats.visited}</div>
-                  </div>
-                  <div style="padding:10px 12px;border-radius:16px;background:rgba(255,208,137,.09);border:1px solid rgba(255,208,137,.14);">
-                    <div style="font-size:11px;color:rgba(226,238,255,.6);">覆盖省份 / 地区</div>
-                    <div style="margin-top:4px;font-size:24px;font-weight:800;color:#ffffff;">${visitedStats.regions}</div>
-                  </div>
-                </div>
-              </div>
-              <div style="padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);">
-                <div style="font-size:11px;font-weight:800;color:#dce9ff;letter-spacing:.06em;">去过的省份 / 地区</div>
-                <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">${regionBadges || '<span style="font-size:11px;color:rgba(226,238,255,.56);">暂无</span>'}</div>
-              </div>
-              <div style="padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);">
-                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-                  <div style="font-size:11px;font-weight:800;color:#dce9ff;letter-spacing:.06em;">去过的城市 / 地点</div>
-                  <div style="font-size:10px;color:rgba(226,238,255,.5);">共 ${visitedNames.length} 个</div>
-                </div>
-                <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">${cityBadges || '<span style="font-size:11px;color:rgba(226,238,255,.56);">暂无</span>'}${extraCount ? `<span style="display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.04);font-size:11px;color:rgba(226,238,255,.58);">+${extraCount}</span>` : ''}</div>
-              </div>
-              <div style="padding:0 4px;font-size:10px;color:rgba(226,238,255,.42);display:flex;justify-content:space-between;gap:10px;">
-                <span>Generated by Earth Online Map</span>
-                <span>${new Date().toLocaleDateString('zh-CN')}</span>
-              </div>
-            </div>
-          </div>
-        `;
-
+        shareCard.innerHTML = `<div style="display:grid;grid-template-columns:1.65fr .95fr;gap:20px;align-items:stretch;"><div style="border-radius:22px;overflow:hidden;background:#081220;border:1px solid rgba(255,255,255,.08);"><img src="${mapCanvas.toDataURL('image/png')}" style="display:block;width:100%;height:100%;object-fit:cover;" /></div><div style="display:flex;flex-direction:column;gap:14px;"><div style="padding:16px;border-radius:20px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(226,238,255,.56);">Earth Online · Travel Data Card</div><div style="margin-top:8px;font-size:24px;font-weight:800;line-height:1.2;">${escapeHtml(shareTitle)}</div><div style="margin-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;"><div style="padding:10px 12px;border-radius:16px;background:rgba(122,173,255,.09);border:1px solid rgba(122,173,255,.14);"><div style="font-size:11px;color:rgba(226,238,255,.6);">去过城市</div><div style="margin-top:4px;font-size:24px;font-weight:800;">${visitedStats.visited}</div></div><div style="padding:10px 12px;border-radius:16px;background:rgba(255,208,137,.09);border:1px solid rgba(255,208,137,.14);"><div style="font-size:11px;color:rgba(226,238,255,.6);">覆盖区域</div><div style="margin-top:4px;font-size:24px;font-weight:800;">${visitedStats.regions}</div></div></div></div><div style="padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);"><div style="font-size:11px;font-weight:800;color:#dce9ff;">去过的省份/地区</div><div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">${regionBadges || '暂无'}</div></div><div style="padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);"><div style="font-size:11px;font-weight:800;color:#dce9ff;">去过的城市（共${visitedNames.length}个）</div><div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">${cityBadges || '暂无'}</div></div><div style="padding:0 4px;font-size:10px;color:rgba(226,238,255,.42);display:flex;justify-content:space-between;"><span>Generated by Earth Online Map</span><span>${new Date().toLocaleDateString('zh-CN')}</span></div></div></div>`;
         document.body.appendChild(shareCard);
-        const finalCanvas = await window.html2canvas(shareCard, {
-          backgroundColor: null,
-          useCORS: true,
-          scale: 2
-        });
+        const finalCanvas = await window.html2canvas(shareCard, { backgroundColor: null, useCORS: true, scale: 2 });
         shareCard.remove();
-
         const link = document.createElement('a');
-        const stamp = new Date().toISOString().slice(0, 10);
-        link.download = `earth-online-map-card-${stamp}.png`;
+        link.download = `earth-online-map-card-${new Date().toISOString().slice(0, 10)}.png`;
         link.href = finalCanvas.toDataURL('image/png');
         link.click();
         setStatus('旅行数据卡片已生成并开始下载 ✨', 'success');
       } catch (error) {
-        setStatus('旅行数据卡片生成失败，请稍后再试。', 'error');
+        setStatus('卡片生成失败，请稍后再试。', 'error');
       } finally {
         DOM.shareBtn.disabled = false;
         DOM.shareBtn.textContent = '📸 截图分享';
@@ -2936,31 +3014,21 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
 
     async function handleAddCity() {
       const value = DOM.cityInput.value.trim();
-      if (!value) {
-        setStatus('先输入一个城市名吧，比如“苏州”或“东京”。', 'warning');
-        return;
-      }
-
+      if (!value) { setStatus('先输入一个城市名吧。', 'warning'); return; }
       const currentNames = new Set(getAllCities().map(city => normalizeText(city.name)));
-      if (currentNames.has(normalizeText(value))) {
-        setStatus('这个城市已经在当前地图里啦，可以换一个新地方继续点亮。', 'warning');
-        return;
-      }
-
+      if (currentNames.has(normalizeText(value))) { setStatus('这个城市已经在地图里啦。', 'warning'); return; }
       DOM.addCityBtn.disabled = true;
       DOM.addCityBtn.textContent = currentVisitType === 'want' ? '加入中...' : '点亮中...';
-      setStatus(currentVisitType === 'want' ? '正在为你查找城市位置并加入想去清单...' : '正在为你查找城市位置并准备点亮效果...', 'warning');
-
+      setStatus('正在为你查找城市位置...', 'warning');
       try {
         const city = await lookupCity(value);
         city.visitStatus = currentVisitType;
         const saved = upsertCustomCity(city);
-        if (!saved) {
-          setStatus('这个城市已经添加过了。', 'warning');
-        } else {
+        if (!saved) { setStatus('这个城市已经添加过了。', 'warning'); }
+        else {
           lastAddedCityId = city.id;
           DOM.cityInput.value = '';
-          setStatus(currentVisitType === 'want' ? `已把 ${city.name} 加入想去清单 🌟` : `已成功点亮 ${city.name}，地图正在为你庆祝 ✨`, 'success');
+          setStatus(currentVisitType === 'want' ? `已把 ${city.name} 加入想去清单 🌟` : `已成功点亮 ${city.name} ✨`, 'success');
           await render();
         }
       } catch (error) {
@@ -2973,26 +3041,267 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
 
     function handleDeleteCity(cityId) {
       removeCustomCity(cityId);
-      setStatus('已删除该自定义城市。', 'warning');
+      setStatus('已删除该城市。', 'warning');
       render();
     }
 
     function handleToggleCityStatus(cityId) {
       toggleCustomCityStatus(cityId);
       lastAddedCityId = cityId;
-      setStatus('已切换城市状态，地图颜色已同步更新。', 'success');
+      setStatus('已切换城市状态。', 'success');
       render();
     }
 
     function handleResetProfile() {
-      const config = getCurrentProfileConfig();
-      if (!confirm(config.resetConfirm)) return;
-      storageWrite(activeProfile, []);
+      if (!confirm('确定要清空你的足迹地图吗？这个操作会删除当前保存的所有城市。')) return;
+      storageWrite([]);
       lastAddedCityId = null;
-      setStatus(activeProfile === 'visitor' ? '已清空你的足迹地图，可以重新开始。' : '已清空后来新增的城市，蘑菇原始足迹保留不变。', 'warning');
+      setStatus('已清空足迹地图，可以重新开始。', 'warning');
       render();
     }
 
+    // ===== Province Selector Logic =====
+    let provinceSelectorState = 'provinces'; // 'provinces' | 'cities'
+
+    function showProvinces() {
+      provinceSelectorState = 'provinces';
+      DOM.provinceSelectorTitle.textContent = '选择省份';
+      DOM.provinceSelectorBack.classList.remove('show');
+      DOM.provinceGrid.innerHTML = '';
+      const provinces = Object.keys(PROVINCE_CITIES);
+      provinces.forEach(prov => {
+        const item = document.createElement('div');
+        item.className = 'province-item';
+        item.textContent = prov;
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          showCitiesForProvince(prov);
+        });
+        DOM.provinceGrid.appendChild(item);
+      });
+    }
+
+    function showCitiesForProvince(province) {
+      provinceSelectorState = 'cities';
+      DOM.provinceSelectorTitle.textContent = province;
+      DOM.provinceSelectorBack.classList.add('show');
+      DOM.provinceGrid.innerHTML = '';
+      const cities = PROVINCE_CITIES[province] || [];
+      cities.forEach(city => {
+        const item = document.createElement('div');
+        item.className = 'city-select-item';
+        item.textContent = city;
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          DOM.cityInput.value = city;
+          hideProvinceSelector();
+          handleAddCity();
+        });
+        DOM.provinceGrid.appendChild(item);
+      });
+    }
+
+    function showProvinceSelector() {
+      showProvinces();
+      DOM.provinceSelector.classList.add('show');
+    }
+
+    function hideProvinceSelector() {
+      DOM.provinceSelector.classList.remove('show');
+    }
+
+    DOM.cityInput.addEventListener('click', () => {
+      showProvinceSelector();
+    });
+
+    DOM.cityInput.addEventListener('focus', () => {
+      showProvinceSelector();
+    });
+
+    DOM.provinceSelectorBack.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showProvinces();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!DOM.inputWrap.contains(e.target)) {
+        hideProvinceSelector();
+      }
+    });
+
+    // ===== Ticket Stub Logic =====
+    function initTicketColorGroup() {
+      DOM.ticketColorGroup.innerHTML = '';
+      TICKET_COLORS.forEach((color, i) => {
+        const swatch = document.createElement('div');
+        swatch.className = 'ticket-color-swatch' + (i === 0 ? ' active' : '');
+        swatch.style.background = color.bg;
+        swatch.title = color.name;
+        swatch.addEventListener('click', () => {
+          DOM.ticketColorGroup.querySelectorAll('.ticket-color-swatch').forEach(s => s.classList.remove('active'));
+          swatch.classList.add('active');
+          selectedTicketColor = color;
+        });
+        DOM.ticketColorGroup.appendChild(swatch);
+      });
+    }
+
+    function getTickets() {
+      try {
+        const raw = localStorage.getItem(TICKET_KEY);
+        if (!raw) return [];
+        return JSON.parse(raw) || [];
+      } catch { return []; }
+    }
+
+    function saveTickets(tickets) {
+      localStorage.setItem(TICKET_KEY, JSON.stringify(tickets));
+    }
+
+    function generateBarcode() {
+      const bars = [];
+      for (let i = 0; i < 40; i++) {
+        const width = Math.random() > 0.5 ? 2 : 1;
+        bars.push(`<div class="ticket-barcode-bar" style="width:${width}px;margin-right:${Math.random() > 0.6 ? 2 : 1}px;"></div>`);
+      }
+      return bars.join('');
+    }
+
+    function renderTicketStub(ticket) {
+      const dateObj = ticket.date ? new Date(ticket.date) : new Date();
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
+
+      const photoHtml = ticket.photo
+        ? `<img src="${ticket.photo}" alt="${escapeHtml(ticket.city)}" />`
+        : `<div class="ticket-no-photo">🌍</div>`;
+
+      return `
+        <div class="ticket-stub" style="background:${ticket.bgColor}; color:${ticket.textColor};">
+          <div class="ticket-stub-left">
+            <div>
+              <div class="ticket-next-label">NEXT STATION</div>
+              <div class="ticket-city-name">${escapeHtml(ticket.city)}</div>
+            </div>
+            <div>
+              <div class="ticket-date-row">
+                <div class="ticket-date-field">
+                  <div class="ticket-date-label">YEAR</div>
+                  <div class="ticket-date-value">${year}</div>
+                </div>
+                <div class="ticket-date-field">
+                  <div class="ticket-date-label">DATE</div>
+                  <div class="ticket-date-value">${month}/${day}</div>
+                </div>
+              </div>
+              <div class="ticket-barcode">${generateBarcode()}</div>
+            </div>
+          </div>
+          <div class="ticket-stub-divider"></div>
+          <div class="ticket-stub-notch-top"></div>
+          <div class="ticket-stub-notch-bottom"></div>
+          <div class="ticket-stub-right">
+            ${photoHtml}
+          </div>
+        </div>
+        <div class="ticket-stub-actions">
+          <button class="ticket-action-btn" data-ticket-download="${ticket.id}">📥 下载</button>
+          <button class="ticket-action-btn delete" data-ticket-delete="${ticket.id}">🗑️ 删除</button>
+        </div>
+      `;
+    }
+
+    function renderTicketGallery() {
+      const tickets = getTickets();
+      if (!tickets.length) {
+        DOM.ticketGallery.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px 0;font-size:14px;">还没有票根，去上方创建你的第一张旅行票根吧 🎫</div>';
+        return;
+      }
+      DOM.ticketGallery.innerHTML = tickets.map(t => `<div class="ticket-stub-wrapper" data-ticket-id="${t.id}">${renderTicketStub(t)}</div>`).join('');
+    }
+
+    DOM.ticketPageBtn.addEventListener('click', () => {
+      DOM.ticketPage.classList.add('show');
+      document.body.style.overflow = 'hidden';
+      initTicketColorGroup();
+      renderTicketGallery();
+      // Set default date to today
+      DOM.ticketDateInput.value = new Date().toISOString().slice(0, 10);
+    });
+
+    DOM.ticketBackBtn.addEventListener('click', () => {
+      DOM.ticketPage.classList.remove('show');
+      document.body.style.overflow = '';
+    });
+
+    DOM.ticketPhotoUpload.addEventListener('click', () => {
+      DOM.ticketPhotoFile.click();
+    });
+
+    DOM.ticketPhotoFile.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        ticketPhotoData = ev.target.result;
+        DOM.ticketPhotoUpload.textContent = '✅ 照片已选择';
+        DOM.ticketPhotoUpload.classList.add('has-photo');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    DOM.ticketCreateBtn.addEventListener('click', () => {
+      const city = DOM.ticketCityInput.value.trim();
+      if (!city) { alert('请输入城市/地点名称'); return; }
+      const date = DOM.ticketDateInput.value;
+      const ticket = {
+        id: `ticket-${Date.now()}`,
+        city,
+        date: date || new Date().toISOString().slice(0, 10),
+        bgColor: selectedTicketColor.bg,
+        textColor: selectedTicketColor.text,
+        photo: ticketPhotoData || null
+      };
+      const tickets = getTickets();
+      tickets.unshift(ticket);
+      saveTickets(tickets);
+      renderTicketGallery();
+      // Reset form
+      DOM.ticketCityInput.value = '';
+      ticketPhotoData = null;
+      DOM.ticketPhotoUpload.textContent = '📷 点击上传照片';
+      DOM.ticketPhotoUpload.classList.remove('has-photo');
+      DOM.ticketPhotoFile.value = '';
+    });
+
+    DOM.ticketGallery.addEventListener('click', async (e) => {
+      const deleteBtn = e.target.closest('[data-ticket-delete]');
+      if (deleteBtn) {
+        const id = deleteBtn.dataset.ticketDelete;
+        const tickets = getTickets().filter(t => t.id !== id);
+        saveTickets(tickets);
+        renderTicketGallery();
+        return;
+      }
+      const downloadBtn = e.target.closest('[data-ticket-download]');
+      if (downloadBtn && window.html2canvas) {
+        const id = downloadBtn.dataset.ticketDownload;
+        const wrapper = DOM.ticketGallery.querySelector(`[data-ticket-id="${id}"] .ticket-stub`);
+        if (!wrapper) return;
+        downloadBtn.textContent = '⏳';
+        try {
+          const canvas = await window.html2canvas(wrapper, { backgroundColor: null, useCORS: true, scale: 2 });
+          const link = document.createElement('a');
+          link.download = `ticket-${id}.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        } catch (err) { console.error(err); }
+        downloadBtn.textContent = '📥 下载';
+      }
+    });
+
+    // ===== Event Listeners =====
     DOM.addCityBtn.addEventListener('click', handleAddCity);
     DOM.shareBtn.addEventListener('click', exportShareImage);
     DOM.visitTypeGroup.addEventListener('click', event => {
@@ -3001,31 +3310,29 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       setVisitType(chip.dataset.value);
     });
     DOM.cityInput.addEventListener('keydown', event => {
-      if (event.key === 'Enter') handleAddCity();
+      if (event.key === 'Enter') { hideProvinceSelector(); handleAddCity(); }
     });
     DOM.resetProfileBtn.addEventListener('click', handleResetProfile);
     DOM.editNameBtn.addEventListener('click', handleEditName);
-    DOM.moguModeBtn.addEventListener('click', () => switchProfile('mogu'));
-    DOM.visitorModeBtn.addEventListener('click', () => switchProfile('visitor'));
     DOM.customList.addEventListener('click', event => {
       const toggle = event.target.closest('[data-toggle-city-id]');
-      if (toggle) {
-        handleToggleCityStatus(toggle.dataset.toggleCityId);
-        return;
-      }
+      if (toggle) { handleToggleCityStatus(toggle.dataset.toggleCityId); return; }
       const button = event.target.closest('[data-city-id]');
       if (!button) return;
       handleDeleteCity(button.dataset.cityId);
     });
 
+    // ===== Init =====
     setVisitType('visited');
-    render().then(() => {
-      if (activeProfile === 'visitor' && !getAllCities().length) {
-        setStatus(PROFILE_CONFIG.visitor.emptyHint, 'warning');
-      } else {
-        setStatus('地图已加载完成。你也可以直接添加新的城市。', 'success');
+
+    (async function init() {
+      // If no name is set, prompt for name
+      if (!getProfileName()) {
+        await promptForProfileName(true);
       }
-    });
+      await render();
+      setStatus('地图已加载完成。添加你去过的城市开始点亮吧！', 'success');
+    })();
   </script>
 </body>
 </html>
