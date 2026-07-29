@@ -824,17 +824,25 @@ svg.leaflet-image-layer.leaflet-interactive path {
       flex: 1;
       min-height: 0;
       display: none;
+      overflow: hidden;
     }
 
-    .tab-content.active { display: flex; }
+    .tab-content.active {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+    }
 
     /* === Map View (Tab 1) === */
     .map-view {
+      flex: 1;
       display: grid;
       grid-template-columns: 400px 1fr;
       gap: 14px;
       padding: 14px;
-      height: 100%;
+      width: 100%;
+      min-height: 0;
     }
 
     .panel {
@@ -1536,49 +1544,79 @@ svg.leaflet-image-layer.leaflet-interactive path {
     .name-dialog-error { min-height: 18px; margin-top: 8px; font-size: 11px; color: #ff9b9b; }
     .name-dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
 
-    /* === Ticket View (Tab 2) === */
-    .ticket-view {
-      height: 100%;
-      overflow-y: auto;
-      padding: 28px;
-    }
-
-    .ticket-view::-webkit-scrollbar { width: 6px; }
-    .ticket-view::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 3px; }
-
-    .ticket-view-inner {
-      max-width: 860px;
-      margin: 0 auto;
-    }
-
-    .ticket-view-title {
-      font-size: 28px;
-      font-weight: 900;
-      letter-spacing: -.8px;
-      margin-bottom: 24px;
-    }
-
-    .ticket-create-section {
-      padding: 22px;
-      border-radius: 22px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
-      margin-bottom: 28px;
-    }
-
-    .ticket-form-title { font-size: 15px; font-weight: 800; margin-bottom: 14px; color: #eef4ff; }
-
-    .ticket-form-grid {
+    /* === Ticket View (Tab 2) - Left/Right Layout === */
+    .ticket-layout {
+      flex: 1;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 14px;
+      grid-template-columns: 420px 1fr;
+      gap: 14px;
+      padding: 14px;
+      min-height: 0;
+      width: 100%;
     }
 
+    .ticket-left-panel, .ticket-right-panel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .ticket-panel-header {
+      padding: 18px 22px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      flex-shrink: 0;
+      background: linear-gradient(180deg, rgba(122,173,255,.05), transparent);
+    }
+
+    .ticket-panel-title {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -.4px;
+      color: #f5f8ff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ticket-panel-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .ticket-panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 22px 22px;
+      min-height: 0;
+    }
+
+    .ticket-panel-body::-webkit-scrollbar { width: 6px; }
+    .ticket-panel-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 3px; }
+
+    /* Left panel form */
+    .ticket-form-section { margin-bottom: 16px; }
+    .ticket-form-section-title {
+      font-size: 12px; font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .ticket-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .ticket-form-field { display: flex; flex-direction: column; gap: 5px; }
-    .ticket-form-field label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+    .ticket-form-field label { font-size: 11px; font-weight: 700; color: var(--muted); }
     .ticket-form-field input, .ticket-form-field select {
-      padding: 10px 12px;
+      padding: 11px 13px;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,.09);
       background: rgba(255,255,255,.04);
@@ -1586,41 +1624,268 @@ svg.leaflet-image-layer.leaflet-interactive path {
       font-size: 13px;
       outline: none;
     }
-    .ticket-form-field input:focus, .ticket-form-field select:focus { border-color: rgba(157, 193, 255, 0.34); }
-    .ticket-form-field select option { background: #0b1728; color: #fff; }
+    .ticket-form-field input:focus { border-color: rgba(157, 193, 255, 0.4); box-shadow: 0 0 0 3px rgba(125,167,255,.1); }
 
-    .ticket-color-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
-    .ticket-color-swatch { width: 32px; height: 32px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all .15s ease; }
+    .ticket-color-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .ticket-color-swatch {
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all .15s ease;
+    }
     .ticket-color-swatch.active { border-color: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,.2); transform: scale(1.1); }
 
     .ticket-photo-upload {
       display: flex; align-items: center; justify-content: center;
-      width: 100%; height: 70px;
+      width: 100%; height: 82px;
       border-radius: 12px;
       border: 2px dashed rgba(255,255,255,.15);
       background: rgba(255,255,255,.02);
-      cursor: pointer; color: var(--muted); font-size: 12px; font-weight: 600;
-      margin-bottom: 14px; transition: all .15s ease;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 13px; font-weight: 700;
+      transition: all .15s ease;
     }
-    .ticket-photo-upload:hover { border-color: rgba(157, 193, 255, 0.34); background: rgba(255,255,255,.04); }
-    .ticket-photo-upload.has-photo { border-style: solid; border-color: rgba(143,216,191,.4); color: var(--success); }
+    .ticket-photo-upload:hover { border-color: rgba(157, 193, 255, 0.4); background: rgba(255,255,255,.05); }
+    .ticket-photo-upload.has-photo { border-style: solid; border-color: rgba(143,216,191,.5); color: var(--success); background: rgba(143,216,191,.08); }
 
     .ticket-create-btn {
-      padding: 12px 24px; border-radius: 14px;
-      background: linear-gradient(135deg, rgba(118,164,255,.28), rgba(118,164,255,.12));
-      border: 1px solid rgba(176,208,255,.3);
-      color: #fff; font-size: 13px; font-weight: 800;
+      width: 100%;
+      padding: 14px 24px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(122,173,255,.36), rgba(200,107,255,.18));
+      border: 1px solid rgba(176,208,255,.42);
+      color: #fff;
+      font-size: 15px; font-weight: 900;
+      cursor: pointer;
+      transition: all .18s ease;
+      letter-spacing: .4px;
+      box-shadow: 0 6px 20px rgba(122,173,255,.16);
+    }
+    .ticket-create-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(122,173,255,.28); }
+
+    /* Draft area on left panel */
+    .ticket-draft-area {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.03);
+      border: 1px dashed rgba(255,255,255,.14);
+    }
+    .ticket-draft-title {
+      font-size: 12px; font-weight: 800; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .ticket-draft-empty {
+      text-align: center; padding: 20px 0;
+      color: var(--muted); font-size: 12px; line-height: 1.5;
+    }
+    .ticket-draft-hint {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(122,173,255,.08);
+      border: 1px dashed rgba(176,208,255,.32);
+      color: #cfe0ff;
+      font-size: 11px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .ticket-draft-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ticket-draft-item {
+      position: relative;
+      cursor: grab;
+      transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+      border-radius: 18px;
+    }
+    .ticket-draft-item:active { cursor: grabbing; }
+    .ticket-draft-item.dragging { opacity: 0.55; transform: scale(0.97); }
+    .ticket-draft-item:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,.24); }
+
+    .ticket-draft-item::before {
+      content: '⇢ 拖到右侧票夹书收纳';
+      position: absolute;
+      top: -10px; left: 12px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(122,173,255,.35);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .3px;
+      pointer-events: none;
+      z-index: 2;
+      backdrop-filter: blur(4px);
+    }
+
+    .ticket-draft-actions {
+      display: flex; gap: 6px; margin-top: 8px; justify-content: flex-end;
+    }
+    .ticket-draft-actions button {
+      padding: 6px 12px; border-radius: 8px;
+      font-size: 11px; font-weight: 700;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      color: #eaf1fb; cursor: pointer;
+      transition: all .12s ease;
+    }
+    .ticket-draft-actions button:hover { background: rgba(255,255,255,.1); }
+    .ticket-draft-actions button.file-btn {
+      background: linear-gradient(135deg, rgba(143,216,191,.28), rgba(143,216,191,.12));
+      border-color: rgba(143,216,191,.36);
+      color: #cff7e5;
+    }
+    .ticket-draft-actions button.delete-btn { color: #ff9b9b; border-color: rgba(255,155,155,.2); }
+
+    /* Right panel - album book */
+    .ticket-album-summary {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: rgba(122,173,255,.08);
+      border: 1px solid rgba(176,208,255,.18);
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #cfe0ff;
+    }
+    .ticket-album-summary strong {
+      color: #fff; font-size: 18px; font-weight: 900;
+      font-family: Outfit, sans-serif;
+    }
+
+    .ticket-album {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      min-height: 200px;
+    }
+
+    .ticket-album-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      border-radius: 18px;
+      border: 2px dashed rgba(255,255,255,.14);
+      background: rgba(255,255,255,.02);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .ticket-album-empty .ticket-album-empty-icon {
+      font-size: 44px;
+      margin-bottom: 12px;
+      opacity: .6;
+    }
+
+    .ticket-album-item {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease;
+      aspect-ratio: 1.6 / 1;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .ticket-album-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 32px rgba(0,0,0,.32);
+    }
+    .ticket-album-item .thumb-wrapper {
+      width: 100%; height: 100%;
+      overflow: hidden;
+    }
+    .ticket-album-item .thumb-wrapper .ticket-stub {
+      transform: scale(0.62);
+      transform-origin: top left;
+      width: 161%;
+      min-height: unset;
+      pointer-events: none;
+    }
+    .ticket-album-item .thumb-badge {
+      position: absolute;
+      bottom: 6px; right: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.6);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    /* Drop zone highlight */
+    .ticket-drop-zone.drag-over {
+      background: rgba(122,173,255,.06);
+      outline: 3px dashed rgba(176,208,255,.5);
+      outline-offset: -6px;
+    }
+
+    /* Ticket detail modal */
+    .ticket-detail-modal {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(4, 10, 20, .82);
+      backdrop-filter: blur(10px);
+      z-index: 2000;
+      align-items: center; justify-content: center;
+      padding: 30px;
+    }
+    .ticket-detail-modal.show { display: flex; }
+    .ticket-detail-dialog {
+      max-width: 720px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
+      background: linear-gradient(180deg, rgba(12,22,39,.98), rgba(8,17,30,.99));
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 32px 80px rgba(0,0,0,.55);
+    }
+    .ticket-detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+    .ticket-detail-title { font-size: 20px; font-weight: 900; letter-spacing: -.4px; color: #f5f8ff; }
+    .ticket-detail-close {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      color: #cfdaf0; cursor: pointer; font-size: 18px;
+    }
+    .ticket-detail-close:hover { background: rgba(255,100,100,.14); color: #ff9b9b; }
+    .ticket-detail-body { margin-bottom: 20px; }
+    .ticket-detail-actions {
+      display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;
+    }
+    .ticket-detail-actions button {
+      padding: 10px 18px; border-radius: 10px;
+      font-size: 13px; font-weight: 800;
       cursor: pointer; transition: all .15s ease;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      color: #eaf1fb;
     }
-    .ticket-create-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,.18); }
-
-    .ticket-gallery { display: grid; grid-template-columns: 1fr; gap: 18px; }
-
-    .ticket-stub-wrapper { transition: box-shadow .3s ease, transform .3s ease; border-radius: 18px; }
-    .ticket-stub-wrapper.ticket-highlight {
-      box-shadow: 0 0 0 3px rgba(156,194,255,.6), 0 20px 40px rgba(122,173,255,.35);
-      transform: scale(1.015);
+    .ticket-detail-actions button:hover { background: rgba(255,255,255,.1); }
+    .ticket-detail-actions button.primary {
+      background: linear-gradient(135deg, rgba(122,173,255,.32), rgba(200,107,255,.16));
+      border-color: rgba(176,208,255,.42);
+      color: #fff;
     }
+    .ticket-detail-actions button.warn { color: #ff9b9b; border-color: rgba(255,155,155,.28); }
+
+    @media (max-width: 900px) {
+      .ticket-layout { grid-template-columns: 1fr; }
+      .map-view { grid-template-columns: 1fr; height: auto; }
+    }
+
+    /* Legacy compatibility hooks (kept for older refs) */
+    .ticket-view { display: none !important; }
+    .ticket-create-section, .ticket-form-title, .ticket-view-inner, .ticket-view-title, .ticket-gallery { display: none; }
 
     .ticket-stub {
       display: flex;
@@ -1855,34 +2120,83 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     <!-- Tab 2: Ticket View -->
     <div class="tab-content" id="tabContentTicket" data-tab="ticket">
-      <div class="ticket-view">
-        <div class="ticket-view-inner">
-          <div class="ticket-view-title">🎫 我的旅行票根</div>
-          <div class="ticket-create-section">
-            <div class="ticket-form-title">制作新票根</div>
-            <div class="ticket-form-grid">
-              <div class="ticket-form-field">
-                <label>城市 / 地点</label>
-                <input id="ticketCityInput" type="text" placeholder="例如：上海、巴黎" />
-              </div>
-              <div class="ticket-form-field">
-                <label>日期</label>
-                <input id="ticketDateInput" type="date" />
+      <div class="ticket-layout">
+        <!-- Left: Ticket Creation Panel -->
+        <aside class="ticket-left-panel">
+          <div class="ticket-panel-header">
+            <div class="ticket-panel-title">🎨 制作旅行票根</div>
+            <div class="ticket-panel-sub">填写信息 → 选配色 → 上传照片 → 生成后拖到右侧票夹书收纳</div>
+          </div>
+          <div class="ticket-panel-body">
+            <div class="ticket-form-section">
+              <div class="ticket-form-section-title">基本信息</div>
+              <div class="ticket-form-grid">
+                <div class="ticket-form-field">
+                  <label>城市 / 地点</label>
+                  <input id="ticketCityInput" type="text" placeholder="例如：上海、巴黎" />
+                </div>
+                <div class="ticket-form-field">
+                  <label>日期</label>
+                  <input id="ticketDateInput" type="date" />
+                </div>
               </div>
             </div>
-            <div class="ticket-form-field" style="margin-bottom:12px;">
-              <label>票根配色</label>
+
+            <div class="ticket-form-section">
+              <div class="ticket-form-section-title">票根配色（8 款）</div>
               <div class="ticket-color-group" id="ticketColorGroup"></div>
             </div>
-            <div class="ticket-form-field" style="margin-bottom:14px;">
-              <label>旅行照片（可选）</label>
+
+            <div class="ticket-form-section">
+              <div class="ticket-form-section-title">旅行照片（可选）</div>
               <div class="ticket-photo-upload" id="ticketPhotoUpload">📷 点击上传照片</div>
               <input type="file" id="ticketPhotoFile" accept="image/*" style="display:none;" />
             </div>
+
             <button class="ticket-create-btn" id="ticketCreateBtn">生成票根 🎫</button>
+
+            <div class="ticket-draft-area">
+              <div class="ticket-draft-title">📌 待收纳（可拖拽到右侧）</div>
+              <div class="ticket-draft-list" id="ticketDraftList"></div>
+              <div class="ticket-draft-empty" id="ticketDraftEmpty">
+                这里会显示刚生成、还未收纳到票夹书的票根<br />
+                <span style="opacity:.6;font-size:11px;">生成后按住拖到右侧「票夹书」→ 一键归档</span>
+              </div>
+            </div>
           </div>
-          <div class="ticket-gallery" id="ticketGallery"></div>
-        </div>
+        </aside>
+
+        <!-- Right: Album Book / Ticket Holder -->
+        <section class="ticket-right-panel ticket-drop-zone" id="ticketDropZone">
+          <div class="ticket-panel-header">
+            <div class="ticket-panel-title">📖 我的票夹书</div>
+            <div class="ticket-panel-sub">把左侧生成的票根拖进来收纳，点击缩略图放大 / 下载 / 删除</div>
+          </div>
+          <div class="ticket-panel-body">
+            <div class="ticket-album-summary">
+              <span>已收纳票根</span>
+              <strong id="ticketAlbumCount">0</strong>
+              <span>张 · 数据保存在本机</span>
+            </div>
+            <div class="ticket-album" id="ticketAlbum"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Detail Modal -->
+  <div class="ticket-detail-modal" id="ticketDetailModal">
+    <div class="ticket-detail-dialog">
+      <div class="ticket-detail-header">
+        <div class="ticket-detail-title" id="ticketDetailTitle">票根详情</div>
+        <button class="ticket-detail-close" id="ticketDetailClose" title="关闭">✕</button>
+      </div>
+      <div class="ticket-detail-body" id="ticketDetailBody"></div>
+      <div class="ticket-detail-actions">
+        <button id="ticketDetailUnfile">↩︎ 取回到左侧</button>
+        <button id="ticketDetailDownload" class="primary">📥 下载图片</button>
+        <button id="ticketDetailDelete" class="warn">🗑️ 删除票根</button>
       </div>
     </div>
   </div>
@@ -2113,7 +2427,7 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
     function getAllCities() { return getCustomCities(); }
 
     const DOM = {};
-    ['pageTitle','pageSubtitle','topbarTitle','topbarSub','cityInput','addCityBtn','openSelectorBtn','resetProfileBtn','shareBtn','visitTypeGroup','statusText','cityPalette','paletteEmpty','customList','customEmpty','celebrationLayer','hoverCard','nameModal','nameModalInput','nameModalError','nameModalConfirm','provinceModal','provinceModalClose','provinceListPanel','cityListPanel','cityListTitle','cityListGrid','ticketCityInput','ticketDateInput','ticketColorGroup','ticketPhotoUpload','ticketPhotoFile','ticketCreateBtn','ticketGallery','topTabsName','topTabsEdit','tabMap','tabTicket','tabContentMap','tabContentTicket'].forEach(id => { DOM[id] = document.getElementById(id); });
+    ['pageTitle','pageSubtitle','topbarTitle','topbarSub','cityInput','addCityBtn','openSelectorBtn','resetProfileBtn','shareBtn','visitTypeGroup','statusText','cityPalette','paletteEmpty','customList','customEmpty','celebrationLayer','hoverCard','nameModal','nameModalInput','nameModalError','nameModalConfirm','provinceModal','provinceModalClose','provinceListPanel','cityListPanel','cityListTitle','cityListGrid','ticketCityInput','ticketDateInput','ticketColorGroup','ticketPhotoUpload','ticketPhotoFile','ticketCreateBtn','ticketDraftList','ticketDraftEmpty','ticketAlbum','ticketAlbumCount','ticketDropZone','ticketDetailModal','ticketDetailTitle','ticketDetailBody','ticketDetailClose','ticketDetailUnfile','ticketDetailDownload','ticketDetailDelete','topTabsName','topTabsEdit','tabMap','tabTicket','tabContentMap','tabContentTicket'].forEach(id => { DOM[id] = document.getElementById(id); });
 
     const map = L.map('map', { zoomControl: false, attributionControl: false, zoomAnimation: true, fadeAnimation: true, preferCanvas: true, minZoom: 2.5, maxZoom: 8, zoomSnap: 0.25, zoomDelta: 0.5, wheelPxPerZoomLevel: 110 }).setView([29, 109.5], 4.5);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -2130,8 +2444,13 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
     function switchTab(tab) {
       document.querySelectorAll('.top-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.dataset.tab === tab));
-      if (tab === 'map') setTimeout(() => map.invalidateSize(true), 100);
-      if (tab === 'ticket') { initTicketColorGroup(); renderTicketGallery(); DOM.ticketDateInput.value = new Date().toISOString().slice(0, 10); }
+      if (tab === 'map') setTimeout(() => map.invalidateSize(true), 60);
+      if (tab === 'ticket') {
+        initTicketColorGroup();
+        renderTicketDraftList();
+        renderTicketAlbum();
+        if (!DOM.ticketDateInput.value) DOM.ticketDateInput.value = new Date().toISOString().slice(0, 10);
+      }
     }
     DOM.tabMap.addEventListener('click', () => switchTab('map'));
     DOM.tabTicket.addEventListener('click', () => switchTab('ticket'));
@@ -2426,11 +2745,26 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       const tickets = getTickets();
       const target = tickets.find(t => normalizeText(t.city) === key);
       if (!target) return;
-      const el = DOM.ticketGallery.querySelector(`[data-tid="${target.id}"]`);
-      if (!el) return;
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      el.classList.add('ticket-highlight');
-      setTimeout(() => el.classList.remove('ticket-highlight'), 2000);
+      // If filed, scroll into album view and open detail modal
+      if (target.filed) {
+        const el = DOM.ticketAlbum.querySelector(`[data-tid="${target.id}"]`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.style.outline = '3px solid rgba(156,194,255,.7)';
+          el.style.outlineOffset = '3px';
+          setTimeout(() => { el.style.outline = ''; el.style.outlineOffset = ''; }, 1800);
+          setTimeout(() => openTicketDetail(target.id), 700);
+        }
+      } else {
+        // Unfiled → scroll to draft list, highlight it
+        const el = DOM.ticketDraftList.querySelector(`[data-tid="${target.id}"]`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.style.outline = '3px solid rgba(156,194,255,.7)';
+          el.style.outlineOffset = '3px';
+          setTimeout(() => { el.style.outline = ''; el.style.outlineOffset = ''; }, 1800);
+        }
+      }
     }
 
     function createRegionLayers(cities, regionMetaMap) {
@@ -2488,33 +2822,255 @@ window.__GEO_WORLD__ = {"type":"FeatureCollection","features":[{"type":"Feature"
       finally { DOM.shareBtn.disabled = false; DOM.shareBtn.textContent = '📸 截图分享'; }
     });
 
-    // === Ticket Logic ===
-    function initTicketColorGroup() { DOM.ticketColorGroup.innerHTML = ''; TICKET_COLORS.forEach((c, i) => { const s = document.createElement('div'); s.className = 'ticket-color-swatch' + (i === 0 ? ' active' : ''); s.style.background = c.bg; s.title = c.name; s.addEventListener('click', () => { DOM.ticketColorGroup.querySelectorAll('.ticket-color-swatch').forEach(x => x.classList.remove('active')); s.classList.add('active'); selectedTicketColor = c; }); DOM.ticketColorGroup.appendChild(s); }); }
-    function getTickets() { try { return JSON.parse(localStorage.getItem(TICKET_KEY)) || []; } catch { return []; } }
-    function saveTickets(t) { localStorage.setItem(TICKET_KEY, JSON.stringify(t)); }
-    function generateBarcode() { let b = ''; for (let i = 0; i < 35; i++) b += `<div class="ticket-barcode-bar" style="width:${Math.random() > .5 ? 2 : 1}px;margin-right:${Math.random() > .6 ? 2 : 1}px;"></div>`; return b; }
-
-    function renderTicketStub(t) {
-      const d = t.date ? new Date(t.date) : new Date(), y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
-      const ph = t.photo ? `<img src="${t.photo}" alt="${escapeHtml(t.city)}" />` : '<div class="ticket-no-photo">🌍</div>';
-      return `<div class="ticket-stub" style="background:${t.bgColor};color:${t.textColor};"><div class="ticket-stub-left"><div><div class="ticket-next-label">NEXT STATION</div><div class="ticket-city-name">${escapeHtml(t.city)}</div></div><div><div class="ticket-date-row"><div class="ticket-date-field"><div class="ticket-date-label">YEAR</div><div class="ticket-date-value">${y}</div></div><div class="ticket-date-field"><div class="ticket-date-label">DATE</div><div class="ticket-date-value">${m}/${day}</div></div></div><div class="ticket-barcode">${generateBarcode()}</div></div></div><div class="ticket-stub-divider"></div><div class="ticket-stub-notch-top"></div><div class="ticket-stub-notch-bottom"></div><div class="ticket-stub-right">${ph}</div></div><div class="ticket-stub-actions"><button class="ticket-action-btn" data-ticket-dl="${t.id}">📥 下载</button><button class="ticket-action-btn delete" data-ticket-rm="${t.id}">🗑️ 删除</button></div>`;
+    // === Ticket Logic (Draft + Album + Drag/Drop) ===
+    function initTicketColorGroup() {
+      DOM.ticketColorGroup.innerHTML = '';
+      TICKET_COLORS.forEach((c, i) => {
+        const s = document.createElement('div');
+        s.className = 'ticket-color-swatch' + (c.bg === selectedTicketColor.bg ? ' active' : (i === 0 && !selectedTicketColor ? ' active' : ''));
+        s.style.background = c.bg;
+        s.title = c.name;
+        s.addEventListener('click', () => {
+          DOM.ticketColorGroup.querySelectorAll('.ticket-color-swatch').forEach(x => x.classList.remove('active'));
+          s.classList.add('active');
+          selectedTicketColor = c;
+        });
+        DOM.ticketColorGroup.appendChild(s);
+      });
     }
 
-    function renderTicketGallery() { const ts = getTickets(); DOM.ticketGallery.innerHTML = ts.length ? ts.map(t => `<div class="ticket-stub-wrapper" data-tid="${t.id}">${renderTicketStub(t)}</div>`).join('') : '<div class="empty-text">还没有票根，去上方创建第一张吧 🎫</div>'; }
+    function getTickets() { try { return JSON.parse(localStorage.getItem(TICKET_KEY)) || []; } catch { return []; } }
+    function saveTickets(t) { localStorage.setItem(TICKET_KEY, JSON.stringify(t)); }
+    function updateTicket(id, patch) { const ts = getTickets().map(t => t.id === id ? { ...t, ...patch } : t); saveTickets(ts); return ts; }
+    function deleteTicket(id) { saveTickets(getTickets().filter(t => t.id !== id)); }
 
-    DOM.ticketPhotoUpload.addEventListener('click', () => DOM.ticketPhotoFile.click());
-    DOM.ticketPhotoFile.addEventListener('change', e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = ev => { ticketPhotoData = ev.target.result; DOM.ticketPhotoUpload.textContent = '✅ 照片已选'; DOM.ticketPhotoUpload.classList.add('has-photo'); }; r.readAsDataURL(f); });
+    function generateBarcode() {
+      let b = '';
+      for (let i = 0; i < 35; i++) b += `<div class="ticket-barcode-bar" style="width:${Math.random() > .5 ? 2 : 1}px;margin-right:${Math.random() > .6 ? 2 : 1}px;"></div>`;
+      return b;
+    }
 
-    DOM.ticketCreateBtn.addEventListener('click', () => {
-      const city = DOM.ticketCityInput.value.trim(); if (!city) { alert('请输入城市名'); return; }
-      const ticket = { id: `tk-${Date.now()}`, city, date: DOM.ticketDateInput.value || new Date().toISOString().slice(0, 10), bgColor: selectedTicketColor.bg, textColor: selectedTicketColor.text, photo: ticketPhotoData };
-      const ts = getTickets(); ts.unshift(ticket); saveTickets(ts); renderTicketGallery();
-      DOM.ticketCityInput.value = ''; ticketPhotoData = null; DOM.ticketPhotoUpload.textContent = '📷 点击上传照片'; DOM.ticketPhotoUpload.classList.remove('has-photo'); DOM.ticketPhotoFile.value = '';
+    function renderTicketStub(t, opts = {}) {
+      const d = t.date ? new Date(t.date) : new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const ph = t.photo ? `<img src="${t.photo}" alt="${escapeHtml(t.city)}" />` : '<div class="ticket-no-photo">🌍</div>';
+      const actions = opts.withActions
+        ? `<div class="ticket-draft-actions">
+             <button class="file-btn" data-ticket-file="${t.id}">📖 收纳到票夹</button>
+             <button data-ticket-dl="${t.id}">📥 下载</button>
+             <button class="delete-btn" data-ticket-rm="${t.id}">🗑️ 删除</button>
+           </div>` : '';
+      return `<div class="ticket-stub" style="background:${t.bgColor};color:${t.textColor};">
+        <div class="ticket-stub-left">
+          <div>
+            <div class="ticket-next-label">NEXT STATION</div>
+            <div class="ticket-city-name">${escapeHtml(t.city)}</div>
+          </div>
+          <div>
+            <div class="ticket-date-row">
+              <div class="ticket-date-field"><div class="ticket-date-label">YEAR</div><div class="ticket-date-value">${y}</div></div>
+              <div class="ticket-date-field"><div class="ticket-date-label">DATE</div><div class="ticket-date-value">${m}/${day}</div></div>
+            </div>
+            <div class="ticket-barcode">${generateBarcode()}</div>
+          </div>
+        </div>
+        <div class="ticket-stub-divider"></div>
+        <div class="ticket-stub-notch-top"></div>
+        <div class="ticket-stub-notch-bottom"></div>
+        <div class="ticket-stub-right">${ph}</div>
+      </div>${actions}`;
+    }
+
+    // Left panel: draft (unfiled) tickets
+    function renderTicketDraftList() {
+      const drafts = getTickets().filter(t => !t.filed);
+      DOM.ticketDraftList.innerHTML = '';
+      DOM.ticketDraftEmpty.style.display = drafts.length ? 'none' : 'block';
+      drafts.forEach(t => {
+        const wrap = document.createElement('div');
+        wrap.className = 'ticket-draft-item';
+        wrap.dataset.tid = t.id;
+        wrap.draggable = true;
+        wrap.innerHTML = renderTicketStub(t, { withActions: true });
+        wrap.addEventListener('dragstart', e => {
+          e.dataTransfer.setData('text/plain', t.id);
+          e.dataTransfer.effectAllowed = 'move';
+          wrap.classList.add('dragging');
+        });
+        wrap.addEventListener('dragend', () => wrap.classList.remove('dragging'));
+        DOM.ticketDraftList.appendChild(wrap);
+      });
+    }
+
+    // Right panel: album (filed) tickets
+    function renderTicketAlbum() {
+      const filed = getTickets().filter(t => t.filed);
+      DOM.ticketAlbum.innerHTML = '';
+      DOM.ticketAlbumCount.textContent = filed.length;
+      if (!filed.length) {
+        DOM.ticketAlbum.innerHTML = `
+          <div class="ticket-album-empty">
+            <div class="ticket-album-empty-icon">📭</div>
+            <div>票夹书还是空的</div>
+            <div style="opacity:.65;font-size:12px;margin-top:6px;">在左侧生成票根后，拖到这里就能收纳啦～</div>
+          </div>`;
+        return;
+      }
+      filed.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'ticket-album-item';
+        item.dataset.tid = t.id;
+        item.title = `${t.city} · ${t.date || ''} · 点击查看`;
+        item.innerHTML = `
+          <div class="thumb-wrapper">${renderTicketStub(t)}</div>
+          <div class="thumb-badge">${escapeHtml(t.city)}</div>`;
+        item.addEventListener('click', () => openTicketDetail(t.id));
+        DOM.ticketAlbum.appendChild(item);
+      });
+    }
+
+    // Drag-drop: from left draft-list to right drop-zone
+    DOM.ticketDropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      DOM.ticketDropZone.classList.add('drag-over');
+    });
+    DOM.ticketDropZone.addEventListener('dragleave', e => {
+      if (e.target === DOM.ticketDropZone || !DOM.ticketDropZone.contains(e.relatedTarget)) {
+        DOM.ticketDropZone.classList.remove('drag-over');
+      }
+    });
+    DOM.ticketDropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      DOM.ticketDropZone.classList.remove('drag-over');
+      const id = e.dataTransfer.getData('text/plain');
+      if (!id) return;
+      updateTicket(id, { filed: true, filedAt: Date.now() });
+      renderTicketDraftList();
+      renderTicketAlbum();
+      setStatus('票根已收纳到票夹书 📖', 'success');
+      // Brief highlight on newly filed thumbnail
+      setTimeout(() => {
+        const el = DOM.ticketAlbum.querySelector(`[data-tid="${id}"]`);
+        if (el) { el.style.outline = '2px solid rgba(143,216,191,.7)'; el.style.outlineOffset = '2px'; setTimeout(() => { el.style.outline = ''; el.style.outlineOffset = ''; }, 1500); }
+      }, 40);
     });
 
-    DOM.ticketGallery.addEventListener('click', async e => {
-      const rm = e.target.closest('[data-ticket-rm]'); if (rm) { saveTickets(getTickets().filter(t => t.id !== rm.dataset.ticketRm)); renderTicketGallery(); return; }
-      const dl = e.target.closest('[data-ticket-dl]'); if (dl && window.html2canvas) { const w = DOM.ticketGallery.querySelector(`[data-tid="${dl.dataset.ticketDl}"] .ticket-stub`); if (!w) return; dl.textContent = '⏳'; try { const cv = await window.html2canvas(w, { backgroundColor: null, useCORS: true, scale: 2 }); const a = document.createElement('a'); a.download = `ticket-${dl.dataset.ticketDl}.png`; a.href = cv.toDataURL('image/png'); a.click(); } catch {} dl.textContent = '📥 下载'; }
+    // Photo upload
+    DOM.ticketPhotoUpload.addEventListener('click', () => DOM.ticketPhotoFile.click());
+    DOM.ticketPhotoFile.addEventListener('change', e => {
+      const f = e.target.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = ev => {
+        ticketPhotoData = ev.target.result;
+        DOM.ticketPhotoUpload.textContent = '✅ 照片已选（点击更换）';
+        DOM.ticketPhotoUpload.classList.add('has-photo');
+      };
+      r.readAsDataURL(f);
+    });
+
+    // Create ticket → goes to draft area (filed: false)
+    DOM.ticketCreateBtn.addEventListener('click', () => {
+      const city = DOM.ticketCityInput.value.trim();
+      if (!city) { setStatus('请先填写城市 / 地点', 'warning'); DOM.ticketCityInput.focus(); return; }
+      const ticket = {
+        id: `tk-${Date.now()}`,
+        city,
+        date: DOM.ticketDateInput.value || new Date().toISOString().slice(0, 10),
+        bgColor: selectedTicketColor.bg,
+        textColor: selectedTicketColor.text,
+        photo: ticketPhotoData,
+        filed: false,
+        createdAt: Date.now()
+      };
+      const ts = getTickets(); ts.unshift(ticket); saveTickets(ts);
+      renderTicketDraftList();
+      // Reset form
+      DOM.ticketCityInput.value = '';
+      ticketPhotoData = null;
+      DOM.ticketPhotoUpload.textContent = '📷 点击上传照片';
+      DOM.ticketPhotoUpload.classList.remove('has-photo');
+      DOM.ticketPhotoFile.value = '';
+      setStatus(`票根「${city}」已生成，拖到右侧票夹书收纳 ✨`, 'success');
+    });
+
+    // Delegate draft-list actions (file / download / delete)
+    DOM.ticketDraftList.addEventListener('click', async e => {
+      const rm = e.target.closest('[data-ticket-rm]');
+      if (rm) {
+        deleteTicket(rm.dataset.ticketRm);
+        renderTicketDraftList();
+        return;
+      }
+      const file = e.target.closest('[data-ticket-file]');
+      if (file) {
+        updateTicket(file.dataset.ticketFile, { filed: true, filedAt: Date.now() });
+        renderTicketDraftList();
+        renderTicketAlbum();
+        setStatus('票根已收纳到票夹书 📖', 'success');
+        return;
+      }
+      const dl = e.target.closest('[data-ticket-dl]');
+      if (dl) await downloadTicket(dl.dataset.ticketDl, DOM.ticketDraftList);
+    });
+
+    async function downloadTicket(id, scopeEl) {
+      if (!window.html2canvas) { setStatus('截图组件未就绪', 'error'); return; }
+      const wrapper = (scopeEl || document).querySelector(`[data-tid="${id}"] .ticket-stub`);
+      if (!wrapper) return;
+      try {
+        const cv = await window.html2canvas(wrapper, { backgroundColor: null, useCORS: true, scale: 2 });
+        const a = document.createElement('a');
+        a.download = `ticket-${id}.png`;
+        a.href = cv.toDataURL('image/png');
+        a.click();
+        setStatus('票根已下载 📥', 'success');
+      } catch (err) {
+        console.error(err);
+        setStatus('下载失败', 'error');
+      }
+    }
+
+    // Ticket Detail Modal (album thumbnail click)
+    let currentDetailTicketId = null;
+    function openTicketDetail(id) {
+      const t = getTickets().find(x => x.id === id);
+      if (!t) return;
+      currentDetailTicketId = id;
+      DOM.ticketDetailTitle.textContent = `🎫 ${t.city} · ${t.date || ''}`;
+      DOM.ticketDetailBody.innerHTML = `<div data-tid="${t.id}" style="border-radius:18px;overflow:hidden;">${renderTicketStub(t)}</div>`;
+      DOM.ticketDetailModal.classList.add('show');
+    }
+    function closeTicketDetail() {
+      DOM.ticketDetailModal.classList.remove('show');
+      currentDetailTicketId = null;
+    }
+    DOM.ticketDetailClose.addEventListener('click', closeTicketDetail);
+    DOM.ticketDetailModal.addEventListener('click', e => { if (e.target === DOM.ticketDetailModal) closeTicketDetail(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && DOM.ticketDetailModal.classList.contains('show')) closeTicketDetail(); });
+
+    DOM.ticketDetailDownload.addEventListener('click', () => {
+      if (currentDetailTicketId) downloadTicket(currentDetailTicketId, DOM.ticketDetailBody);
+    });
+    DOM.ticketDetailUnfile.addEventListener('click', () => {
+      if (!currentDetailTicketId) return;
+      updateTicket(currentDetailTicketId, { filed: false });
+      renderTicketDraftList();
+      renderTicketAlbum();
+      closeTicketDetail();
+      setStatus('已把票根取回到左侧待收纳区', 'success');
+    });
+    DOM.ticketDetailDelete.addEventListener('click', () => {
+      if (!currentDetailTicketId) return;
+      if (!confirm('确定删除这张票根吗？此操作不可恢复。')) return;
+      deleteTicket(currentDetailTicketId);
+      renderTicketDraftList();
+      renderTicketAlbum();
+      closeTicketDetail();
+      setStatus('票根已删除', 'success');
     });
 
     // === Init ===
