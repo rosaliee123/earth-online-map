@@ -61,6 +61,13 @@ tailwind.config = {
   .red-chip { background:#fee2e2; color:#b91c1c; }
   .segment-btn.active { background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.08); color:#0f172a; }
   .segment-btn { color:#64748b; }
+  /* Wizard 按钮 */
+  .wz-gender, .wz-unit, .wz-activity, .wz-pace, .wz-rest {
+    background:#fff; color:#475569; border-color:#e2e8f0;
+  }
+  .wz-gender.active, .wz-unit.active, .wz-activity.active, .wz-pace.active, .wz-rest.active {
+    background:#ecfdf5; color:#047857; border-color:#10b981;
+  }
   .badge-locked { filter: grayscale(1); opacity: 0.35; }
   .fade-mask { mask-image: linear-gradient(90deg, transparent, black 12px, black calc(100% - 12px), transparent); }
   .water-cup {
@@ -84,10 +91,13 @@ tailwind.config = {
       <div class="text-[11px] text-slate-500" id="today-str"></div>
       <h1 class="text-xl font-bold flex items-center gap-2">
         <span class="inline-block w-2 h-2 rounded-full bg-mint-500"></span>
-        瘦干螂养成
+        <span id="app-title">瘦干螂养成</span>
       </h1>
     </div>
     <div class="flex items-center gap-2">
+      <button id="btn-profile" class="text-xs text-slate-500 hover:text-mint-600 flex items-center gap-1 px-2 py-1 rounded-lg bg-white/70 border border-slate-100" title="个人资料设置">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
       <button id="btn-share" class="text-xs text-slate-500 hover:text-mint-600 flex items-center gap-1 px-2 py-1 rounded-lg bg-white/70 border border-slate-100" title="生成周报卡片">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v14"/></svg>
         周报
@@ -102,14 +112,13 @@ tailwind.config = {
     <section id="page-home" class="tab-page space-y-4"></section>
     <section id="page-log" class="tab-page space-y-4 hidden"></section>
     <section id="page-weight" class="tab-page space-y-4 hidden"></section>
-    <section id="page-meals" class="tab-page space-y-4 hidden"></section>
     <section id="page-cal" class="tab-page space-y-4 hidden"></section>
   </main>
 </div>
 
 <!-- Bottom Tab Bar -->
 <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur border-t border-slate-100" style="padding-bottom: env(safe-area-inset-bottom);">
-  <div class="max-w-md mx-auto grid grid-cols-5 py-2">
+  <div class="max-w-md mx-auto grid grid-cols-4 py-2">
     <button data-tab="home" class="tab-btn text-slate-400 flex flex-col items-center gap-0.5 text-[11px] font-medium">
       <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5L12 3l9 6.5V21a1 1 0 01-1 1h-5v-7h-6v7H4a1 1 0 01-1-1V9.5z"/></svg>
       首页<div class="tab-dot w-1 h-1 rounded-full bg-mint-500"></div>
@@ -121,10 +130,6 @@ tailwind.config = {
     <button data-tab="weight" class="tab-btn text-slate-400 flex flex-col items-center gap-0.5 text-[11px] font-medium">
       <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-4 4 4 5-6"/></svg>
       体重<div class="tab-dot w-1 h-1 rounded-full bg-mint-500"></div>
-    </button>
-    <button data-tab="meals" class="tab-btn text-slate-400 flex flex-col items-center gap-0.5 text-[11px] font-medium">
-      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 3v9a4 4 0 004 4v6M8 3v6m-4 0h8M16 3c-1 3-1 6 0 9v12"/></svg>
-      选餐<div class="tab-dot w-1 h-1 rounded-full bg-mint-500"></div>
     </button>
     <button data-tab="cal" class="tab-btn text-slate-400 flex flex-col items-center gap-0.5 text-[11px] font-medium">
       <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
@@ -144,20 +149,115 @@ tailwind.config = {
    常量与配置
    ============================================================== */
 const LS_KEY = 'fit-tracker-v2';
-const USER_PROFILE = {
-  height: 173,           // cm
-  startWeight: 128,      // 斤
-  goalWeight: 112,       // 斤
-  startDate: '2026-08-05',
-  goalDate:  '2026-11-05',
-  calorieMin: 1350,
-  calorieMax: 1500,
-  proteinMin: 90,        // g
-  proteinMax: 110,
-  carbTarget: 150,       // g
-  fatTarget: 45,         // g
-  waterTarget: 2000,     // ml
+
+/* ==============================================================
+   用户资料 · 默认与派生计算（BMR/TDEE/热量/蛋白）
+   ============================================================== */
+const DEFAULT_PROFILE = {
+  name: '',
+  gender: 'female',       // 'female' | 'male'
+  age: 25,
+  heightCm: 165,
+  currentKg: 60,
+  goalKg: 52,
+  startWeightKg: 60,      // 首次填资料时的起始体重（用于进度基线）
+  unit: 'jin',            // 'jin'（斤）| 'kg'
+  activity: 'light',      // sedentary / light / moderate / active
+  pace: 'standard',       // gentle / standard / aggressive / custom
+  customKcalMin: 1350,
+  customKcalMax: 1500,
+  restrictions: [],       // 忌口/偏好 ['no_pork','no_beef','no_seafood','no_duck','no_offal','no_bullfrog','vegetarian', ...]
+  restrictionsCustom: '', // 用户自定义忌口备注
+  startDate: null,
+  onboarded: false,
 };
+
+const ACTIVITY_FACTOR = { sedentary:1.2, light:1.375, moderate:1.55, active:1.725 };
+const ACTIVITY_LABEL = {
+  sedentary: '久坐（办公室 · 少运动）',
+  light:     '轻度活动（每周 1-3 次运动）',
+  moderate:  '中度活动（每周 3-5 次运动）',
+  active:    '重度活动（每天运动 / 体力工作）',
+};
+const PACE_INFO = {
+  gentle:     { label:'🐢 温和', gap:300, perWeekKg:0.3, desc:'每周约 0.3kg，可持续' },
+  standard:   { label:'⚡ 标准', gap:500, perWeekKg:0.5, desc:'每周约 0.5kg，最推荐' },
+  aggressive: { label:'🔥 积极', gap:750, perWeekKg:0.75,desc:'每周约 0.75kg，短期冲刺' },
+  custom:     { label:'✍️ 自定义', gap:0,   perWeekKg:0,   desc:'手动设定热量上下限' },
+};
+const RESTRICTION_OPTIONS = [
+  { k:'no_pork',     label:'🚫 不吃猪肉' },
+  { k:'no_beef',     label:'🚫 不吃牛肉' },
+  { k:'no_duck',     label:'🚫 不吃鸭肉' },
+  { k:'no_seafood',  label:'🚫 不吃海鲜' },
+  { k:'no_offal',    label:'🚫 不吃内脏' },
+  { k:'no_bullfrog', label:'🚫 不吃牛蛙' },
+  { k:'vegetarian',  label:'🌱 素食' },
+  { k:'no_spicy',    label:'🌶️ 不吃辣' },
+  { k:'no_dairy',    label:'🥛 不喝牛奶（乳糖不耐）' },
+];
+
+// 用 Mifflin-St Jeor 公式算 BMR，再根据活动系数推 TDEE / 每日热量 / 宏量目标
+function computeTargets(p) {
+  const kg = Number(p.currentKg) || 60;
+  const cm = Number(p.heightCm) || 165;
+  const age = Number(p.age) || 25;
+  const bmr = 10*kg + 6.25*cm - 5*age + (p.gender === 'male' ? 5 : -161);
+  const act = ACTIVITY_FACTOR[p.activity] || 1.375;
+  const tdee = Math.round(bmr * act);
+  let kcalTarget, kcalMin, kcalMax;
+  if (p.pace === 'custom') {
+    kcalMin = Number(p.customKcalMin) || 1200;
+    kcalMax = Number(p.customKcalMax) || 1500;
+    kcalTarget = Math.round((kcalMin + kcalMax) / 2);
+  } else {
+    const gap = (PACE_INFO[p.pace] || PACE_INFO.standard).gap;
+    kcalTarget = Math.max(1200, tdee - gap);  // 兜底：不低于 1200
+    kcalMin = Math.round(kcalTarget - 100);
+    kcalMax = Math.round(kcalTarget + 100);
+  }
+  const proteinTarget = Math.round(kg * 1.8);
+  const proteinMin = Math.round(kg * 1.6);
+  const proteinMax = Math.round(kg * 2.0);
+  const carbTarget = Math.round(kcalTarget * 0.4 / 4);
+  const fatTarget  = Math.round(kcalTarget * 0.25 / 9);
+  const waterTarget = Math.min(3500, Math.max(1500, Math.round(kg * 35 / 100) * 100));
+  return { bmr:Math.round(bmr), tdee, kcalTarget, kcalMin, kcalMax, proteinTarget, proteinMin, proteinMax, carbTarget, fatTarget, waterTarget };
+}
+
+// 起始日预计达成目标日期
+function computeGoalDate(p) {
+  if (!p || !p.startDate) return null;
+  const remainKg = Math.max(0, (p.startWeightKg || p.currentKg) - p.goalKg);
+  const perWeek = (PACE_INFO[p.pace] || PACE_INFO.standard).perWeekKg || 0.5;
+  const days = Math.max(7, Math.ceil(remainKg / perWeek * 7));
+  const d = new Date(p.startDate);
+  d.setDate(d.getDate() + days);
+  const y = d.getFullYear(), m = d.getMonth()+1, day = d.getDate();
+  return `${y}-${m<10?'0'+m:m}-${day<10?'0'+day:day}`;
+}
+
+// 让所有原有 USER_PROFILE.xxx 引用平滑迁移：Proxy 每次访问都返回 state.profile 最新计算值
+const USER_PROFILE = new Proxy({}, {
+  get(_, key) {
+    const p = (state && state.profile) || DEFAULT_PROFILE;
+    if (key === 'profile') return p;
+    switch (key) {
+      case 'height':       return p.heightCm;
+      case 'startWeight':  return Math.round((p.startWeightKg || p.currentKg) * 2 * 10) / 10;   // 斤
+      case 'goalWeight':   return Math.round(p.goalKg * 2 * 10) / 10;                          // 斤
+      case 'startDate':    return p.startDate || today();
+      case 'goalDate':     return computeGoalDate(p);
+    }
+    const t = computeTargets(p);
+    if (key in t) return t[key === 'kcalTarget' ? 'kcalTarget' : key];
+    // 兼容旧字段名
+    if (key === 'calorieMin') return t.kcalMin;
+    if (key === 'calorieMax') return t.kcalMax;
+    return undefined;
+  },
+  set() { return true; }, // 只读
+});
 
 const DEFAULT_STATE = {
   weights: {},           // { date: kg斤 }
@@ -170,8 +270,8 @@ const DEFAULT_STATE = {
   badges: [],            // 已解锁徽章 id
   seenTips: [],
   activeTab: 'home',
-  activeShift: 'day',
   activeLogTab: 'diet',
+  profile: null,         // 用户资料（null = 未完成引导，弹 wizard）
 };
 
 let state = load();
@@ -181,7 +281,10 @@ function load() {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) return structuredClone(DEFAULT_STATE);
     const parsed = JSON.parse(raw);
-    return { ...structuredClone(DEFAULT_STATE), ...parsed };
+    const merged = { ...structuredClone(DEFAULT_STATE), ...parsed };
+    // 老数据迁移：如果 profile 缺失，标记为需要引导
+    if (!merged.profile || typeof merged.profile !== 'object') merged.profile = null;
+    return merged;
   } catch(e) { return structuredClone(DEFAULT_STATE); }
 }
 function save() { localStorage.setItem(LS_KEY, JSON.stringify(state)); }
@@ -303,7 +406,7 @@ const EXERCISE_DB = [
   { name:'椭圆机',     kcal30: 260, icon:'💫' },
   { name:'动感单车',   kcal30: 290, icon:'🚴‍♀️' },
   { name:'羽毛球',     kcal30: 230, icon:'🏸' },
-  { name:'跳操 / 舞蹈',k30: 220, kcal30:220, icon:'💃' },
+  { name:'跳操 / 舞蹈',kcal30: 220, icon:'💃' },
   { name:'爬楼梯',     kcal30: 250, icon:'🪜' },
 ];
 
@@ -417,7 +520,7 @@ const BADGES = [
   { id:'lose_1',        name:'首斤达成',   desc:'累计减重 1 斤', icon:'📉', check: s => (firstWeight(s) - currentWeight(s)) >= 1 },
   { id:'lose_5',        name:'五斤俱乐部', desc:'累计减重 5 斤', icon:'💪', check: s => (firstWeight(s) - currentWeight(s)) >= 5 },
   { id:'lose_10',       name:'十斤达成',   desc:'累计减重 10 斤', icon:'🎯', check: s => (firstWeight(s) - currentWeight(s)) >= 10 },
-  { id:'goal_hit',      name:'目标达成！',  desc:'达到 112 斤目标', icon:'👑', check: s => currentWeight(s) <= USER_PROFILE.goalWeight },
+  { id:'goal_hit',      name:'目标达成！',  get desc(){ return `达到 ${USER_PROFILE.goalWeight} 斤目标`; }, icon:'👑', check: s => currentWeight(s) <= USER_PROFILE.goalWeight },
   { id:'exercise_10',   name:'运动 10 天', desc:'累计运动打卡 10 天', icon:'🏋️', check: s => Object.values(s.exercise||{}).filter(a => a && a.length>0).length >= 10 },
   { id:'craving_win',   name:'战胜馋虫',   desc:'第一次成功用低卡替代', icon:'🛡️', check: s => (s.cravingWins||0) >= 1 },
   { id:'protein_pro',   name:'蛋白达人',   desc:'累计 7 天蛋白达到 90g', icon:'🥩', check: s => proteinHitDays(s) >= 7 },
@@ -456,10 +559,11 @@ function toast(msg) {
   toastTimer = setTimeout(() => { el.style.opacity = 0; el.style.transform = 'translate(-50%, -6px)'; }, 1800);
 }
 
-function openModal(html) {
+function openModal(html, opts) {
   const root = document.getElementById('modal-root');
+  const overlayAttr = opts && opts.locked ? '' : 'data-modal-overlay';
   root.innerHTML = `
-    <div class="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center animate-fade-in" data-modal-overlay>
+    <div class="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center animate-fade-in" ${overlayAttr}>
       <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[88vh] flex flex-col animate-slide-up overflow-hidden">
         ${html}
       </div>
@@ -475,11 +579,268 @@ function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;'
 function tagCn(t) { return t==='green'?'🟢 绿灯':t==='yellow'?'🟡 黄灯':'🔴 红灯'; }
 
 /* ==============================================================
+   个人资料 · Wizard 引导 + 编辑
+   ============================================================== */
+let wizardData = null;
+let wizardStep = 1;
+const WIZARD_STEPS = 5;
+
+function openProfileWizard(isFirstTime) {
+  // 初始化 wizardData：编辑模式则拷贝现有 profile，首次则用默认值
+  wizardData = state.profile ? JSON.parse(JSON.stringify(state.profile)) : JSON.parse(JSON.stringify(DEFAULT_PROFILE));
+  wizardData._isFirst = !!isFirstTime;
+  wizardStep = 1;
+  renderWizard();
+}
+
+function closeWizard() {
+  wizardData = null;
+  closeModal();
+}
+
+function wizardKgToInput(kg, unit) { return unit === 'kg' ? Number(kg).toFixed(1) : (Number(kg)*2).toFixed(1); }
+function wizardInputToKg(v, unit) { return unit === 'kg' ? Number(v) : Number(v) / 2; }
+
+function renderWizard() {
+  const p = wizardData;
+  const isFirst = p._isFirst;
+  const totalSteps = WIZARD_STEPS;
+  let body = '';
+
+  if (wizardStep === 1) {
+    body = `
+      <div class="text-lg font-bold">👋 ${isFirst ? '欢迎使用瘦干螂养成' : '基础信息'}</div>
+      <div class="text-xs text-slate-500 mt-1 mb-4">${isFirst ? '花 30 秒填一下，App 就能为你算出最合适的减脂方案' : '基础信息用于计算基础代谢率'}</div>
+      <label class="block text-xs text-slate-500 mb-1">昵称（选填）</label>
+      <input id="wz-name" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm mb-4" placeholder="怎么称呼你？" value="${escapeHtml(p.name||'')}">
+      <label class="block text-xs text-slate-500 mb-2">性别 <span class="text-slate-400">（用于计算基础代谢）</span></label>
+      <div class="grid grid-cols-2 gap-2 mb-4">
+        <button class="wz-gender ${p.gender==='female'?'active':''} py-3 rounded-xl border text-sm" data-gender="female">👩 女</button>
+        <button class="wz-gender ${p.gender==='male'?'active':''} py-3 rounded-xl border text-sm" data-gender="male">👨 男</button>
+      </div>
+      <label class="block text-xs text-slate-500 mb-1">年龄</label>
+      <input id="wz-age" type="number" min="12" max="80" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm" value="${p.age}">
+    `;
+  } else if (wizardStep === 2) {
+    body = `
+      <div class="text-lg font-bold">📏 身高体重</div>
+      <div class="text-xs text-slate-500 mt-1 mb-4">这些数字决定了你的每日热量目标</div>
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-xs text-slate-500">显示单位</span>
+        <div class="flex-1"></div>
+        <button class="wz-unit ${p.unit==='jin'?'active':''} px-3 py-1 rounded-lg border text-xs" data-unit="jin">斤</button>
+        <button class="wz-unit ${p.unit==='kg'?'active':''} px-3 py-1 rounded-lg border text-xs" data-unit="kg">kg</button>
+      </div>
+      <label class="block text-xs text-slate-500 mb-1">身高（cm）</label>
+      <input id="wz-height" type="number" min="120" max="220" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm mb-4" value="${p.heightCm}">
+      <label class="block text-xs text-slate-500 mb-1">当前体重（${p.unit==='kg'?'kg':'斤'}）</label>
+      <input id="wz-cur" type="number" step="0.1" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm mb-4" value="${wizardKgToInput(p.currentKg, p.unit)}">
+      <label class="block text-xs text-slate-500 mb-1">目标体重（${p.unit==='kg'?'kg':'斤'}）</label>
+      <input id="wz-goal" type="number" step="0.1" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm" value="${wizardKgToInput(p.goalKg, p.unit)}">
+    `;
+  } else if (wizardStep === 3) {
+    body = `
+      <div class="text-lg font-bold">🏃 活动水平</div>
+      <div class="text-xs text-slate-500 mt-1 mb-4">这决定了你的每日总消耗 TDEE</div>
+      <div class="space-y-2">
+        ${Object.keys(ACTIVITY_LABEL).map(k => `
+          <button class="wz-activity ${p.activity===k?'active':''} w-full text-left px-4 py-3 rounded-xl border text-sm" data-activity="${k}">
+            <div class="font-medium">${ACTIVITY_LABEL[k]}</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">系数 ×${ACTIVITY_FACTOR[k]}</div>
+          </button>
+        `).join('')}
+      </div>
+    `;
+  } else if (wizardStep === 4) {
+    body = `
+      <div class="text-lg font-bold">🎯 减脂节奏</div>
+      <div class="text-xs text-slate-500 mt-1 mb-4">越激进减得越快，但也越难坚持</div>
+      <div class="space-y-2">
+        ${Object.keys(PACE_INFO).map(k => {
+          const info = PACE_INFO[k];
+          return `
+            <button class="wz-pace ${p.pace===k?'active':''} w-full text-left px-4 py-3 rounded-xl border text-sm" data-pace="${k}">
+              <div class="font-medium">${info.label} · 缺口 ${info.gap||'自定义'} kcal</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">${info.desc}</div>
+            </button>
+          `;
+        }).join('')}
+      </div>
+      ${p.pace === 'custom' ? `
+        <div class="mt-4 space-y-2 bg-slate-50 rounded-xl p-3">
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="block text-[11px] text-slate-500 mb-1">每日热量下限</label>
+              <input id="wz-kmin" type="number" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm" value="${p.customKcalMin}"></div>
+            <div><label class="block text-[11px] text-slate-500 mb-1">每日热量上限</label>
+              <input id="wz-kmax" type="number" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm" value="${p.customKcalMax}"></div>
+          </div>
+        </div>
+      ` : ''}
+    `;
+  } else if (wizardStep === 5) {
+    body = `
+      <div class="text-lg font-bold">🍽️ 忌口 / 饮食偏好</div>
+      <div class="text-xs text-slate-500 mt-1 mb-4">可多选，含忌口食材的菜品会自动标红灯</div>
+      <div class="grid grid-cols-2 gap-2 mb-3">
+        ${RESTRICTION_OPTIONS.map(o => `
+          <button class="wz-rest ${p.restrictions.includes(o.k)?'active':''} px-3 py-2 rounded-xl border text-xs text-left" data-rest="${o.k}">${o.label}</button>
+        `).join('')}
+      </div>
+      <label class="block text-xs text-slate-500 mb-1 mt-3">其他自定义（如"过敏坚果" · 选填）</label>
+      <input id="wz-restcustom" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm" placeholder="留空即可" value="${escapeHtml(p.restrictionsCustom||'')}">
+    `;
+  }
+
+  // 完成后的预览
+  let previewCard = '';
+  if (wizardStep === WIZARD_STEPS) {
+    const t = computeTargets(p);
+    const gd = (function(){
+      const remainKg = Math.max(0, p.currentKg - p.goalKg);
+      const perWeek = (PACE_INFO[p.pace] || PACE_INFO.standard).perWeekKg || 0.5;
+      if (perWeek === 0) return '手动';
+      const days = Math.ceil(remainKg / perWeek * 7);
+      const d = new Date(); d.setDate(d.getDate() + days);
+      return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}（约 ${days} 天）`;
+    })();
+    previewCard = `
+      <div class="mt-4 rounded-2xl bg-gradient-to-br from-mint-500 to-emerald-600 text-white p-4">
+        <div class="text-xs opacity-80">📊 自动计算结果</div>
+        <div class="grid grid-cols-2 gap-2 mt-2 text-xs">
+          <div><div class="opacity-70">BMR</div><div class="font-bold text-base">${t.bmr} kcal</div></div>
+          <div><div class="opacity-70">TDEE</div><div class="font-bold text-base">${t.tdee} kcal</div></div>
+          <div><div class="opacity-70">每日目标</div><div class="font-bold text-base">${t.kcalMin}-${t.kcalMax}</div></div>
+          <div><div class="opacity-70">蛋白</div><div class="font-bold text-base">${t.proteinMin}-${t.proteinMax}g</div></div>
+          <div class="col-span-2"><div class="opacity-70">预计达标</div><div class="font-bold text-base">${gd}</div></div>
+        </div>
+      </div>
+    `;
+  }
+
+  const html = `
+    <div class="p-5 flex-1 overflow-y-auto">
+      <!-- 进度条 -->
+      <div class="flex items-center gap-1.5 mb-4">
+        ${Array.from({length: totalSteps}).map((_, i) =>
+          `<div class="flex-1 h-1 rounded-full ${i < wizardStep ? 'bg-mint-500' : 'bg-slate-200'}"></div>`
+        ).join('')}
+      </div>
+      <div class="text-[10px] text-slate-400 mb-2">Step ${wizardStep} / ${totalSteps}</div>
+      ${body}
+      ${previewCard}
+    </div>
+    <div class="p-4 border-t border-slate-100 flex gap-2">
+      ${wizardStep > 1 ? `<button id="wz-prev" class="flex-1 py-3 rounded-xl bg-slate-100 text-slate-600 text-sm font-medium">上一步</button>` : (isFirst ? '' : `<button id="wz-cancel" class="flex-1 py-3 rounded-xl bg-slate-100 text-slate-600 text-sm font-medium">取消</button>`)}
+      <button id="wz-next" class="flex-1 py-3 rounded-xl bg-mint-500 text-white text-sm font-medium">${wizardStep === WIZARD_STEPS ? '✓ 完成' : '下一步 →'}</button>
+    </div>
+  `;
+  openModal(html, { locked: isFirst });
+  bindWizardEvents();
+}
+
+function bindWizardEvents() {
+  const p = wizardData;
+  // 收集输入
+  const collect = () => {
+    if (wizardStep === 1) {
+      const nameEl = document.getElementById('wz-name');
+      if (nameEl) p.name = nameEl.value.trim();
+      const ageEl = document.getElementById('wz-age');
+      if (ageEl) p.age = Math.max(12, Math.min(80, Number(ageEl.value) || 25));
+    } else if (wizardStep === 2) {
+      const h = document.getElementById('wz-height');
+      if (h) p.heightCm = Math.max(120, Math.min(220, Number(h.value) || 165));
+      const cur = document.getElementById('wz-cur');
+      const goal = document.getElementById('wz-goal');
+      if (cur) p.currentKg = wizardInputToKg(cur.value, p.unit);
+      if (goal) p.goalKg = wizardInputToKg(goal.value, p.unit);
+      // 起始体重锁定为当前体重（首次）
+      if (!p.startWeightKg || p._isFirst) p.startWeightKg = p.currentKg;
+    } else if (wizardStep === 4 && p.pace === 'custom') {
+      const kmin = document.getElementById('wz-kmin');
+      const kmax = document.getElementById('wz-kmax');
+      if (kmin) p.customKcalMin = Number(kmin.value) || 1350;
+      if (kmax) p.customKcalMax = Number(kmax.value) || 1500;
+    } else if (wizardStep === 5) {
+      const rc = document.getElementById('wz-restcustom');
+      if (rc) p.restrictionsCustom = rc.value.trim();
+    }
+  };
+
+  // 性别
+  document.querySelectorAll('.wz-gender').forEach(btn => btn.addEventListener('click', () => {
+    p.gender = btn.dataset.gender; renderWizard();
+  }));
+  // 单位
+  document.querySelectorAll('.wz-unit').forEach(btn => btn.addEventListener('click', () => {
+    collect(); p.unit = btn.dataset.unit; renderWizard();
+  }));
+  // 活动
+  document.querySelectorAll('.wz-activity').forEach(btn => btn.addEventListener('click', () => {
+    p.activity = btn.dataset.activity; renderWizard();
+  }));
+  // 节奏
+  document.querySelectorAll('.wz-pace').forEach(btn => btn.addEventListener('click', () => {
+    collect(); p.pace = btn.dataset.pace; renderWizard();
+  }));
+  // 忌口
+  document.querySelectorAll('.wz-rest').forEach(btn => btn.addEventListener('click', () => {
+    const k = btn.dataset.rest;
+    if (p.restrictions.includes(k)) p.restrictions = p.restrictions.filter(x => x!==k);
+    else p.restrictions = [...p.restrictions, k];
+    collect(); renderWizard();
+  }));
+  // 上一步 / 下一步 / 取消
+  const prev = document.getElementById('wz-prev');
+  if (prev) prev.addEventListener('click', () => { collect(); wizardStep = Math.max(1, wizardStep - 1); renderWizard(); });
+  const cancel = document.getElementById('wz-cancel');
+  if (cancel) cancel.addEventListener('click', () => closeWizard());
+  const next = document.getElementById('wz-next');
+  if (next) next.addEventListener('click', () => {
+    collect();
+    // 简单校验
+    if (wizardStep === 2) {
+      if (!p.heightCm || !p.currentKg || !p.goalKg) { toast('请填完整身高和体重'); return; }
+      if (p.goalKg >= p.currentKg) { toast('目标体重需小于当前体重'); return; }
+    }
+    if (wizardStep < WIZARD_STEPS) { wizardStep++; renderWizard(); return; }
+    // 完成
+    finishWizard();
+  });
+}
+
+function finishWizard() {
+  const p = wizardData;
+  const wasFirst = p._isFirst;
+  delete p._isFirst;
+  if (!p.startDate) p.startDate = today();
+  if (!p.startWeightKg) p.startWeightKg = p.currentKg;
+  state.profile = p;
+  save();
+  closeWizard();
+  toast(wasFirst ? '🎉 设置完成，开始你的减脂之旅' : '✅ 资料已更新');
+  if (wasFirst) {
+    bootApp();
+  } else {
+    // 更新标题 + 重新渲染当前 tab
+    if (p.name) document.getElementById('app-title').textContent = `${p.name}·养成日记`;
+    else document.getElementById('app-title').textContent = '瘦干螂养成';
+    RENDERERS[state.activeTab || 'home']();
+  }
+}
+
+/* ==============================================================
    业务计算
    ============================================================== */
 function currentWeight(s = state) {
   const dates = Object.keys(s.weights || {}).sort();
   return dates.length ? s.weights[dates[dates.length-1]] : USER_PROFILE.startWeight;
+}
+function previousWeight(s = state) {
+  // 上一次的体重记录（用于对比 delta）
+  const dates = Object.keys(s.weights || {}).sort();
+  if (dates.length < 2) return null;
+  return s.weights[dates[dates.length-2]];
 }
 function firstWeight(s = state) {
   const dates = Object.keys(s.weights || {}).sort();
@@ -572,15 +933,28 @@ function getCalorieTarget() {
   return { min: USER_PROFILE.calorieMin, max, phase };
 }
 function cyclePhaseTip(phase) {
+  const days = daysUntilNextPeriod(phase);
+  const suffix = (days != null && days > 0) ? `（距下次约 ${days} 天）` : '';
   if (phase.phase === 'menstrual')
-    return { icon:'💕', text:`经期第 ${phase.day} 天，多喝热水，适当放松饮食压力，热量目标已自动上浮 150kcal。补铁食物：牛肉/鸭血/深绿蔬菜/豆类。`, cls:'from-pink-50 to-rose-50 border-pink-100 text-pink-700' };
+    return { icon:'💕', text:`经期第 ${phase.day} 天，多喝热水，适当放松饮食压力，热量目标已自动上浮 150kcal。补铁食物：牛肉/深绿蔬菜/豆类。`, cls:'from-pink-50 to-rose-50 border-pink-100 text-pink-700' };
   if (phase.phase === 'luteal')
-    return { icon:'🌸', text:'黄体期，可能会有食欲增加/水肿，多吃点镁（坚果/深绿蔬菜）；热量目标微上浮 50kcal。', cls:'from-purple-50 to-fuchsia-50 border-purple-100 text-purple-700' };
+    return { icon:'🌸', text:`黄体期，可能会有食欲增加/水肿，多吃点镁（坚果/深绿蔬菜）；热量目标微上浮 50kcal。${suffix}`, cls:'from-purple-50 to-fuchsia-50 border-purple-100 text-purple-700' };
   if (phase.phase === 'follicular')
-    return { icon:'✨', text:'卵泡期，激素回升、代谢较好，可以适当加强运动强度。', cls:'from-emerald-50 to-teal-50 border-emerald-100 text-emerald-700' };
+    return { icon:'✨', text:`卵泡期，激素回升、代谢较好，可以适当加强运动强度。${suffix}`, cls:'from-emerald-50 to-teal-50 border-emerald-100 text-emerald-700' };
   if (phase.phase === 'ovulation')
-    return { icon:'✨', text:'排卵期，能量最好的一段时间，正是冲刺运动/减脂的好窗口。', cls:'from-sky-50 to-cyan-50 border-sky-100 text-sky-700' };
+    return { icon:'✨', text:`排卵期，能量最好的一段时间，正是冲刺运动/减脂的好窗口。${suffix}`, cls:'from-sky-50 to-cyan-50 border-sky-100 text-sky-700' };
   return null;
+}
+// 预测距下次经期天数（基于最近一次经期起始 + 平均周期）
+function daysUntilNextPeriod(phase) {
+  const periods = (state.periods || []).slice().sort((a,b) => a.start.localeCompare(b.start));
+  if (!periods.length || phase.phase === 'menstrual' || phase.phase === 'unknown') return null;
+  const last = periods[periods.length - 1];
+  const avgCycle = (state.settings && state.settings.avgCycle) || 28;
+  const nextStart = new Date(last.start);
+  nextStart.setDate(nextStart.getDate() + avgCycle);
+  const diff = Math.round((nextStart - new Date(today())) / 86400000);
+  return diff > 0 ? diff : null;
 }
 
 function streakDays() {
@@ -651,6 +1025,8 @@ function showBadgeUnlock(b) {
 function renderHome() {
   const el = document.getElementById('page-home');
   const now = currentWeight();
+  const prev = previousWeight();
+  const delta = prev != null ? (now - prev) : null;
   const remain = (now - USER_PROFILE.goalWeight).toFixed(1);
   const macros = macrosOfDay(today());
   const burn = exerciseKcal(today());
@@ -686,7 +1062,10 @@ function renderHome() {
               <div class="text-sm opacity-80">斤</div>
               ${todayWeight != null ? '<span class="chip bg-white/20 text-white text-[10px] ml-1">已打卡</span>' : ''}
             </div>
-            <div class="text-xs opacity-80 mt-1">BMI <b class="text-white">${bmiVal.toFixed(1)}</b> · ${bmiInfo.label}</div>
+            <div class="text-xs opacity-80 mt-1">
+              BMI <b class="text-white">${bmiVal.toFixed(1)}</b> · ${bmiInfo.label}
+              ${delta != null ? `<span class="ml-2 ${delta<0?'text-emerald-100':(delta>0?'text-amber-100':'text-white/70')}">${delta<0?'↓':(delta>0?'↑':'—')} ${Math.abs(delta).toFixed(1)}斤 vs 上次</span>` : ''}
+            </div>
           </div>
           <button class="text-xs bg-white/20 backdrop-blur px-3 py-1.5 rounded-full font-medium" data-goto="weight">→ 详情</button>
         </div>
@@ -864,11 +1243,12 @@ function hash(str) { let h=0; for (let i=0;i<str.length;i++) h = (h*31 + str.cha
 
 function personalHint(kcal, water, burn, now) {
   const m = macrosOfDay(today());
+  const t = getCalorieTarget();
   if (m.p < 30 && new Date().getHours() >= 14) return `今天蛋白只吃了 ${m.p.toFixed(0)}g，晚餐必须要有蛋白 —— 试试烤鱼或鸡胸。`;
-  if (kcal > USER_PROFILE.calorieMax) return `今天已超上限 ${kcal - USER_PROFILE.calorieMax} kcal，晚上先喝 300ml 温水，饿了再决定。`;
+  if (kcal > t.max) return `今天已超上限 ${kcal - t.max} kcal，晚上先喝 300ml 温水，饿了再决定。`;
   if (water < 500 && new Date().getHours() >= 12) return `到中午了才喝了 ${water}ml，起来倒一杯水吧～`;
   if (burn === 0 && new Date().getHours() >= 20) return `今天还没运动，饭后 15 分钟快走也算。`;
-  if (kcal === 0 && new Date().getHours() >= 13) return `到中午了还没记录，午餐参考「选餐」里的绿灯组合。`;
+  if (kcal === 0 && new Date().getHours() >= 13) return `到中午了还没记录，午餐选鸡胸/鱼/豆腐 + 一份绿叶菜，最稳。`;
   return null;
 }
 
@@ -978,7 +1358,7 @@ function renderDietSub() {
       <div class="rounded-2xl bg-white shadow-card border border-slate-100 overflow-hidden">
         <div class="px-4 py-3 border-b border-slate-100 flex justify-between items-center">
           <div class="text-sm font-semibold">近 7 天摄入</div>
-          <div class="text-[11px] text-slate-400">目标 ${USER_PROFILE.calorieMin}-${USER_PROFILE.calorieMax}</div>
+          <div class="text-[11px] text-slate-400">目标 ${getCalorieTarget().min}-${getCalorieTarget().max}</div>
         </div>
         <div class="relative p-4" style="height:180px"><canvas id="diet-7d-chart"></canvas></div>
       </div>
@@ -1851,11 +2231,17 @@ function renderWeight() {
     <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
       <div class="text-sm font-semibold mb-3">三阶段里程碑</div>
       <div class="space-y-3">
-        ${[
-          { m:1, from: USER_PROFILE.startWeight, to:123, label:'第 1 个月', desc:'适应期 · 主要减掉水肿' },
-          { m:2, from:123, to:118, label:'第 2 个月', desc:'稳定期 · 每周 1-1.5 斤' },
-          { m:3, from:118, to:USER_PROFILE.goalWeight, label:'第 3 个月', desc:'冲刺期 · 到达目标' },
-        ].map(ms => {
+        ${(() => {
+          const sw = USER_PROFILE.startWeight, gw = USER_PROFILE.goalWeight;
+          const step = (sw - gw) / 3;
+          const m1 = +(sw - step).toFixed(1);
+          const m2 = +(sw - 2*step).toFixed(1);
+          return [
+            { m:1, from: sw, to: m1, label:'第 1 阶段', desc:'适应期 · 主要减掉水肿' },
+            { m:2, from: m1, to: m2, label:'第 2 阶段', desc:'稳定期 · 每周 1-1.5 斤' },
+            { m:3, from: m2, to: gw, label:'第 3 阶段', desc:'冲刺期 · 到达目标' },
+          ];
+        })().map(ms => {
           let progress = 0;
           if (now <= ms.to) progress = 100;
           else if (now < ms.from) progress = Math.min(100, ((ms.from - now)/(ms.from - ms.to))*100);
@@ -2247,124 +2633,6 @@ function drawWeightChart() {
 }
 
 /* ==============================================================
-   渲染：MEALS 选餐建议
-   ============================================================== */
-const CANTEEN_PLAN = {
-  day: {
-    title: '早班日 · 主战场午餐',
-    tip: '早班上午集中输出，午餐蛋白拉满、下午加一份水果或酸奶做加餐；晚餐提前到 18:30 前吃完，减脂窗口更长。',
-    meals: [
-      { slot:'午餐（12:00 前后）', goal:'主食一拳、蛋白两掌、蔬菜两拳，500-600 kcal',
-        picks:[
-          { name:'杂粮饭半碗 + 清蒸鲈鱼 + 蒜蓉西兰花', kcal:460, tag:'green' },
-          { name:'糙米饭半碗 + 香煎鸡胸 + 凉拌黄瓜 + 番茄蛋汤', kcal:500, tag:'green' },
-          { name:'牛肉 + 老豆腐 + 蒸南瓜 + 清炒时蔬', kcal:540, tag:'green' },
-      ]},
-      { slot:'下午加餐（15:30）', goal:'150 kcal 以内，补蛋白稳血糖',
-        picks:[
-          { name:'希腊酸奶 + 蓝莓', kcal:130, tag:'green' },
-          { name:'茶叶蛋 + 无糖豆浆', kcal:140, tag:'green' },
-          { name:'10 粒巴旦木 + 一杯美式', kcal:80, tag:'green' },
-      ]},
-      { slot:'晚餐（≤ 18:30）', goal:'低碳高蛋白，300-400 kcal',
-        picks:[
-          { name:'虾仁 + 老豆腐 + 蒸时蔬', kcal:300, tag:'green' },
-          { name:'烤鱼一份 + 凉拌菠菜', kcal:350, tag:'green' },
-          { name:'2 个水煮蛋 + 番茄鸡蛋 + 紫菜汤', kcal:380, tag:'green' },
-      ]},
-    ],
-  },
-  night: {
-    title: '晚班日 · 主战场晚餐',
-    tip: '晚班易饿，重点：白天两餐吃够蛋白，晚班前一份小碳水；夜里若饿用无糖酸奶 / 水煮蛋顶，别叠加炸物+奶茶。',
-    meals: [
-      { slot:'午餐（12:00-13:00）', goal:'400-500 kcal，蛋白 + 高纤维',
-        picks:[
-          { name:'糙米饭半碗 + 牛肉 + 蒜蓉西兰花', kcal:480, tag:'green' },
-          { name:'鸡胸沙拉碗 + 一个煎蛋', kcal:420, tag:'green' },
-          { name:'虾仁豆腐煲 + 半碗杂粮饭', kcal:460, tag:'green' },
-      ]},
-      { slot:'晚餐（17:30 上晚班前）', goal:'500-600 kcal，扛饿到夜里',
-        picks:[
-          { name:'杂粮饭一小碗 + 香煎鸡胸 + 番茄鸡蛋 + 时蔬', kcal:580, tag:'green' },
-          { name:'烤鱼一份 + 老豆腐 + 玉米一根', kcal:560, tag:'green' },
-          { name:'半份酸菜鱼（少油汤） + 杂粮饭半碗 + 一份青菜', kcal:600, tag:'yellow' },
-      ]},
-      { slot:'夜宵（如需，21:30 后）', goal:'≤ 150 kcal，纯蛋白/纤维',
-        picks:[
-          { name:'2 个水煮蛋 + 一杯温豆浆', kcal:210, tag:'yellow' },
-          { name:'希腊酸奶 100g + 圣女果', kcal:110, tag:'green' },
-          { name:'一碗紫菜蛋花汤', kcal:80, tag:'green' },
-      ]},
-    ],
-  },
-};
-
-function renderMeals() {
-  const el = document.getElementById('page-meals');
-  const shift = state.activeShift;
-  const plan = CANTEEN_PLAN[shift];
-
-  el.innerHTML = `
-    <div class="flex items-center gap-2 p-1 rounded-2xl bg-slate-100">
-      ${[{k:'day',label:'☀️ 早班'},{k:'night',label:'🌙 晚班'}].map(it =>
-        `<button data-shift="${it.k}" class="segment-btn ${shift===it.k?'active':''} flex-1 py-2 rounded-xl text-sm font-medium">${it.label}</button>`
-      ).join('')}
-    </div>
-
-    <div class="rounded-2xl bg-gradient-to-br from-mint-500 to-emerald-600 text-white p-4 shadow-soft">
-      <div class="text-sm font-semibold">${plan.title}</div>
-      <div class="text-xs opacity-90 mt-2 leading-relaxed">${plan.tip}</div>
-    </div>
-
-    ${plan.meals.map(m => `
-      <div class="rounded-2xl bg-white shadow-card border border-slate-100 overflow-hidden">
-        <div class="px-4 py-3 border-b border-slate-100">
-          <div class="text-sm font-semibold">${m.slot}</div>
-          <div class="text-[11px] text-slate-500 mt-0.5">${m.goal}</div>
-        </div>
-        <div class="p-4 space-y-2">
-          ${m.picks.map(p => `
-            <div class="flex items-center justify-between bg-slate-50 rounded-xl px-3 py-2.5">
-              <div class="flex-1 min-w-0 pr-2">
-                <div class="text-sm text-slate-800">${escapeHtml(p.name)}</div>
-                <div class="mt-1"><span class="chip ${p.tag}-chip">${tagCn(p.tag)}</span></div>
-              </div>
-              <div class="text-right">
-                <div class="text-sm font-semibold">${p.kcal}</div>
-                <div class="text-[10px] text-slate-400">kcal</div>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `).join('')}
-
-    <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
-      <div class="text-sm font-semibold mb-3">餐厅红绿灯速查</div>
-      <div class="space-y-3">
-        <div>
-          <div class="flex items-center gap-1.5 mb-1.5"><span class="chip green-chip">🟢 绿灯 · 放心吃</span></div>
-          <div class="text-xs text-slate-600 leading-relaxed">鱼虾、鸡胸、牛肉、鸡蛋、豆腐、豆浆、绿叶菜、番茄鸡蛋、蒸南瓜/玉米、糙米/杂粮饭半碗、无糖酸奶</div>
-        </div>
-        <div>
-          <div class="flex items-center gap-1.5 mb-1.5"><span class="chip yellow-chip">🟡 黄灯 · 控量吃</span></div>
-          <div class="text-xs text-slate-600 leading-relaxed">酸菜鱼（少油汤）、烧鸭、冒菜、麻辣香锅、烤鸡腿、寿司、香蕉、面条 — 一周不超过 2-3 次</div>
-        </div>
-        <div>
-          <div class="flex items-center gap-1.5 mb-1.5"><span class="chip red-chip">🔴 红灯 · 避雷</span></div>
-          <div class="text-xs text-slate-600 leading-relaxed">炸鸡、干锅、炒饭/炒面、红烧肉、甜奶茶、可乐、蛋糕、薯条 — 一周最多解馋一次</div>
-        </div>
-      </div>
-    </div>
-
-    <button class="w-full py-3 rounded-2xl bg-mint-50 text-mint-700 text-sm font-medium border border-mint-100" data-goto="log">
-      + 从推荐挑一份，去记录今日饮食
-    </button>
-  `;
-}
-
-/* ==============================================================
    渲染：CAL（成就页 · 日历热图 + 徽章 + 数据看板）
    ============================================================== */
 let calCursor = new Date();
@@ -2657,11 +2925,11 @@ function openWeeklyReport() {
 /* ==============================================================
    路由 & 全局事件
    ============================================================== */
-const RENDERERS = { home: renderHome, log: renderLog, weight: renderWeight, meals: renderMeals, cal: renderCal };
+const RENDERERS = { home: renderHome, log: renderLog, weight: renderWeight, cal: renderCal };
 function switchTab(name) {
   state.activeTab = name;
   save();
-  ['home','log','weight','meals','cal'].forEach(k => document.getElementById('page-'+k).classList.toggle('hidden', k !== name));
+  ['home','log','weight','cal'].forEach(k => document.getElementById('page-'+k).classList.toggle('hidden', k !== name));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
   RENDERERS[name]();
   // 触发图表
@@ -2718,12 +2986,13 @@ function drawDiet7d() {
   for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate()-i); dates.push(fmtDate(d)); }
   const data = dates.map(d => macrosOfDay(d).k);
   const labels = dates.map(d => d.slice(5));
+  const target = getCalorieTarget();
   diet7dChart = new Chart(c, {
     type:'bar',
     data: {
       labels,
       datasets: [{
-        data, backgroundColor: data.map(v => v > USER_PROFILE.calorieMax ? '#ef4444' : v >= USER_PROFILE.calorieMin ? '#22c55e' : v > 0 ? '#f59e0b' : '#e5e7eb'),
+        data, backgroundColor: data.map(v => v > target.max ? '#ef4444' : v >= target.min ? '#22c55e' : v > 0 ? '#f59e0b' : '#e5e7eb'),
         borderRadius: 6,
       }]
     },
@@ -2823,7 +3092,15 @@ document.addEventListener('click', (e) => {
 
   // 删除体重
   const delW = e.target.closest('[data-del-weight]');
-  if (delW) { delete state.weights[delW.dataset.delWeight]; save(); renderWeight(); return; }
+  if (delW) {
+    const date = delW.dataset.delWeight;
+    if (confirm(`确认删除 ${date} 的体重记录？`)) {
+      delete state.weights[date];
+      save();
+      renderWeight();
+    }
+    return;
+  }
 
   // 体重保存（在 weight 页面）
   if (e.target.id === 'w-save') {
@@ -2837,10 +3114,6 @@ document.addEventListener('click', (e) => {
     return;
   }
 
-  // 班次
-  const shift = e.target.closest('[data-shift]');
-  if (shift) { state.activeShift = shift.dataset.shift; save(); renderMeals(); return; }
-
   // 日历翻页
   const cal = e.target.closest('[data-cal]');
   if (cal) { calCursor.setDate(1); calCursor.setMonth(calCursor.getMonth() + (cal.dataset.cal === 'next' ? 1 : -1)); renderCal(); return; }
@@ -2851,12 +3124,16 @@ document.addEventListener('click', (e) => {
   // 周报
   if (e.target.closest('#btn-share') || e.target.closest('#btn-weekly-share')) { openWeeklyReport(); return; }
 
+  // 个人资料
+  if (e.target.closest('#btn-profile')) { openProfileWizard(false); return; }
+
   // 重置
   if (e.target.closest('#btn-reset')) {
-    if (confirm('确定要清空所有本地数据吗？此操作不可恢复。')) {
+    if (confirm('确定要清空所有本地数据吗？此操作不可恢复，包括个人资料。')) {
       localStorage.removeItem(LS_KEY);
       state = load();
       calCursor = new Date();
+      if (!state.profile) { openProfileWizard(true); return; }
       switchTab('home');
       toast('已清空所有数据');
     }
@@ -2871,12 +3148,25 @@ document.addEventListener('keydown', (e) => {
 /* ==============================================================
    初始化
    ============================================================== */
-if (Object.keys(state.weights).length === 0) {
-  state.weights[USER_PROFILE.startDate] = USER_PROFILE.startWeight;
-  save();
+// 若无个人资料 → 强制引导
+if (!state.profile) {
+  openProfileWizard(true);
+} else {
+  bootApp();
 }
-checkBadges();
-switchTab(state.activeTab || 'home');
+
+function bootApp() {
+  // 首次种一条起始体重记录（用户完成 wizard 或已有 profile 时）
+  if (Object.keys(state.weights).length === 0) {
+    state.weights[USER_PROFILE.startDate] = USER_PROFILE.startWeight;
+    save();
+  }
+  // 应用标题：如果填了昵称，显示"XX 的养成日记"
+  const p = state.profile;
+  if (p && p.name) document.getElementById('app-title').textContent = `${p.name}·养成日记`;
+  checkBadges();
+  switchTab(state.activeTab || 'home');
+}
 </script>
 </body>
 </html>
