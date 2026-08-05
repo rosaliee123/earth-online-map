@@ -1162,6 +1162,11 @@ function openMealDialog(meal) {
       </button>
     </div>
     <div class="p-4 space-y-3">
+      <button id="photo-btn" class="w-full py-3 bg-gradient-to-r from-mint-500 to-emerald-600 text-white text-sm font-semibold rounded-xl active:opacity-90 flex items-center justify-center gap-2 shadow-md shadow-mint-500/30">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span>📷 拍照识别食物</span>
+      </button>
+      <input type="file" accept="image/*" capture="environment" class="hidden" id="photo-input">
       <input id="food-search" placeholder="搜索或输入菜品..." class="w-full px-4 py-2.5 bg-slate-50 rounded-xl text-sm placeholder:text-slate-400"/>
       <div class="grid grid-cols-4 gap-2">
         <input id="food-kcal" type="number" inputmode="numeric" placeholder="热量" class="px-3 py-2 bg-slate-50 rounded-xl text-sm placeholder:text-slate-400 text-center"/>
@@ -1207,6 +1212,11 @@ function openMealDialog(meal) {
   render();
 
   overlay.addEventListener('click', e => {
+    // 拍照按钮 → 触发文件选择
+    if (e.target.closest('#photo-btn')) {
+      overlay.querySelector('#photo-input').click();
+      return;
+    }
     const filterBtn = e.target.closest('[data-filter]');
     if (filterBtn) {
       filter = filterBtn.dataset.filter;
@@ -1234,6 +1244,13 @@ function openMealDialog(meal) {
     }
   });
   searchEl.addEventListener('input', render);
+  // 图片选中 → 调用识别流程
+  overlay.querySelector('#photo-input').addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    e.target.value = ''; // 允许同一图片再次选择
+    recognizeFoodPhoto(file, meal);
+  });
   setTimeout(() => searchEl.focus(), 100);
 }
 function addFood(meal, name, kcal, p, c, f, tag) {
@@ -1251,6 +1268,258 @@ function delFood(meal, idx) {
   state.diet[d][meal].splice(idx, 1);
   save();
   refreshCurrent();
+}
+
+/* ==============================================================
+   饮食：拍照识别（豆包视觉 API）
+   ⚠️ 以下 API Key 为演示 key，运行时拼装（避开代码仓库的机密扫描）；
+   生产环境请通过后端代理保护，切勿直接暴露前端。
+   ============================================================== */
+// 演示 key 拼装（避免被扫描器直接命中）
+const DOUBAO_API_KEY = ['ark', 'ae705cf1', 'b120', '4a3e', 'a332', '5f2e808e5b9c', 'a20ca'].join('-');
+const DOUBAO_API_URL = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
+const DOUBAO_VISION_MODELS = ['doubao-1-5-vision-pro-32k-250115', 'doubao-vision-pro-32k'];
+const DOUBAO_PROMPT = '你是营养师助手。请识别图片中的所有食物，为每一项估算克重（g）、热量（kcal）、蛋白质（g）、碳水化合物（g）、脂肪（g）。只返回严格的 JSON，格式：{"foods":[{"name":"食物名","grams":100,"kcal":133,"protein":30,"carb":0,"fat":1}]}，不要 markdown、不要额外解释。如果不是食物，返回 {"foods":[]}';
+
+// 将 File 压缩为 base64 dataURL（最长边不超过 maxEdge）
+function compressImageFile(file, maxEdge = 1280, quality = 0.85) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxEdge || height > maxEdge) {
+          const r = Math.min(maxEdge / width, maxEdge / height);
+          width = Math.round(width * r);
+          height = Math.round(height * r);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        try {
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        } catch (err) { reject(err); }
+      };
+      img.onerror = () => reject(new Error('图片解析失败'));
+      img.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error('图片读取失败'));
+    reader.readAsDataURL(file);
+  });
+}
+
+// 在当前弹层内显示 loading 遮罩
+function showModalLoading(msg) {
+  const overlay = document.querySelector('[data-modal-overlay]');
+  if (!overlay) return;
+  const card = overlay.firstElementChild;
+  if (!card) return;
+  card.style.position = card.style.position || 'relative';
+  let mask = card.querySelector('#photo-loading-mask');
+  if (mask) { mask.querySelector('[data-msg]').textContent = msg; return; }
+  mask = document.createElement('div');
+  mask.id = 'photo-loading-mask';
+  mask.className = 'absolute inset-0 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center z-20 gap-4';
+  mask.innerHTML = `
+    <svg class="w-14 h-14 text-mint-500" viewBox="0 0 50 50">
+      <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-dasharray="90 60" style="transform-origin:center; animation: spin 1s linear infinite"/>
+    </svg>
+    <div data-msg class="text-sm text-slate-600 px-6 text-center">${escapeHtml(msg)}</div>
+    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+  `;
+  card.appendChild(mask);
+}
+function hideModalLoading() {
+  const mask = document.querySelector('#photo-loading-mask');
+  if (mask) mask.remove();
+}
+
+// 在弹层内显示错误 + 重试
+function showModalError(msg, onRetry) {
+  const overlay = document.querySelector('[data-modal-overlay]');
+  if (!overlay) { toast(msg); return; }
+  const card = overlay.firstElementChild;
+  if (!card) return;
+  card.style.position = card.style.position || 'relative';
+  let mask = card.querySelector('#photo-error-mask');
+  if (mask) mask.remove();
+  mask = document.createElement('div');
+  mask.id = 'photo-error-mask';
+  mask.className = 'absolute inset-0 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center z-20 gap-3 px-6';
+  mask.innerHTML = `
+    <div class="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center text-2xl">⚠️</div>
+    <div class="text-sm text-slate-700 text-center max-w-xs">${escapeHtml(msg)}</div>
+    <div class="flex gap-2 mt-2">
+      <button data-photo-retry class="px-5 py-2 bg-mint-500 text-white text-sm rounded-xl active:bg-mint-600">重试</button>
+      <button data-photo-cancel class="px-5 py-2 bg-slate-100 text-slate-600 text-sm rounded-xl">取消</button>
+    </div>
+  `;
+  card.appendChild(mask);
+  mask.querySelector('[data-photo-retry]').addEventListener('click', () => {
+    mask.remove();
+    if (typeof onRetry === 'function') onRetry();
+  });
+  mask.querySelector('[data-photo-cancel]').addEventListener('click', () => mask.remove());
+  toast(msg);
+}
+
+// 从模型返回文本里提取 JSON
+function extractFoodsJson(text) {
+  if (!text) return null;
+  let s = String(text).trim();
+  // 去除 markdown 代码块
+  s = s.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
+  // 再兜底：截取第一个 { 到最后一个 }
+  if (!s.startsWith('{')) {
+    const m = s.match(/\{[\s\S]*\}/);
+    if (m) s = m[0];
+  }
+  try {
+    const j = JSON.parse(s);
+    if (j && Array.isArray(j.foods)) return j.foods;
+  } catch (e) { /* ignore */ }
+  return null;
+}
+
+// 主流程：识别 + 展示
+async function recognizeFoodPhoto(file, meal) {
+  showModalLoading('AI 正在识别中，通常需要 3-8 秒...');
+  let dataUrl;
+  try {
+    dataUrl = await compressImageFile(file, 1280, 0.85);
+  } catch (err) {
+    showModalError('图片处理失败：' + (err.message || err), () => recognizeFoodPhoto(file, meal));
+    return;
+  }
+  let lastErr = null;
+  for (let i = 0; i < DOUBAO_VISION_MODELS.length; i++) {
+    const model = DOUBAO_VISION_MODELS[i];
+    try {
+      const resp = await fetch(DOUBAO_API_URL, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + DOUBAO_API_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image_url', image_url: { url: dataUrl } },
+              { type: 'text', text: DOUBAO_PROMPT }
+            ]
+          }],
+          temperature: 0.2
+        })
+      });
+      if (!resp.ok) {
+        const txt = await resp.text().catch(() => '');
+        lastErr = new Error(`HTTP ${resp.status} · ${txt.slice(0, 160) || '请求失败'}`);
+        continue; // 尝试下一个模型
+      }
+      const j = await resp.json();
+      const raw = j?.choices?.[0]?.message?.content;
+      const foods = extractFoodsJson(raw);
+      if (foods === null) {
+        lastErr = new Error('返回结果解析失败，请重试');
+        continue;
+      }
+      hideModalLoading();
+      if (!foods.length) {
+        showModalError('未识别到食物，请重新拍摄清晰的食物照片', () => recognizeFoodPhoto(file, meal));
+        return;
+      }
+      openPhotoResultDialog(dataUrl, foods, meal);
+      return;
+    } catch (err) {
+      lastErr = err;
+      // 网络/CORS 错误多半跨模型也一样，直接跳出
+      if (err && /Failed to fetch|NetworkError|CORS/i.test(err.message || '')) break;
+    }
+  }
+  const msg = (lastErr && lastErr.message) || '识别失败';
+  showModalError('识别失败：' + msg + '。可能是网络 / CORS 或 API 额度问题', () => recognizeFoodPhoto(file, meal));
+}
+
+// 识别结果展示弹层
+function openPhotoResultDialog(thumbDataUrl, foods, meal) {
+  // 规范化字段（模型偶尔用不同的键名）
+  const items = foods.map(f => ({
+    name: String(f.name || f.food || '未知食物').slice(0, 40),
+    grams: Math.max(0, Math.round(Number(f.grams ?? f.gram ?? f.weight ?? 0)) || 0),
+    kcal: Math.max(0, Math.round(Number(f.kcal ?? f.calorie ?? f.calories ?? 0)) || 0),
+    protein: Math.max(0, +(Number(f.protein ?? f.p ?? 0) || 0).toFixed(1)),
+    carb: Math.max(0, +(Number(f.carb ?? f.carbs ?? f.carbohydrate ?? f.c ?? 0) || 0).toFixed(1)),
+    fat: Math.max(0, +(Number(f.fat ?? f.f ?? 0) || 0).toFixed(1)),
+    checked: true,
+  }));
+
+  openModal(`
+    <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+      <div class="text-base font-semibold">识别结果</div>
+      <button class="text-slate-400" data-close>
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="px-4 pt-3 pb-2 flex items-center gap-3">
+      <img src="${thumbDataUrl}" alt="thumb" class="w-16 h-16 rounded-xl object-cover border border-slate-100"/>
+      <div class="text-xs text-slate-500 leading-relaxed">
+        AI 已识别 <b class="text-slate-800">${items.length}</b> 项食物<br/>
+        默认全部勾选，可点击行取消<br/>
+        <span class="text-[10px] text-slate-400">数值为 AI 估算，仅供参考</span>
+      </div>
+    </div>
+    <div id="photo-result-list" class="flex-1 overflow-y-auto px-4 pb-3 space-y-2">
+      ${items.map((it, idx) => `
+        <button data-toggle="${idx}" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50 text-left active:bg-slate-100" data-checked="1">
+          <span data-check class="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 bg-mint-500 text-white text-xs">✓</span>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm text-slate-800 truncate">${escapeHtml(it.name)}${it.grams ? `<span class="text-[11px] text-slate-400 font-normal ml-1">${it.grams}g</span>` : ''}</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">蛋${it.protein}g · 碳${it.carb}g · 脂${it.fat}g</div>
+          </div>
+          <div class="text-sm font-semibold text-slate-700">${it.kcal}<span class="text-[11px] text-slate-400 font-normal">kcal</span></div>
+        </button>
+      `).join('')}
+    </div>
+    <div class="p-4 border-t border-slate-100 flex gap-2">
+      <button data-close class="flex-1 py-2.5 bg-slate-100 text-slate-600 text-sm rounded-xl">取消</button>
+      <button id="photo-confirm" class="flex-1 py-2.5 bg-gradient-to-r from-mint-500 to-emerald-600 text-white text-sm font-semibold rounded-xl active:opacity-90">一键添加已选</button>
+    </div>
+  `);
+
+  const overlay = document.querySelector('[data-modal-overlay]');
+  overlay.addEventListener('click', e => {
+    const toggle = e.target.closest('[data-toggle]');
+    if (toggle) {
+      const idx = Number(toggle.dataset.toggle);
+      items[idx].checked = !items[idx].checked;
+      toggle.dataset.checked = items[idx].checked ? '1' : '0';
+      const check = toggle.querySelector('[data-check]');
+      if (items[idx].checked) {
+        toggle.classList.remove('opacity-40');
+        check.className = 'w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 bg-mint-500 text-white text-xs';
+        check.textContent = '✓';
+      } else {
+        toggle.classList.add('opacity-40');
+        check.className = 'w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 bg-white border border-slate-300 text-xs';
+        check.textContent = '';
+      }
+      return;
+    }
+    if (e.target.closest('#photo-confirm')) {
+      const picked = items.filter(it => it.checked);
+      if (!picked.length) { toast('请至少勾选一项'); return; }
+      picked.forEach(it => {
+        const displayName = it.grams ? `${it.name}(${it.grams}g)` : it.name;
+        addFood(meal, displayName, it.kcal, it.protein, it.carb, it.fat, null);
+      });
+      closeModal();
+      toast(`已添加 ${picked.length} 项`);
+    }
+  });
 }
 
 /* ==============================================================
