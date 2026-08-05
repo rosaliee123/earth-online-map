@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#10b981" />
+<title>轻食日记 · 减脂 App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif'],
+      },
+      colors: {
+        mint: {
+          50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac',
+          400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d',
+        },
+      },
+      boxShadow: {
+        soft: '0 4px 20px -6px rgba(16,185,129,0.20)',
+        card: '0 2px 12px -4px rgba(15,23,42,0.08)',
+      },
+      animation: {
+        'fade-in': 'fadeIn .28s ease',
+        'slide-up': 'slideUp .3s cubic-bezier(.2,.9,.3,1)',
+        'pop': 'pop .3s cubic-bezier(.2,1.4,.3,1)',
+      },
+      keyframes: {
+        fadeIn: { '0%': {opacity:0, transform:'translateY(6px)'}, '100%':{opacity:1, transform:'translateY(0)'} },
+        slideUp: { '0%': {transform:'translateY(100%)'}, '100%':{transform:'translateY(0)'} },
+        pop: { '0%': {transform:'scale(.85)', opacity:0}, '100%':{transform:'scale(1)', opacity:1} },
+      },
+    }
+  }
+}
+</script>
+<style>
+  html, body { -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; background: linear-gradient(180deg,#ecfdf5 0%,#f8fafc 40%); min-height:100vh; }
+  body { padding-bottom: 96px; }
+  .no-scrollbar::-webkit-scrollbar { display:none; }
+  .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
+  .tab-page { animation: fadeIn .25s ease; }
+  @keyframes fadeIn { from {opacity:0; transform:translateY(6px);} to {opacity:1;} }
+  .ring-progress { background: conic-gradient(var(--ring-color,#22c55e) calc(var(--p,0)*1%), #e5e7eb 0); }
+  .cal-cell { aspect-ratio: 1/1; }
+  .tab-btn.active { color:#16a34a; }
+  .tab-btn.active .tab-dot { opacity:1; transform:scale(1); }
+  .tab-dot { opacity:0; transform:scale(.6); transition:all .2s ease; }
+  input:focus,select:focus,textarea:focus { outline:none; }
+  .chip { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:9999px; font-size:12px; font-weight:500; }
+  .green-chip { background:#dcfce7; color:#15803d; }
+  .yellow-chip { background:#fef9c3; color:#a16207; }
+  .red-chip { background:#fee2e2; color:#b91c1c; }
+  .segment-btn.active { background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.08); color:#0f172a; }
+  .segment-btn { color:#64748b; }
+  .badge-locked { filter: grayscale(1); opacity: 0.35; }
+  .fade-mask { mask-image: linear-gradient(90deg, transparent, black 12px, black calc(100% - 12px), transparent); }
+  .water-cup {
+    position: relative; width: 40px; height: 56px;
+    border: 2px solid #94a3b8; border-radius: 4px 4px 12px 12px; overflow: hidden;
+    background: linear-gradient(#fff,#f8fafc);
+  }
+  .water-cup.filled { border-color: #0ea5e9; }
+  .water-fill {
+    position:absolute; left:0; right:0; bottom:0; background: linear-gradient(180deg,#7dd3fc,#0284c7);
+    transition: height .4s ease;
+  }
+</style>
+</head>
+<body class="font-sans text-slate-800">
+
+<!-- ============= APP CONTAINER ============= -->
+<div id="app" class="max-w-md mx-auto px-4 pt-6">
+  <header class="flex items-center justify-between mb-4">
+    <div>
+      <div class="text-[11px] text-slate-500" id="today-str"></div>
+      <h1 class="text-xl font-bold flex items-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-mint-500"></span>
+        轻食日记
+      </h1>
+    </div>
+    <div class="flex items-center gap-2">
+      <button id="btn-share" class="text-xs text-slate-500 hover:text-mint-600 flex items-center gap-1 px-2 py-1 rounded-lg bg-white/70 border border-slate-100" title="生成周报卡片">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v14"/></svg>
+        周报
+      </button>
+      <button id="btn-reset" class="text-xs text-slate-400 hover:text-red-500 px-2 py-1 rounded-lg" title="清空本地数据">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section id="page-home" class="tab-page space-y-4"></section>
+    <section id="page-log" class="tab-page space-y-4 hidden"></section>
+    <section id="page-weight" class="tab-page space-y-4 hidden"></section>
+    <section id="page-meals" class="tab-page space-y-4 hidden"></section>
+    <section id="page-cal" class="tab-page space-y-4 hidden"></section>
+  </main>
+</div>
+
+<!-- Bottom Tab Bar -->
+<nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur border-t border-slate-100" style="padding-bottom: env(safe-area-inset-bottom);">
+  <div class="max-w-md mx-auto grid grid-cols-5 py-2">
+    <button data-tab="home" class="tab-btn text-slate-400 flex flex-col items-center gap-0.5 text-[11px] font-medium">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5L12 3l9 6.5V21a1 1 0 01-1 1h-5v-7h-6v7H4a1 1 0 01-1-1V9.5z"/></svg>
+      首页<div class="tab-dot w-1 h-1 rounded-full bg-mint-500"></div>
+    </button>
+    <button data-tab="log" class="tab-btn text-slate-400 flex flex-col items-center gap-0.5 text-[11px] font-medium">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      记录<div class="tab-dot w-1 h-1 rounded-full bg-mint-500"></div>
+    </button>
+    <button data-tab="weight" class="tab-btn text-slate-400 flex flex-col items-center gap-0.5 text-[11px] font-medium">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-4 4 4 5-6"/></svg>
+      体重<div class="tab-dot w-1 h-1 rounded-full bg-mint-500"></div>
+    </button>
+    <button data-tab="meals" class="tab-btn text-slate-400 flex flex-col items-center gap-0.5 text-[11px] font-medium">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 3v9a4 4 0 004 4v6M8 3v6m-4 0h8M16 3c-1 3-1 6 0 9v12"/></svg>
+      选餐<div class="tab-dot w-1 h-1 rounded-full bg-mint-500"></div>
+    </button>
+    <button data-tab="cal" class="tab-btn text-slate-400 flex flex-col items-center gap-0.5 text-[11px] font-medium">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+      成就<div class="tab-dot w-1 h-1 rounded-full bg-mint-500"></div>
+    </button>
+  </div>
+</nav>
+
+<!-- Toast -->
+<div id="toast" class="fixed left-1/2 -translate-x-1/2 top-6 bg-slate-900 text-white text-sm px-4 py-2 rounded-full shadow-lg opacity-0 pointer-events-none transition-all z-50"></div>
+
+<!-- Modal Root -->
+<div id="modal-root"></div>
+
+<script>
+/* ==============================================================
+   常量与配置
+   ============================================================== */
+const LS_KEY = 'fit-tracker-v2';
+const USER_PROFILE = {
+  height: 173,           // cm
+  startWeight: 128,      // 斤
+  goalWeight: 112,       // 斤
+  startDate: '2026-08-05',
+  goalDate:  '2026-11-05',
+  calorieMin: 1350,
+  calorieMax: 1500,
+  proteinMin: 90,        // g
+  proteinMax: 110,
+  carbTarget: 150,       // g
+  fatTarget: 45,         // g
+  waterTarget: 2000,     // ml
+};
+
+const DEFAULT_STATE = {
+  weights: {},           // { date: kg斤 }
+  diet: {},              // { date: { breakfast:[], lunch:[], dinner:[], snack:[] } }
+  water: {},             // { date: ml }
+  exercise: {},          // { date: [ {name, min, kcal} ] }
+  badges: [],            // 已解锁徽章 id
+  seenTips: [],
+  activeTab: 'home',
+  activeShift: 'day',
+  activeLogTab: 'diet',
+};
+
+let state = load();
+
+function load() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return structuredClone(DEFAULT_STATE);
+    const parsed = JSON.parse(raw);
+    return { ...structuredClone(DEFAULT_STATE), ...parsed };
+  } catch(e) { return structuredClone(DEFAULT_STATE); }
+}
+function save() { localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+
+/* ==============================================================
+   日期工具
+   ============================================================== */
+function pad(n) { return n<10?'0'+n:''+n; }
+function fmtDate(d) { return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function today() { return fmtDate(new Date()); }
+function daysBetween(a, b) { return Math.round((new Date(b) - new Date(a)) / 86400000); }
+function todayStr() {
+  const d = new Date();
+  const w = ['日','一','二','三','四','五','六'][d.getDay()];
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 · 周${w}`;
+}
+document.getElementById('today-str').textContent = todayStr();
+
+/* ==============================================================
+   菜品热量库（kcal / 蛋白g / 碳g / 脂g）
+   ============================================================== */
+const FOOD_DB = [
+  // 主食
+  { n:'白米饭（一碗）', k:200, p:4,  c:44, f:0.5, t:'green' },
+  { n:'白米饭（半碗）', k:100, p:2,  c:22, f:0.3, t:'green' },
+  { n:'糙米饭（一碗）', k:190, p:5,  c:40, f:1.5, t:'green' },
+  { n:'杂粮饭（一碗）', k:180, p:6,  c:38, f:1,   t:'green' },
+  { n:'玉米（一根）',   k:130, p:4,  c:28, f:1.5, t:'green' },
+  { n:'红薯（一小块）', k:100, p:1,  c:24, f:0.2, t:'green' },
+  { n:'南瓜（一份）',   k:90,  p:2,  c:20, f:0.2, t:'green' },
+  { n:'全麦面包（一片）', k:90, p:4, c:16, f:1.2, t:'green' },
+  { n:'燕麦（40g）',    k:150, p:5,  c:26, f:3,   t:'green' },
+  { n:'面条（一份）',   k:320, p:11, c:60, f:3,   t:'yellow' },
+  { n:'意面（一份）',   k:350, p:12, c:65, f:3,   t:'yellow' },
+  { n:'肠粉（一份）',   k:380, p:8,  c:50, f:12,  t:'yellow' },
+  { n:'炒饭（一份）',   k:620, p:14, c:80, f:22,  t:'red' },
+  { n:'炒面（一份）',   k:580, p:14, c:75, f:20,  t:'red' },
+
+  // 蛋白（鸡/鱼/牛/蛋/豆）
+  { n:'水煮鸡胸肉 100g',k:133, p:30, c:0,  f:1.2, t:'green' },
+  { n:'香煎鸡胸 100g',  k:180, p:28, c:1,  f:6,   t:'green' },
+  { n:'烤鸡腿（去皮）', k:220, p:26, c:0,  f:12,  t:'yellow' },
+  { n:'清蒸鲈鱼 100g',  k:120, p:22, c:0,  f:3,   t:'green' },
+  { n:'烤鱼 100g',      k:150, p:20, c:1,  f:7,   t:'green' },
+  { n:'虾仁 100g',      k:100, p:22, c:0,  f:1,   t:'green' },
+  { n:'白灼虾（10只）', k:110, p:23, c:0,  f:1.5, t:'green' },
+  { n:'牛肉 100g',      k:200, p:26, c:0,  f:10,  t:'green' },
+  { n:'牛腩红烧 100g',  k:260, p:22, c:5,  f:17,  t:'yellow' },
+  { n:'水煮蛋（一个）', k:75,  p:6,  c:0.5,f:5,   t:'green' },
+  { n:'茶叶蛋（一个）', k:80,  p:6.5,c:1,  f:5.5, t:'green' },
+  { n:'煎蛋（一个）',   k:110, p:6,  c:0.5,f:9,   t:'yellow' },
+  { n:'蒸蛋（一份）',   k:100, p:8,  c:2,  f:6,   t:'green' },
+  { n:'嫩豆腐 100g',    k:82,  p:8,  c:2,  f:5,   t:'green' },
+  { n:'老豆腐 100g',    k:115, p:12, c:3,  f:6.5, t:'green' },
+  { n:'豆浆（无糖一杯）',k:60, p:5,  c:5,  f:2.5, t:'green' },
+  { n:'牛奶（250ml）',  k:130, p:8,  c:12, f:5,   t:'green' },
+  { n:'希腊酸奶（100g）',k:70, p:10, c:4,  f:1,   t:'green' },
+  { n:'脱脂酸奶（一盒）',k:80, p:9,  c:10, f:0.5, t:'green' },
+
+  // 蔬菜
+  { n:'清炒绿叶菜（一份）',k:90, p:3, c:8, f:6, t:'green' },
+  { n:'白灼时蔬（一份）',k:50, p:3, c:8, f:1, t:'green' },
+  { n:'西兰花（一份）', k:60, p:4, c:9, f:1, t:'green' },
+  { n:'凉拌黄瓜（一份）',k:50, p:1, c:5, f:3, t:'green' },
+  { n:'番茄鸡蛋（一份）',k:180, p:10, c:8, f:11, t:'green' },
+  { n:'蒜蓉菠菜（一份）',k:80, p:4, c:8, f:4, t:'green' },
+  { n:'凉拌木耳（一份）',k:70, p:2, c:12, f:2, t:'green' },
+  { n:'海带汤（一碗）', k:40, p:2, c:5, f:1, t:'green' },
+  { n:'紫菜蛋花汤（一碗）',k:60, p:5, c:3, f:3, t:'green' },
+  { n:'冬瓜排骨汤（撇油）',k:120, p:8, c:6, f:7, t:'yellow' },
+
+  // 黄灯
+  { n:'酸菜鱼（半份）', k:260, p:22, c:8, f:15, t:'yellow' },
+  { n:'烧鸭 100g',      k:220, p:18, c:2, f:16, t:'yellow' },
+  { n:'冒菜（一份控油）',k:400, p:20, c:35, f:22, t:'yellow' },
+  { n:'麻辣香锅（半份）',k:500, p:22, c:40, f:28, t:'yellow' },
+  { n:'寿司（6贯）',    k:350, p:14, c:60, f:5, t:'yellow' },
+  { n:'肉夹馍（一个）', k:450, p:20, c:50, f:20, t:'yellow' },
+  { n:'鸡肉卷（一个）', k:420, p:22, c:40, f:20, t:'yellow' },
+
+  // 红灯
+  { n:'炸鸡腿（一个）', k:320, p:18, c:12, f:22, t:'red' },
+  { n:'重油干锅（一份）',k:720, p:25, c:40, f:52, t:'red' },
+  { n:'红烧肉（一份）', k:550, p:20, c:8, f:48, t:'red' },
+  { n:'甜奶茶（一杯）', k:320, p:5, c:55, f:10, t:'red' },
+  { n:'可乐（一罐）',   k:140, p:0, c:35, f:0, t:'red' },
+  { n:'蛋糕（一块）',   k:360, p:5, c:45, f:18, t:'red' },
+  { n:'薯条（一份）',   k:320, p:4, c:42, f:15, t:'red' },
+  { n:'汉堡（一个）',   k:520, p:22, c:45, f:28, t:'red' },
+  { n:'披萨（一大块）', k:380, p:15, c:38, f:18, t:'red' },
+  { n:'冰淇淋（一份）', k:280, p:4, c:32, f:15, t:'red' },
+  { n:'薯片（一小袋）', k:220, p:2, c:22, f:14, t:'red' },
+
+  // 水果坚果
+  { n:'苹果（一个中）', k:90, p:0.5, c:23, f:0.3, t:'green' },
+  { n:'香蕉（一根）',   k:105, p:1.3, c:27, f:0.3, t:'yellow' },
+  { n:'蓝莓（100g）',   k:57, p:0.7, c:14, f:0.3, t:'green' },
+  { n:'圣女果（一份）', k:40, p:1, c:8, f:0.5, t:'green' },
+  { n:'橙子（一个）',   k:80, p:1.3, c:20, f:0.2, t:'green' },
+  { n:'巴旦木（10粒）', k:70, p:2.5, c:2, f:6, t:'green' },
+  { n:'开心果（15粒）', k:80, p:3, c:4, f:6.5, t:'green' },
+];
+
+/* ==============================================================
+   运动库（30 分钟基准，按 60kg 估算，会按当前体重线性修正）
+   ============================================================== */
+const EXERCISE_DB = [
+  { name:'快走',       kcal30: 150, icon:'🚶' },
+  { name:'慢跑',       kcal30: 260, icon:'🏃' },
+  { name:'跑步',       kcal30: 320, icon:'🏃‍♀️' },
+  { name:'骑行',       kcal30: 240, icon:'🚴' },
+  { name:'游泳',       kcal30: 300, icon:'🏊' },
+  { name:'跳绳',       kcal30: 380, icon:'🪢' },
+  { name:'HIIT',       kcal30: 350, icon:'🔥' },
+  { name:'力量训练',   kcal30: 200, icon:'🏋️' },
+  { name:'瑜伽',       kcal30: 120, icon:'🧘' },
+  { name:'普拉提',     kcal30: 150, icon:'🤸' },
+  { name:'徒步',       kcal30: 170, icon:'🥾' },
+  { name:'椭圆机',     kcal30: 260, icon:'💫' },
+  { name:'动感单车',   kcal30: 290, icon:'🚴‍♀️' },
+  { name:'羽毛球',     kcal30: 230, icon:'🏸' },
+  { name:'跳操 / 舞蹈',k30: 220, kcal30:220, icon:'💃' },
+  { name:'爬楼梯',     kcal30: 250, icon:'🪜' },
+];
+
+/* ==============================================================
+   低卡替代（防暴食）
+   ============================================================== */
+const CRAVING_ALT = [
+  { crave:'奶茶 / 甜饮',  origin:320, alt:'无糖乌龙 + 一勺蛋白粉', save:260 },
+  { crave:'蛋糕 / 甜点',  origin:360, alt:'希腊酸奶 + 蓝莓 + 少许蜂蜜', save:250 },
+  { crave:'炸鸡 / 汉堡',  origin:520, alt:'香煎鸡胸 + 蔬菜卷', save:300 },
+  { crave:'薯片 / 薯条',  origin:320, alt:'烤海苔一片 + 圣女果', save:260 },
+  { crave:'冰淇淋',       origin:280, alt:'冷冻香蕉打成"香蕉冰"', save:180 },
+  { crave:'火锅 / 烤肉',  origin:900, alt:'清汤锅底 + 白灼虾 + 大量绿叶菜', save:450 },
+  { crave:'夜宵烧烤',     origin:800, alt:'2 个茶叶蛋 + 一杯温豆浆', save:640 },
+  { crave:'饼干 / 面包',  origin:280, alt:'半根黄瓜 + 10 粒巴旦木', save:180 },
+];
+
+/* ==============================================================
+   减脂 Tips 库
+   ============================================================== */
+const DAILY_TIPS = [
+  '不吃猪肉的你，牛肉/鱼虾/鸡胸/豆腐/蛋轮换更均衡，每天蛋白目标 90-110g。',
+  '空腹称重最准：早晨起床、上完厕所、脱袜子。',
+  '减脂平台期 = 身体在适应。方法：碳水循环、加一天力量训练。',
+  '奶茶 = 一顿饭。今天想喝？换成无糖乌龙 + 一勺蛋白粉。',
+  '睡眠不足 6 小时会显著增加饥饿素，早点睡就是在减脂。',
+  '"少吃一口"比"多跑一公里"高效 3 倍。管住嘴永远排第一。',
+  '一顿饭蛋白吃到"两掌"、蔬菜吃到"两拳"、主食"一拳"以内。',
+  '晚上馋了先喝 300ml 温水，等 10 分钟，八成会消失。',
+  '走路比想象中重要：每天 8000 步 ≈ 消耗 200-300 kcal。',
+  '不必戒零食，只戒"没准备"：办公室常备水煮蛋、鸡胸、坚果。',
+  '生理期前一周体重浮动 1-2 斤是正常的水肿，别慌。',
+  '减脂 ≠ 挨饿。吃太少会让基础代谢下降，反而更难瘦。',
+  '"红灯"食物一周 1 次，选一样别叠加，选了炸鸡就别配奶茶。',
+  '早班日：午餐是主战场，蛋白拉满；晚班日：夜里若饿只补蛋白。',
+  '记录 > 完美。记 3 天不完美的饮食，比记 1 天完美的更有用。',
+  '体重每天上下 1 斤是水和便便，看趋势不看单日。',
+  '喝够水，每天 2000ml；水少了脂肪代谢也变慢。',
+  '"我要吃零食"按钮按下去 → 选低卡替代，成功一次省 200+ kcal。',
+];
+
+/* ==============================================================
+   徽章系统
+   ============================================================== */
+const BADGES = [
+  { id:'first_weight',  name:'第一次称重', desc:'完成第 1 次体重打卡', icon:'⚖️', check: s => Object.keys(s.weights).length >= 1 },
+  { id:'first_diet',    name:'第一顿记录', desc:'记录第 1 次饮食', icon:'🍱', check: s => Object.values(s.diet).some(d => d && (d.breakfast?.length||d.lunch?.length||d.dinner?.length||d.snack?.length)) },
+  { id:'streak_3',      name:'三日之约',   desc:'连续 3 天打卡', icon:'🥉', check: s => maxStreak(s) >= 3 },
+  { id:'streak_7',      name:'习惯萌芽',   desc:'连续 7 天打卡', icon:'🌱', check: s => maxStreak(s) >= 7 },
+  { id:'streak_14',     name:'两周坚持',   desc:'连续 14 天打卡', icon:'🔥', check: s => maxStreak(s) >= 14 },
+  { id:'streak_30',     name:'月度铁人',   desc:'连续 30 天打卡', icon:'🏆', check: s => maxStreak(s) >= 30 },
+  { id:'water_7',       name:'水润 7 天',  desc:'累计 7 天喝够 2000ml', icon:'💧', check: s => Object.values(s.water||{}).filter(v => v >= 2000).length >= 7 },
+  { id:'lose_1',        name:'首斤达成',   desc:'累计减重 1 斤', icon:'📉', check: s => (firstWeight(s) - currentWeight(s)) >= 1 },
+  { id:'lose_5',        name:'五斤俱乐部', desc:'累计减重 5 斤', icon:'💪', check: s => (firstWeight(s) - currentWeight(s)) >= 5 },
+  { id:'lose_10',       name:'十斤达成',   desc:'累计减重 10 斤', icon:'🎯', check: s => (firstWeight(s) - currentWeight(s)) >= 10 },
+  { id:'goal_hit',      name:'目标达成！',  desc:'达到 112 斤目标', icon:'👑', check: s => currentWeight(s) <= USER_PROFILE.goalWeight },
+  { id:'exercise_10',   name:'运动 10 天', desc:'累计运动打卡 10 天', icon:'🏋️', check: s => Object.values(s.exercise||{}).filter(a => a && a.length>0).length >= 10 },
+  { id:'craving_win',   name:'战胜馋虫',   desc:'第一次成功用低卡替代', icon:'🛡️', check: s => (s.cravingWins||0) >= 1 },
+  { id:'protein_pro',   name:'蛋白达人',   desc:'累计 7 天蛋白达到 90g', icon:'🥩', check: s => proteinHitDays(s) >= 7 },
+];
+
+function maxStreak(s) {
+  const dates = Object.keys(s.weights).sort();
+  if (dates.length === 0) return 0;
+  let maxN = 1, curN = 1;
+  for (let i = 1; i < dates.length; i++) {
+    if (daysBetween(dates[i-1], dates[i]) === 1) { curN++; maxN = Math.max(maxN, curN); }
+    else curN = 1;
+  }
+  return maxN;
+}
+function proteinHitDays(s) {
+  let n = 0;
+  Object.values(s.diet||{}).forEach(d => {
+    if (!d) return;
+    let p = 0;
+    ['breakfast','lunch','dinner','snack'].forEach(k => (d[k]||[]).forEach(it => p += Number(it.p||0)));
+    if (p >= USER_PROFILE.proteinMin) n++;
+  });
+  return n;
+}
+
+/* ==============================================================
+   Toast & Modal 工具
+   ============================================================== */
+let toastTimer = null;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.opacity = 1; el.style.transform = 'translate(-50%, 0)';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.style.opacity = 0; el.style.transform = 'translate(-50%, -6px)'; }, 1800);
+}
+
+function openModal(html) {
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center animate-fade-in" data-modal-overlay>
+      <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[88vh] flex flex-col animate-slide-up overflow-hidden">
+        ${html}
+      </div>
+    </div>
+  `;
+}
+function closeModal() { document.getElementById('modal-root').innerHTML = ''; }
+document.addEventListener('click', e => {
+  if (e.target.matches('[data-modal-overlay]') || e.target.closest('[data-close]')) closeModal();
+});
+
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function tagCn(t) { return t==='green'?'🟢 绿灯':t==='yellow'?'🟡 黄灯':'🔴 红灯'; }
+
+/* ==============================================================
+   业务计算
+   ============================================================== */
+function currentWeight(s = state) {
+  const dates = Object.keys(s.weights || {}).sort();
+  return dates.length ? s.weights[dates[dates.length-1]] : USER_PROFILE.startWeight;
+}
+function firstWeight(s = state) {
+  const dates = Object.keys(s.weights || {}).sort();
+  return dates.length ? s.weights[dates[0]] : USER_PROFILE.startWeight;
+}
+function bmi() {
+  // 体重是斤，转 kg
+  const kg = currentWeight() / 2;
+  const m = USER_PROFILE.height / 100;
+  return kg / (m*m);
+}
+function bmiLabel(v) {
+  if (v < 18.5) return { label:'偏瘦', color:'text-sky-500' };
+  if (v < 24)   return { label:'正常', color:'text-mint-600' };
+  if (v < 28)   return { label:'超重', color:'text-amber-500' };
+  return { label:'肥胖', color:'text-red-500' };
+}
+
+function dietOfDay(date) {
+  const raw = state.diet[date];
+  if (!raw) return { breakfast:[], lunch:[], dinner:[], snack:[] };
+  return { breakfast:[], lunch:[], dinner:[], snack:[], ...raw };
+}
+function macrosOfDay(date) {
+  const d = dietOfDay(date);
+  let k=0, p=0, c=0, f=0;
+  ['breakfast','lunch','dinner','snack'].forEach(m => (d[m]||[]).forEach(it => {
+    k += Number(it.kcal||it.k||0);
+    p += Number(it.p||0);
+    c += Number(it.c||0);
+    f += Number(it.f||0);
+  }));
+  return { k, p, c, f };
+}
+function exerciseKcal(date) {
+  return (state.exercise[date]||[]).reduce((a,b)=>a+Number(b.kcal||0),0);
+}
+function balanceKcal(date) {
+  // 净热量 = 摄入 - 消耗
+  return macrosOfDay(date).k - exerciseKcal(date);
+}
+function waterMl(date) { return state.water[date] || 0; }
+
+function streakDays() {
+  let n = 0;
+  const d = new Date();
+  while (true) {
+    const key = fmtDate(d);
+    if (state.weights[key] != null) { n++; d.setDate(d.getDate()-1); }
+    else break;
+  }
+  return n;
+}
+function daysToGoal() {
+  const now = currentWeight();
+  const remain = now - USER_PROFILE.goalWeight;
+  if (remain <= 0) return 0;
+  const dates = Object.keys(state.weights).sort();
+  if (dates.length < 2) return Math.ceil(remain / 0.178);
+  const last = state.weights[dates[dates.length-1]];
+  const startIdx = Math.max(0, dates.length - 8);
+  const base = state.weights[dates[startIdx]];
+  const spanDays = daysBetween(dates[startIdx], dates[dates.length-1]) || 1;
+  const rate = (base - last) / spanDays;
+  if (rate <= 0.02) return Math.ceil(remain / 0.178);
+  return Math.ceil(remain / rate);
+}
+function predictedDate() {
+  const days = daysToGoal();
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return fmtDate(d);
+}
+function planEta() {
+  const now = currentWeight();
+  const start = USER_PROFILE.startWeight;
+  const goal = USER_PROFILE.goalWeight;
+  const totalLoss = start - goal;
+  const done = Math.max(0, start - now);
+  const pct = Math.max(0, Math.min(100, (done / totalLoss) * 100));
+  return { pct, done, totalLoss };
+}
+
+function checkBadges() {
+  const before = new Set(state.badges);
+  BADGES.forEach(b => {
+    if (!before.has(b.id) && b.check(state)) {
+      state.badges.push(b.id);
+      setTimeout(() => showBadgeUnlock(b), 400);
+    }
+  });
+  save();
+}
+function showBadgeUnlock(b) {
+  openModal(`
+    <div class="p-8 text-center">
+      <div class="text-6xl mb-3 animate-pop">${b.icon}</div>
+      <div class="text-xs text-mint-600 font-medium">解锁新徽章</div>
+      <div class="text-xl font-bold mt-1">${b.name}</div>
+      <div class="text-sm text-slate-500 mt-2">${b.desc}</div>
+      <button class="mt-6 px-8 py-2.5 bg-mint-500 text-white rounded-full text-sm font-medium" data-close>太棒了</button>
+    </div>
+  `);
+}
+
+/* ==============================================================
+   渲染：HOME
+   ============================================================== */
+function renderHome() {
+  const el = document.getElementById('page-home');
+  const now = currentWeight();
+  const remain = (now - USER_PROFILE.goalWeight).toFixed(1);
+  const macros = macrosOfDay(today());
+  const burn = exerciseKcal(today());
+  const balance = macros.k - burn;
+  const kcalTarget = USER_PROFILE.calorieMax;
+  const kcalPct = Math.min(100, Math.round(macros.k / kcalTarget * 100));
+  const kcalColor = macros.k > USER_PROFILE.calorieMax ? '#ef4444' : (macros.k > USER_PROFILE.calorieMin ? '#f59e0b' : '#22c55e');
+  const water = waterMl(today());
+  const waterPct = Math.min(100, Math.round(water / USER_PROFILE.waterTarget * 100));
+  const eta = daysToGoal();
+  const plan = planEta();
+  const todayWeight = state.weights[today()];
+  const tip = pickDailyTip();
+  const personalTip = personalHint(macros.k, water, burn, now);
+  const bmiVal = bmi();
+  const bmiInfo = bmiLabel(bmiVal);
+
+  el.innerHTML = `
+    <!-- 顶部主卡 -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-mint-500 via-mint-600 to-emerald-700 text-white p-5 shadow-soft">
+      <div class="absolute -right-8 -top-10 w-40 h-40 rounded-full bg-white/10"></div>
+      <div class="absolute -right-16 top-20 w-32 h-32 rounded-full bg-white/5"></div>
+      <div class="relative">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="text-xs opacity-80 mb-1">当前体重</div>
+            <div class="flex items-baseline gap-2">
+              <div class="text-5xl font-bold tracking-tight">${now.toFixed(1)}</div>
+              <div class="text-sm opacity-80">斤</div>
+              ${todayWeight != null ? '<span class="chip bg-white/20 text-white text-[10px] ml-1">已打卡</span>' : ''}
+            </div>
+            <div class="text-xs opacity-80 mt-1">BMI <b class="text-white">${bmiVal.toFixed(1)}</b> · ${bmiInfo.label}</div>
+          </div>
+          <button class="text-xs bg-white/20 backdrop-blur px-3 py-1.5 rounded-full font-medium" data-goto="weight">→ 详情</button>
+        </div>
+        <div class="mt-4 flex items-center justify-between">
+          <div><div class="text-[11px] opacity-75">目标</div><div class="text-base font-semibold">${USER_PROFILE.goalWeight} 斤</div></div>
+          <div class="text-center"><div class="text-[11px] opacity-75">还差</div><div class="text-base font-semibold">${remain} 斤</div></div>
+          <div class="text-right"><div class="text-[11px] opacity-75">预计</div><div class="text-base font-semibold">${eta === 0 ? '已达标 🎉' : eta + '天'}</div></div>
+        </div>
+        <div class="mt-4">
+          <div class="h-2 bg-white/20 rounded-full overflow-hidden">
+            <div class="h-full bg-white/90 rounded-full transition-all" style="width: ${plan.pct}%"></div>
+          </div>
+          <div class="flex justify-between text-[10px] mt-1 opacity-80">
+            <span>${USER_PROFILE.startWeight}斤 · 起</span>
+            <span>${plan.done.toFixed(1)}/${plan.totalLoss} 斤</span>
+            <span>${USER_PROFILE.goalWeight}斤 · 目标</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 快速操作 4 宫格 -->
+    <div class="grid grid-cols-4 gap-2">
+      ${[
+        { icon:'⚖️', label:'称重', act:'quick-weight' },
+        { icon:'🍱', label:'饮食', act:'quick-diet' },
+        { icon:'💧', label:'喝水', act:'quick-water' },
+        { icon:'🏃', label:'运动', act:'quick-exercise' },
+      ].map(a => `
+        <button class="rounded-2xl bg-white p-3 shadow-card border border-slate-100 flex flex-col items-center gap-1 active:scale-95 transition-transform" data-quick="${a.act}">
+          <div class="text-2xl">${a.icon}</div>
+          <div class="text-[11px] text-slate-600 font-medium">${a.label}</div>
+        </button>
+      `).join('')}
+    </div>
+
+    <!-- 今日热量平衡 -->
+    <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <div class="text-xs text-slate-500">今日热量平衡</div>
+          <div class="text-2xl font-bold mt-0.5" style="color:${balance > USER_PROFILE.calorieMax ? '#ef4444' : balance >= USER_PROFILE.calorieMin ? '#f59e0b' : '#22c55e'}">
+            ${balance} <span class="text-sm text-slate-400 font-medium">kcal</span>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-1">摄入 ${macros.k} - 运动 ${burn} = ${balance} · 目标 ${USER_PROFILE.calorieMin}-${USER_PROFILE.calorieMax}</div>
+        </div>
+        <div class="relative w-16 h-16 rounded-full ring-progress" style="--p: ${kcalPct}; --ring-color: ${kcalColor};">
+          <div class="absolute inset-1.5 rounded-full bg-white flex items-center justify-center text-xs font-semibold" style="color: ${kcalColor}">${kcalPct}%</div>
+        </div>
+      </div>
+      <div class="h-2 rounded-full bg-slate-100 overflow-hidden">
+        <div class="h-full transition-all" style="width: ${kcalPct}%; background: ${kcalColor}"></div>
+      </div>
+      <!-- 宏量 4 项 -->
+      <div class="mt-3 grid grid-cols-4 gap-2">
+        ${[
+          { label:'热量', val:macros.k, unit:'kcal', target:USER_PROFILE.calorieMax, color:'#22c55e' },
+          { label:'蛋白', val:macros.p.toFixed(0), unit:'g', target:USER_PROFILE.proteinMax, color:'#3b82f6' },
+          { label:'碳水', val:macros.c.toFixed(0), unit:'g', target:USER_PROFILE.carbTarget, color:'#f59e0b' },
+          { label:'脂肪', val:macros.f.toFixed(0), unit:'g', target:USER_PROFILE.fatTarget, color:'#ec4899' },
+        ].map(m => {
+          const pct = Math.min(100, Math.round(Number(m.val)/m.target*100));
+          return `
+            <div class="text-center">
+              <div class="text-[10px] text-slate-500">${m.label}</div>
+              <div class="text-sm font-semibold mt-0.5">${m.val}<span class="text-[10px] text-slate-400 font-normal">/${m.target}${m.unit}</span></div>
+              <div class="h-1 rounded-full bg-slate-100 mt-1 overflow-hidden"><div class="h-full transition-all" style="width:${pct}%;background:${m.color}"></div></div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- 水分卡 -->
+    <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <div class="text-xs text-slate-500">今日饮水</div>
+          <div class="flex items-baseline gap-1 mt-0.5">
+            <div class="text-2xl font-bold text-sky-600">${water}</div>
+            <div class="text-xs text-slate-400">/ ${USER_PROFILE.waterTarget} ml</div>
+          </div>
+        </div>
+        <div class="flex gap-1.5">
+          <button class="px-2.5 py-1.5 bg-sky-50 text-sky-600 text-xs rounded-lg font-medium" data-water="+250">+250</button>
+          <button class="px-2.5 py-1.5 bg-sky-100 text-sky-700 text-xs rounded-lg font-medium" data-water="+500">+500</button>
+        </div>
+      </div>
+      <div class="flex gap-1.5 justify-between">
+        ${Array.from({length:8}).map((_, i) => {
+          const need = (i+1) * 250;
+          const isFilled = water >= need;
+          const fill = isFilled ? 100 : (water > i*250 ? ((water - i*250)/250)*100 : 0);
+          return `
+            <div class="water-cup ${isFilled?'filled':''}">
+              <div class="water-fill" style="height:${fill}%"></div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- 防暴食按钮 -->
+    <button class="w-full rounded-2xl bg-gradient-to-r from-orange-400 to-pink-500 text-white p-4 shadow-soft active:scale-[0.98] transition-transform" data-craving>
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-full bg-white/25 flex items-center justify-center text-2xl">🛡️</div>
+        <div class="text-left flex-1">
+          <div class="text-sm font-bold">我要吃零食 / 有点馋</div>
+          <div class="text-[11px] opacity-90">按一下，给你一份低卡替代方案</div>
+        </div>
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+      </div>
+    </button>
+
+    <!-- 今日贴士 -->
+    <div class="rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 p-4 border border-emerald-100">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-6 h-6 rounded-full bg-mint-500 text-white text-xs flex items-center justify-center">💡</div>
+        <div class="text-sm font-semibold text-slate-800">今日贴士</div>
+      </div>
+      <div class="text-xs text-slate-600 leading-relaxed mb-1">${tip}</div>
+      ${personalTip ? `<div class="text-xs text-mint-700 bg-white/60 rounded-lg px-2 py-1.5 mt-2 leading-relaxed"><b>给你的：</b>${personalTip}</div>` : ''}
+    </div>
+
+    <!-- 最近徽章 -->
+    <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold">我的徽章</div>
+        <button class="text-xs text-slate-400" data-goto="cal">全部 →</button>
+      </div>
+      <div class="flex gap-3 overflow-x-auto no-scrollbar">
+        ${BADGES.slice(0,8).map(b => {
+          const unlocked = state.badges.includes(b.id);
+          return `
+            <div class="flex-shrink-0 w-14 text-center ${unlocked ? '' : 'badge-locked'}">
+              <div class="w-12 h-12 mx-auto rounded-2xl bg-slate-50 flex items-center justify-center text-2xl">${b.icon}</div>
+              <div class="text-[10px] mt-1 text-slate-600 truncate">${b.name}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function pickDailyTip() {
+  const idx = Math.abs(hash(today())) % DAILY_TIPS.length;
+  return DAILY_TIPS[idx];
+}
+function hash(str) { let h=0; for (let i=0;i<str.length;i++) h = (h*31 + str.charCodeAt(i)) | 0; return h; }
+
+function personalHint(kcal, water, burn, now) {
+  const m = macrosOfDay(today());
+  if (m.p < 30 && new Date().getHours() >= 14) return `今天蛋白只吃了 ${m.p.toFixed(0)}g，晚餐必须要有蛋白 —— 试试烤鱼或鸡胸。`;
+  if (kcal > USER_PROFILE.calorieMax) return `今天已超上限 ${kcal - USER_PROFILE.calorieMax} kcal，晚上先喝 300ml 温水，饿了再决定。`;
+  if (water < 500 && new Date().getHours() >= 12) return `到中午了才喝了 ${water}ml，起来倒一杯水吧～`;
+  if (burn === 0 && new Date().getHours() >= 20) return `今天还没运动，饭后 15 分钟快走也算。`;
+  if (kcal === 0 && new Date().getHours() >= 13) return `到中午了还没记录，午餐参考「选餐」里的绿灯组合。`;
+  return null;
+}
+
+/* ==============================================================
+   渲染：LOG（记录页 · 3 子tab：饮食/运动/水分）
+   ============================================================== */
+function renderLog() {
+  const el = document.getElementById('page-log');
+  const sub = state.activeLogTab || 'diet';
+  el.innerHTML = `
+    <div class="flex items-center gap-1 p-1 rounded-2xl bg-slate-100 text-sm">
+      ${[
+        {k:'diet',label:'🍱 饮食'},
+        {k:'exercise',label:'🏃 运动'},
+        {k:'water',label:'💧 水分'},
+      ].map(t => `<button data-sublog="${t.k}" class="segment-btn ${sub===t.k?'active':''} flex-1 py-2 rounded-xl font-medium">${t.label}</button>`).join('')}
+    </div>
+    <div id="log-body"></div>
+  `;
+  renderLogBody();
+}
+function renderLogBody() {
+  const body = document.getElementById('log-body');
+  if (!body) return;
+  const sub = state.activeLogTab;
+  if (sub === 'diet') body.innerHTML = renderDietSub();
+  else if (sub === 'exercise') body.innerHTML = renderExerciseSub();
+  else if (sub === 'water') body.innerHTML = renderWaterSub();
+}
+
+/* -------- 饮食子页 -------- */
+function renderDietSub() {
+  const d = dietOfDay(today());
+  const macros = macrosOfDay(today());
+  const totals = ['breakfast','lunch','dinner','snack'].map(k => (d[k]||[]).reduce((a,b)=>a+Number(b.kcal||b.k||0),0));
+  const total = totals.reduce((a,b)=>a+b,0);
+
+  return `
+    <div class="space-y-4 mt-4">
+      <!-- 环形卡：4 项宏量 -->
+      <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
+        <div class="text-xs text-slate-500 mb-3">今日营养分布 · ${today()}</div>
+        <div class="flex items-center gap-4">
+          <div class="relative w-28 h-28 flex items-center justify-center">
+            <canvas id="macro-donut" width="112" height="112"></canvas>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <div class="text-2xl font-bold">${total}</div>
+              <div class="text-[10px] text-slate-400">kcal</div>
+            </div>
+          </div>
+          <div class="flex-1 space-y-2 text-xs">
+            ${[
+              { label:'蛋白', val:macros.p.toFixed(0), unit:'g', target:USER_PROFILE.proteinMax, color:'#3b82f6' },
+              { label:'碳水', val:macros.c.toFixed(0), unit:'g', target:USER_PROFILE.carbTarget, color:'#f59e0b' },
+              { label:'脂肪', val:macros.f.toFixed(0), unit:'g', target:USER_PROFILE.fatTarget, color:'#ec4899' },
+            ].map(m => `
+              <div>
+                <div class="flex justify-between mb-0.5">
+                  <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:${m.color}"></span>${m.label}</span>
+                  <span class="text-slate-500">${m.val} / ${m.target}${m.unit}</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                  <div class="h-full transition-all" style="width:${Math.min(100,(Number(m.val)/m.target*100))}%;background:${m.color}"></div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+
+      ${['breakfast','lunch','dinner','snack'].map((k,i) => {
+        const names = ['早餐','午餐','晚餐','加餐 / 夜宵'];
+        const emoji = ['🌅','🍱','🌙','🌰'];
+        const items = d[k] || [];
+        const sub = totals[i];
+        return `
+        <div class="rounded-2xl bg-white shadow-card border border-slate-100 overflow-hidden">
+          <div class="flex items-center justify-between px-4 py-3">
+            <div class="flex items-center gap-2">
+              <div class="text-lg">${emoji[i]}</div>
+              <div class="text-sm font-semibold">${names[i]}</div>
+              <div class="text-xs text-slate-400">${sub} kcal</div>
+            </div>
+            <button class="text-xs text-mint-600 font-medium" data-add-meal="${k}">+ 添加</button>
+          </div>
+          <div class="px-4 pb-3 space-y-2">
+            ${items.length === 0 ? '<div class="text-xs text-slate-400 py-2">还没记录</div>' : items.map((it, idx) => `
+              <div class="flex items-center justify-between bg-slate-50 rounded-lg px-3 py-2">
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium text-slate-800 truncate">${escapeHtml(it.name || it.n)}</div>
+                  <div class="text-[11px] text-slate-500 mt-0.5">${it.kcal || it.k} kcal · 蛋${(it.p||0).toFixed?.(0) ?? it.p??0}g 碳${(it.c||0).toFixed?.(0) ?? it.c??0}g 脂${(it.f||0).toFixed?.(0) ?? it.f??0}g ${it.tag||it.t ? '· '+tagCn(it.tag||it.t) : ''}</div>
+                </div>
+                <button class="text-slate-400 hover:text-red-500 px-2 py-1" data-del="${k}:${idx}">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+              </div>`).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+
+      <!-- 历史 7 天 -->
+      <div class="rounded-2xl bg-white shadow-card border border-slate-100 overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-100 flex justify-between items-center">
+          <div class="text-sm font-semibold">近 7 天摄入</div>
+          <div class="text-[11px] text-slate-400">目标 ${USER_PROFILE.calorieMin}-${USER_PROFILE.calorieMax}</div>
+        </div>
+        <div class="relative p-4" style="height:180px"><canvas id="diet-7d-chart"></canvas></div>
+      </div>
+    </div>
+  `;
+}
+
+/* -------- 运动子页 -------- */
+function renderExerciseSub() {
+  const list = state.exercise[today()] || [];
+  const sum = list.reduce((a,b)=>a+Number(b.kcal||0),0);
+  const cw = currentWeight() / 2; // kg
+
+  return `
+    <div class="space-y-4 mt-4">
+      <div class="rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 text-white p-4 shadow-soft">
+        <div class="text-xs opacity-80">今日消耗</div>
+        <div class="text-3xl font-bold mt-0.5">${sum} <span class="text-sm opacity-80">kcal</span></div>
+        <div class="text-[11px] opacity-90 mt-1">共 ${list.length} 项运动 · 相当于少吃 ${(sum/9).toFixed(0)}g 脂肪</div>
+      </div>
+
+      <div class="grid grid-cols-4 gap-2">
+        ${EXERCISE_DB.slice(0,8).map(ex => `
+          <button class="rounded-xl bg-white p-3 shadow-card border border-slate-100 active:scale-95 flex flex-col items-center gap-1" data-quickex='${JSON.stringify(ex).replace(/'/g,"&#39;")}'>
+            <div class="text-2xl">${ex.icon}</div>
+            <div class="text-[10px] text-slate-600 truncate w-full text-center">${ex.name}</div>
+          </button>
+        `).join('')}
+      </div>
+      <button class="w-full py-2.5 text-sm font-medium text-mint-700 bg-mint-50 rounded-2xl" data-exercise-more>查看全部运动 →</button>
+
+      <div class="rounded-2xl bg-white shadow-card border border-slate-100 overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-100 text-sm font-semibold">今日记录</div>
+        <div class="divide-y divide-slate-100">
+          ${list.length === 0 ? '<div class="text-xs text-slate-400 px-4 py-4">今天还没运动，点上面的图标快速记录</div>' :
+            list.map((it, idx) => `
+              <div class="flex items-center justify-between px-4 py-2.5">
+                <div class="flex items-center gap-2">
+                  <div class="text-xl">${it.icon || '🏃'}</div>
+                  <div>
+                    <div class="text-sm font-medium">${escapeHtml(it.name)}</div>
+                    <div class="text-[11px] text-slate-500">${it.min} 分钟 · 消耗 ${it.kcal} kcal</div>
+                  </div>
+                </div>
+                <button class="text-slate-300 hover:text-red-500" data-del-ex="${idx}">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+              </div>
+            `).join('')
+          }
+        </div>
+      </div>
+
+      <div class="text-[11px] text-slate-400 leading-relaxed px-1">
+        热量按你当前体重 ${cw.toFixed(0)}kg 估算，个体差异较大，仅供参考。
+      </div>
+    </div>
+  `;
+}
+
+/* -------- 水分子页 -------- */
+function renderWaterSub() {
+  const w = waterMl(today());
+  const pct = Math.min(100, Math.round(w / USER_PROFILE.waterTarget * 100));
+  const recentDays = Array.from({length:7}).map((_, i) => {
+    const d = new Date(); d.setDate(d.getDate() - (6-i));
+    const key = fmtDate(d);
+    return { key, val: state.water[key] || 0, label: (d.getMonth()+1)+'/'+d.getDate() };
+  });
+  return `
+    <div class="space-y-4 mt-4">
+      <div class="rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-600 text-white p-5 shadow-soft text-center">
+        <div class="text-xs opacity-80">今日已喝</div>
+        <div class="text-5xl font-bold mt-1">${w}<span class="text-lg opacity-80">ml</span></div>
+        <div class="text-xs opacity-90 mt-1">目标 ${USER_PROFILE.waterTarget}ml · 已完成 ${pct}%</div>
+        <div class="mt-4 h-2 rounded-full bg-white/25 overflow-hidden">
+          <div class="h-full bg-white transition-all" style="width:${pct}%"></div>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        ${[100, 250, 500, '自定义'].map(v => `
+          <button class="flex-1 py-3 rounded-2xl bg-white shadow-card border border-slate-100 text-sm font-medium active:bg-sky-50" data-water="${v === '自定义' ? 'custom' : '+'+v}">
+            ${v === '自定义' ? '⚙️ 自定义' : '+' + v + 'ml'}
+          </button>
+        `).join('')}
+      </div>
+
+      <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
+        <div class="text-sm font-semibold mb-3">水杯可视化</div>
+        <div class="flex flex-wrap gap-2 justify-center">
+          ${Array.from({length:8}).map((_, i) => {
+            const need = (i+1)*250;
+            const isFilled = w >= need;
+            const fill = isFilled ? 100 : (w > i*250 ? ((w - i*250)/250)*100 : 0);
+            return `<div class="water-cup ${isFilled?'filled':''}" style="width:36px;height:52px;"><div class="water-fill" style="height:${fill}%"></div></div>`;
+          }).join('')}
+        </div>
+        <div class="text-[11px] text-slate-400 text-center mt-2">每杯 250ml · 8 杯正好 2000ml</div>
+      </div>
+
+      <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
+        <div class="text-sm font-semibold mb-3">近 7 天</div>
+        <div class="flex items-end gap-1.5 h-24">
+          ${recentDays.map(d => {
+            const h = Math.min(100, d.val / USER_PROFILE.waterTarget * 100);
+            const ok = d.val >= USER_PROFILE.waterTarget;
+            return `
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="flex-1 w-full flex items-end">
+                  <div class="w-full rounded-t-md ${ok ? 'bg-sky-500' : 'bg-sky-200'}" style="height:${h}%; min-height:2px"></div>
+                </div>
+                <div class="text-[9px] text-slate-500">${d.label}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ==============================================================
+   饮食：添加菜品弹层
+   ============================================================== */
+function openMealDialog(meal) {
+  openModal(`
+    <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+      <div class="text-base font-semibold">添加${{breakfast:'早餐',lunch:'午餐',dinner:'晚餐',snack:'加餐'}[meal]}</div>
+      <button class="text-slate-400" data-close>
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-4 space-y-3">
+      <input id="food-search" placeholder="搜索或输入菜品..." class="w-full px-4 py-2.5 bg-slate-50 rounded-xl text-sm placeholder:text-slate-400"/>
+      <div class="grid grid-cols-4 gap-2">
+        <input id="food-kcal" type="number" inputmode="numeric" placeholder="热量" class="px-3 py-2 bg-slate-50 rounded-xl text-sm placeholder:text-slate-400 text-center"/>
+        <input id="food-p" type="number" inputmode="decimal" placeholder="蛋g" class="px-3 py-2 bg-slate-50 rounded-xl text-sm placeholder:text-slate-400 text-center"/>
+        <input id="food-c" type="number" inputmode="decimal" placeholder="碳g" class="px-3 py-2 bg-slate-50 rounded-xl text-sm placeholder:text-slate-400 text-center"/>
+        <input id="food-f" type="number" inputmode="decimal" placeholder="脂g" class="px-3 py-2 bg-slate-50 rounded-xl text-sm placeholder:text-slate-400 text-center"/>
+      </div>
+      <button id="food-add" class="w-full py-2.5 bg-mint-500 text-white text-sm font-medium rounded-xl active:bg-mint-600">保存自定义</button>
+    </div>
+    <div class="px-4 pb-2 flex gap-2 fade-mask overflow-x-auto no-scrollbar">
+      ${['全部','green','yellow','red'].map((t,i) => `
+        <button data-filter="${t}" class="whitespace-nowrap px-3 py-1 rounded-full text-xs ${i===0?'bg-slate-900 text-white':'bg-slate-100 text-slate-600'}">${t==='全部'?'全部':tagCn(t)}</button>
+      `).join('')}
+    </div>
+    <div id="food-list" class="flex-1 overflow-y-auto px-4 pb-6 pt-2 space-y-1.5"></div>
+  `);
+
+  const overlay = document.querySelector('[data-modal-overlay]');
+  const listEl = overlay.querySelector('#food-list');
+  const searchEl = overlay.querySelector('#food-search');
+  let filter = '全部';
+
+  function render() {
+    const q = searchEl.value.trim();
+    let items = FOOD_DB;
+    if (filter !== '全部') items = items.filter(it => it.t === filter);
+    if (q) items = items.filter(it => it.n.includes(q));
+    listEl.innerHTML = items.slice(0, 80).map(it => `
+      <button data-pick='${JSON.stringify(it).replace(/'/g,"&#39;")}' class="w-full flex items-center justify-between text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 active:bg-slate-100">
+        <div class="flex-1 min-w-0">
+          <div class="text-sm text-slate-800 truncate">${escapeHtml(it.n)}</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">${tagCn(it.t)} · 蛋${it.p}g 碳${it.c}g 脂${it.f}g</div>
+        </div>
+        <div class="text-sm font-semibold text-slate-700 ml-3">${it.k}<span class="text-[11px] text-slate-400 font-normal">kcal</span></div>
+      </button>
+    `).join('') || '<div class="text-xs text-slate-400 py-4 text-center">未找到匹配菜品，可手动填写上方数据后保存</div>';
+  }
+  render();
+
+  overlay.addEventListener('click', e => {
+    const filterBtn = e.target.closest('[data-filter]');
+    if (filterBtn) {
+      filter = filterBtn.dataset.filter;
+      overlay.querySelectorAll('[data-filter]').forEach(b => {
+        b.className = 'whitespace-nowrap px-3 py-1 rounded-full text-xs ' + (b.dataset.filter === filter ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600');
+      });
+      render();
+    }
+    const pickBtn = e.target.closest('[data-pick]');
+    if (pickBtn) {
+      const it = JSON.parse(pickBtn.dataset.pick);
+      addFood(meal, it.n, it.k, it.p, it.c, it.f, it.t);
+      closeModal();
+    }
+    if (e.target.id === 'food-add') {
+      const name = searchEl.value.trim();
+      const kcal = Number(overlay.querySelector('#food-kcal').value);
+      const p = Number(overlay.querySelector('#food-p').value) || 0;
+      const c = Number(overlay.querySelector('#food-c').value) || 0;
+      const f = Number(overlay.querySelector('#food-f').value) || 0;
+      if (!name) { toast('先输入菜品名'); return; }
+      if (!kcal || kcal <= 0) { toast('请填写热量'); return; }
+      addFood(meal, name, kcal, p, c, f, null);
+      closeModal();
+    }
+  });
+  searchEl.addEventListener('input', render);
+  setTimeout(() => searchEl.focus(), 100);
+}
+function addFood(meal, name, kcal, p, c, f, tag) {
+  const d = today();
+  if (!state.diet[d]) state.diet[d] = { breakfast:[], lunch:[], dinner:[], snack:[] };
+  state.diet[d][meal] = state.diet[d][meal] || [];
+  state.diet[d][meal].push({ name, kcal: Number(kcal), p:Number(p)||0, c:Number(c)||0, f:Number(f)||0, tag });
+  save();
+  toast('已添加');
+  checkBadges();
+  refreshCurrent();
+}
+function delFood(meal, idx) {
+  const d = today();
+  state.diet[d][meal].splice(idx, 1);
+  save();
+  refreshCurrent();
+}
+
+/* ==============================================================
+   运动：添加弹层
+   ============================================================== */
+function openExerciseDialog(preset) {
+  const cw = currentWeight() / 2;
+  const factor = cw / 60; // 60kg 基准
+  openModal(`
+    <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+      <div class="text-base font-semibold">${preset ? '记录：'+preset.name : '选择运动'}</div>
+      <button class="text-slate-400" data-close>
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-4 space-y-3">
+      <div id="ex-picked">${preset ? `<div class="text-4xl text-center">${preset.icon}</div><div class="text-center text-sm mt-1">${preset.name}</div>` : ''}</div>
+      <div class="flex items-center gap-2">
+        <input id="ex-min" type="number" inputmode="numeric" placeholder="时长（分钟）" value="30" class="flex-1 px-4 py-2.5 bg-slate-50 rounded-xl text-sm text-center"/>
+        <div class="text-xs text-slate-500 whitespace-nowrap">≈ <b id="ex-kcal" class="text-mint-600">${preset ? Math.round(preset.kcal30 * factor) : 0}</b> kcal</div>
+      </div>
+      <button id="ex-save" class="w-full py-2.5 bg-mint-500 text-white text-sm font-medium rounded-xl active:bg-mint-600" ${preset ? '' : 'disabled style="opacity:0.4"'}>保存</button>
+    </div>
+    ${!preset ? `
+    <div class="flex-1 overflow-y-auto p-4 pt-0 grid grid-cols-3 gap-2">
+      ${EXERCISE_DB.map(ex => `
+        <button data-pick-ex='${JSON.stringify(ex).replace(/'/g,"&#39;")}' class="rounded-xl bg-slate-50 p-3 active:bg-slate-100 flex flex-col items-center gap-1">
+          <div class="text-2xl">${ex.icon}</div>
+          <div class="text-[11px] text-slate-700">${ex.name}</div>
+          <div class="text-[10px] text-slate-400">${Math.round(ex.kcal30 * factor)}kcal/30min</div>
+        </button>
+      `).join('')}
+    </div>` : ''}
+  `);
+
+  const overlay = document.querySelector('[data-modal-overlay]');
+  let selected = preset;
+  overlay.addEventListener('click', e => {
+    const pick = e.target.closest('[data-pick-ex]');
+    if (pick) {
+      selected = JSON.parse(pick.dataset.pickEx);
+      overlay.querySelector('#ex-picked').innerHTML = `<div class="text-4xl text-center">${selected.icon}</div><div class="text-center text-sm mt-1">${selected.name}</div>`;
+      overlay.querySelector('#ex-save').removeAttribute('disabled');
+      overlay.querySelector('#ex-save').style.opacity = 1;
+      updateKcal();
+    }
+    if (e.target.id === 'ex-save' && selected) {
+      const min = Number(overlay.querySelector('#ex-min').value) || 30;
+      const kcal = Math.round(selected.kcal30 * factor * min / 30);
+      addExercise(selected.name, min, kcal, selected.icon);
+      closeModal();
+    }
+  });
+  function updateKcal() {
+    if (!selected) return;
+    const min = Number(overlay.querySelector('#ex-min').value) || 30;
+    const kcal = Math.round(selected.kcal30 * factor * min / 30);
+    overlay.querySelector('#ex-kcal').textContent = kcal;
+  }
+  overlay.querySelector('#ex-min').addEventListener('input', updateKcal);
+}
+function addExercise(name, min, kcal, icon) {
+  const d = today();
+  state.exercise[d] = state.exercise[d] || [];
+  state.exercise[d].push({ name, min: Number(min), kcal: Number(kcal), icon });
+  save();
+  toast('已记录运动');
+  checkBadges();
+  refreshCurrent();
+}
+
+/* ==============================================================
+   水分：加水
+   ============================================================== */
+function addWater(ml) {
+  const d = today();
+  state.water[d] = (state.water[d] || 0) + Number(ml);
+  if (state.water[d] < 0) state.water[d] = 0;
+  save();
+  toast(ml > 0 ? `+${ml}ml` : `${ml}ml`);
+  checkBadges();
+  refreshCurrent();
+}
+function openWaterCustom() {
+  openModal(`
+    <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+      <div class="text-base font-semibold">自定义饮水量</div>
+      <button class="text-slate-400" data-close>
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-4 space-y-3">
+      <input id="water-ml" type="number" inputmode="numeric" placeholder="毫升 ml" class="w-full px-4 py-3 bg-slate-50 rounded-xl text-lg text-center font-semibold"/>
+      <div class="flex gap-2">
+        <button class="flex-1 py-2 text-sm bg-slate-100 rounded-xl" data-set="150">150</button>
+        <button class="flex-1 py-2 text-sm bg-slate-100 rounded-xl" data-set="300">300</button>
+        <button class="flex-1 py-2 text-sm bg-slate-100 rounded-xl" data-set="500">500</button>
+      </div>
+      <div class="flex gap-2">
+        <button id="water-add" class="flex-1 py-2.5 bg-sky-500 text-white text-sm font-medium rounded-xl">添加</button>
+        <button id="water-minus" class="flex-1 py-2.5 bg-slate-100 text-slate-700 text-sm font-medium rounded-xl">扣减</button>
+      </div>
+    </div>
+  `);
+  const overlay = document.querySelector('[data-modal-overlay]');
+  overlay.addEventListener('click', e => {
+    const setBtn = e.target.closest('[data-set]');
+    if (setBtn) overlay.querySelector('#water-ml').value = setBtn.dataset.set;
+    if (e.target.id === 'water-add') {
+      const v = Number(overlay.querySelector('#water-ml').value);
+      if (v > 0) { addWater(v); closeModal(); }
+    }
+    if (e.target.id === 'water-minus') {
+      const v = Number(overlay.querySelector('#water-ml').value);
+      if (v > 0) { addWater(-v); closeModal(); }
+    }
+  });
+}
+
+/* ==============================================================
+   称重 & 防暴食
+   ============================================================== */
+function openWeightDialog() {
+  const now = currentWeight();
+  const todayW = state.weights[today()] || '';
+  openModal(`
+    <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+      <div class="text-base font-semibold">${todayW ? '更新' : '打卡'}今日体重</div>
+      <button class="text-slate-400" data-close>
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-6 space-y-4">
+      <div class="text-center">
+        <div class="text-xs text-slate-500 mb-1">${today()}</div>
+        <input id="w-in" type="number" step="0.1" inputmode="decimal" value="${todayW}" placeholder="${now.toFixed(1)}" class="w-full text-5xl font-bold text-center bg-transparent border-b-2 border-slate-100 pb-2 focus:border-mint-500 transition-colors" />
+        <div class="text-sm text-slate-500 mt-1">斤（1 kg = 2 斤）</div>
+      </div>
+      <button id="w-save-btn" class="w-full py-3 bg-mint-500 text-white text-base font-medium rounded-2xl active:bg-mint-600">保存打卡</button>
+      <div class="text-[11px] text-slate-400 text-center">建议早晨空腹、上完厕所后称重</div>
+    </div>
+  `);
+  const overlay = document.querySelector('[data-modal-overlay]');
+  setTimeout(() => overlay.querySelector('#w-in').focus(), 200);
+  overlay.querySelector('#w-save-btn').addEventListener('click', () => {
+    const v = Number(overlay.querySelector('#w-in').value);
+    if (!v || v < 40 || v > 400) { toast('请输入合理体重（斤）'); return; }
+    state.weights[today()] = v;
+    save();
+    toast('打卡成功 ✨');
+    checkBadges();
+    closeModal();
+    refreshCurrent();
+  });
+}
+
+function openCravingDialog() {
+  openModal(`
+    <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+      <div>
+        <div class="text-base font-semibold">🛡️ 战胜馋虫</div>
+        <div class="text-[11px] text-slate-500 mt-0.5">选一个想吃的，我给你更好的选择</div>
+      </div>
+      <button class="text-slate-400" data-close>
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="flex-1 overflow-y-auto p-4 space-y-2">
+      ${CRAVING_ALT.map(c => `
+        <div class="rounded-2xl bg-gradient-to-br from-orange-50 to-pink-50 border border-orange-100 p-3">
+          <div class="flex items-center justify-between">
+            <div class="text-sm font-semibold text-slate-800">我想吃：${c.crave}</div>
+            <div class="text-xs text-red-500">${c.origin} kcal</div>
+          </div>
+          <div class="mt-2 bg-white rounded-xl p-3">
+            <div class="text-[11px] text-mint-600 font-medium">✨ 建议替代</div>
+            <div class="text-sm text-slate-800 mt-1">${c.alt}</div>
+            <div class="text-[11px] text-mint-700 mt-1">替代后省下约 <b>${c.save} kcal</b>，相当于 ${(c.save/9).toFixed(0)}g 脂肪</div>
+          </div>
+          <button class="mt-2 w-full py-2 text-xs font-medium text-white bg-mint-500 rounded-lg active:bg-mint-600" data-crave-win="${c.save}">选替代方案 · 战胜一次</button>
+        </div>
+      `).join('')}
+      <div class="text-[11px] text-slate-400 leading-relaxed p-2">
+        小技巧：真的很馋时，先喝 300ml 温水 + 等 10 分钟；10 分钟后 8 成会消失。
+      </div>
+    </div>
+  `);
+  const overlay = document.querySelector('[data-modal-overlay]');
+  overlay.addEventListener('click', e => {
+    const win = e.target.closest('[data-crave-win]');
+    if (win) {
+      state.cravingWins = (state.cravingWins || 0) + 1;
+      save();
+      checkBadges();
+      toast('你太棒了！已记录一次胜利 💪');
+      closeModal();
+    }
+  });
+}
+
+/* ==============================================================
+   渲染：WEIGHT
+   ============================================================== */
+let weightChart = null;
+function renderWeight() {
+  const el = document.getElementById('page-weight');
+  const now = currentWeight();
+  const first = firstWeight();
+  const dates = Object.keys(state.weights).sort();
+  const todayW = state.weights[today()] || '';
+  const bmiVal = bmi();
+  const bmiInfo = bmiLabel(bmiVal);
+  const eta = daysToGoal();
+  const etaDate = eta === 0 ? '已达标 🎉' : predictedDate();
+  const rate7d = recentLossRate(7);
+  const rate30d = recentLossRate(30);
+
+  el.innerHTML = `
+    <!-- 打卡输入 -->
+    <div class="rounded-2xl bg-gradient-to-br from-white to-slate-50 p-4 shadow-card border border-slate-100">
+      <div class="text-xs text-slate-500 mb-2">今日体重打卡</div>
+      <div class="flex items-center gap-2">
+        <input id="w-input" type="number" step="0.1" inputmode="decimal" value="${todayW}" placeholder="${now.toFixed(1)}" class="flex-1 text-2xl font-bold bg-transparent border-b border-slate-200 pb-1 focus:border-mint-500 transition-colors"/>
+        <span class="text-sm text-slate-500">斤</span>
+        <button id="w-save" class="px-4 py-2 bg-mint-500 text-white text-sm font-medium rounded-xl active:bg-mint-600">${todayW ? '更新' : '保存'}</button>
+      </div>
+      <div class="text-[11px] text-slate-400 mt-2">早晨空腹称最准</div>
+    </div>
+
+    <!-- 3 KPI -->
+    <div class="grid grid-cols-3 gap-3">
+      <div class="rounded-2xl bg-white p-3 shadow-card border border-slate-100 text-center">
+        <div class="text-[11px] text-slate-500">起始</div>
+        <div class="text-lg font-bold mt-1">${first.toFixed(1)}</div>
+      </div>
+      <div class="rounded-2xl bg-mint-500 text-white p-3 shadow-soft text-center">
+        <div class="text-[11px] opacity-80">当前</div>
+        <div class="text-lg font-bold mt-1">${now.toFixed(1)}</div>
+      </div>
+      <div class="rounded-2xl bg-white p-3 shadow-card border border-slate-100 text-center">
+        <div class="text-[11px] text-slate-500">目标</div>
+        <div class="text-lg font-bold mt-1">${USER_PROFILE.goalWeight}</div>
+      </div>
+    </div>
+
+    <!-- BMI + 预测 -->
+    <div class="grid grid-cols-2 gap-3">
+      <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
+        <div class="text-xs text-slate-500">BMI</div>
+        <div class="flex items-baseline gap-2 mt-1">
+          <div class="text-2xl font-bold">${bmiVal.toFixed(1)}</div>
+          <div class="text-xs ${bmiInfo.color} font-semibold">${bmiInfo.label}</div>
+        </div>
+        <div class="text-[10px] text-slate-400 mt-1">身高 ${USER_PROFILE.height}cm · 目标 BMI 21.4</div>
+        <div class="relative h-1.5 bg-slate-100 rounded-full mt-2 overflow-hidden">
+          <div class="absolute inset-y-0 left-0 bg-sky-300" style="width:33%"></div>
+          <div class="absolute inset-y-0 left-[33%] bg-mint-400" style="width:22%"></div>
+          <div class="absolute inset-y-0 left-[55%] bg-amber-400" style="width:20%"></div>
+          <div class="absolute inset-y-0 left-[75%] bg-red-400" style="width:25%"></div>
+          <div class="absolute top-1/2 -translate-y-1/2 w-2 h-3 bg-slate-900 rounded-full" style="left: ${Math.min(95, (bmiVal-16)/16*100)}%"></div>
+        </div>
+      </div>
+      <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
+        <div class="text-xs text-slate-500">预计达标</div>
+        <div class="text-lg font-bold mt-1">${eta === 0 ? '已达标 🎉' : eta + ' 天后'}</div>
+        <div class="text-[11px] text-slate-400 mt-1">${eta === 0 ? '' : '约 ' + etaDate}</div>
+        <div class="text-[10px] text-slate-500 mt-2">
+          近 7 天：<b class="text-slate-700">${rate7d >= 0 ? '↓' : '↑'} ${Math.abs(rate7d).toFixed(2)}</b> 斤/天<br>
+          近 30 天：<b class="text-slate-700">${rate30d >= 0 ? '↓' : '↑'} ${Math.abs(rate30d).toFixed(2)}</b> 斤/天
+        </div>
+      </div>
+    </div>
+
+    <!-- 图表 -->
+    <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-sm font-semibold">体重趋势</div>
+        <div class="text-[11px] text-slate-400">${dates.length} 条记录</div>
+      </div>
+      <div class="relative" style="height:220px">
+        <canvas id="w-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- 3 阶段里程碑 -->
+    <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
+      <div class="text-sm font-semibold mb-3">三阶段里程碑</div>
+      <div class="space-y-3">
+        ${[
+          { m:1, from: USER_PROFILE.startWeight, to:123, label:'第 1 个月', desc:'适应期 · 主要减掉水肿' },
+          { m:2, from:123, to:118, label:'第 2 个月', desc:'稳定期 · 每周 1-1.5 斤' },
+          { m:3, from:118, to:USER_PROFILE.goalWeight, label:'第 3 个月', desc:'冲刺期 · 到达目标' },
+        ].map(ms => {
+          let progress = 0;
+          if (now <= ms.to) progress = 100;
+          else if (now < ms.from) progress = Math.min(100, ((ms.from - now)/(ms.from - ms.to))*100);
+          const done = progress >= 100;
+          return `
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${done ? 'bg-mint-500 text-white' : 'bg-slate-100 text-slate-500'}">
+                ${done ? '✓' : ms.m}
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between text-sm">
+                  <span class="font-medium">${ms.label} · 目标 ${ms.to} 斤</span>
+                  <span class="text-slate-500 text-xs">${done ? '已完成' : progress.toFixed(0)+'%'}</span>
+                </div>
+                <div class="h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                  <div class="h-full bg-mint-500 transition-all" style="width:${progress}%"></div>
+                </div>
+                <div class="text-[10px] text-slate-400 mt-0.5">${ms.desc}</div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- 打卡历史 -->
+    <div class="rounded-2xl bg-white shadow-card border border-slate-100 overflow-hidden">
+      <div class="px-4 py-3 border-b border-slate-100 text-sm font-semibold">打卡历史</div>
+      <div class="divide-y divide-slate-100 max-h-64 overflow-y-auto">
+        ${dates.length === 0 ? '<div class="text-xs text-slate-400 px-4 py-4">还没有打卡记录</div>' :
+          dates.slice().reverse().map((d, i, arr) => {
+            const w = state.weights[d];
+            const prev = arr[i+1] ? state.weights[arr[i+1]] : null;
+            const diff = prev != null ? (w - prev).toFixed(1) : null;
+            const diffCls = diff == null ? '' : (diff < 0 ? 'text-mint-600' : diff > 0 ? 'text-red-500' : 'text-slate-400');
+            const diffTxt = diff == null ? '' : (diff > 0 ? '+'+diff : diff);
+            return `<div class="flex items-center justify-between px-4 py-2.5">
+              <div class="text-xs text-slate-500">${d}</div>
+              <div class="flex items-center gap-3">
+                <div class="text-sm font-semibold">${w.toFixed(1)} <span class="text-[11px] text-slate-400 font-normal">斤</span></div>
+                <div class="text-xs ${diffCls} w-12 text-right">${diffTxt}</div>
+                <button class="text-slate-300 hover:text-red-500" data-del-weight="${d}">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+              </div>
+            </div>`;
+          }).join('')}
+      </div>
+    </div>
+  `;
+  drawWeightChart();
+}
+
+function recentLossRate(n) {
+  const dates = Object.keys(state.weights).sort();
+  if (dates.length < 2) return 0;
+  const endIdx = dates.length - 1;
+  let startIdx = endIdx - 1;
+  for (let i = endIdx; i >= 0; i--) {
+    if (daysBetween(dates[i], dates[endIdx]) >= n) { startIdx = i; break; }
+    startIdx = i;
+  }
+  const span = daysBetween(dates[startIdx], dates[endIdx]) || 1;
+  return (state.weights[dates[startIdx]] - state.weights[dates[endIdx]]) / span;
+}
+
+function drawWeightChart() {
+  const ctx = document.getElementById('w-chart');
+  if (!ctx) return;
+  const dates = Object.keys(state.weights).sort();
+  const labels = dates.length ? dates : [USER_PROFILE.startDate];
+  const data = dates.length ? dates.map(d => state.weights[d]) : [USER_PROFILE.startWeight];
+  if (weightChart) weightChart.destroy();
+  const goalLine = new Array(labels.length).fill(USER_PROFILE.goalWeight);
+  const values = [...data, USER_PROFILE.goalWeight, USER_PROFILE.startWeight];
+  const min = Math.floor(Math.min(...values) - 2);
+  const max = Math.ceil(Math.max(...values) + 2);
+
+  weightChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels.map(d => d.slice(5)),
+      datasets: [
+        {
+          label: '体重', data,
+          borderColor: '#22c55e',
+          backgroundColor: (c) => {
+            const {ctx, chartArea} = c.chart;
+            if (!chartArea) return 'rgba(34,197,94,0.1)';
+            const g = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+            g.addColorStop(0, 'rgba(34,197,94,0.35)');
+            g.addColorStop(1, 'rgba(34,197,94,0)');
+            return g;
+          },
+          borderWidth: 2.5, fill:true, tension: 0.35,
+          pointRadius:4, pointBackgroundColor:'#fff', pointBorderColor:'#22c55e', pointBorderWidth:2, pointHoverRadius:6,
+        },
+        { label:'目标', data:goalLine, borderColor:'#f59e0b', borderWidth:1.5, borderDash:[4,4], pointRadius:0, fill:false, tension:0 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins: {
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#0f172a', padding:10, cornerRadius:8, titleFont:{size:11}, bodyFont:{size:12,weight:'bold'},
+          callbacks:{label:(c)=>c.dataset.label+'：'+c.parsed.y.toFixed(1)+' 斤'}
+        }
+      },
+      scales: {
+        x: { grid:{display:false}, ticks:{font:{size:10}, color:'#94a3b8'} },
+        y: { min, max, grid:{color:'rgba(148,163,184,0.15)'}, ticks:{font:{size:10}, color:'#94a3b8', stepSize:2} }
+      }
+    }
+  });
+}
+
+/* ==============================================================
+   渲染：MEALS 选餐建议
+   ============================================================== */
+const CANTEEN_PLAN = {
+  day: {
+    title: '早班日 · 主战场午餐',
+    tip: '早班上午集中输出，午餐蛋白拉满、下午加一份水果或酸奶做加餐；晚餐提前到 18:30 前吃完，减脂窗口更长。',
+    meals: [
+      { slot:'午餐（12:00 前后）', goal:'主食一拳、蛋白两掌、蔬菜两拳，500-600 kcal',
+        picks:[
+          { name:'杂粮饭半碗 + 清蒸鲈鱼 + 蒜蓉西兰花', kcal:460, tag:'green' },
+          { name:'糙米饭半碗 + 香煎鸡胸 + 凉拌黄瓜 + 番茄蛋汤', kcal:500, tag:'green' },
+          { name:'牛肉 + 老豆腐 + 蒸南瓜 + 清炒时蔬', kcal:540, tag:'green' },
+      ]},
+      { slot:'下午加餐（15:30）', goal:'150 kcal 以内，补蛋白稳血糖',
+        picks:[
+          { name:'希腊酸奶 + 蓝莓', kcal:130, tag:'green' },
+          { name:'茶叶蛋 + 无糖豆浆', kcal:140, tag:'green' },
+          { name:'10 粒巴旦木 + 一杯美式', kcal:80, tag:'green' },
+      ]},
+      { slot:'晚餐（≤ 18:30）', goal:'低碳高蛋白，300-400 kcal',
+        picks:[
+          { name:'虾仁 + 老豆腐 + 蒸时蔬', kcal:300, tag:'green' },
+          { name:'烤鱼一份 + 凉拌菠菜', kcal:350, tag:'green' },
+          { name:'2 个水煮蛋 + 番茄鸡蛋 + 紫菜汤', kcal:380, tag:'green' },
+      ]},
+    ],
+  },
+  night: {
+    title: '晚班日 · 主战场晚餐',
+    tip: '晚班易饿，重点：白天两餐吃够蛋白，晚班前一份小碳水；夜里若饿用无糖酸奶 / 水煮蛋顶，别叠加炸物+奶茶。',
+    meals: [
+      { slot:'午餐（12:00-13:00）', goal:'400-500 kcal，蛋白 + 高纤维',
+        picks:[
+          { name:'糙米饭半碗 + 牛肉 + 蒜蓉西兰花', kcal:480, tag:'green' },
+          { name:'鸡胸沙拉碗 + 一个煎蛋', kcal:420, tag:'green' },
+          { name:'虾仁豆腐煲 + 半碗杂粮饭', kcal:460, tag:'green' },
+      ]},
+      { slot:'晚餐（17:30 上晚班前）', goal:'500-600 kcal，扛饿到夜里',
+        picks:[
+          { name:'杂粮饭一小碗 + 香煎鸡胸 + 番茄鸡蛋 + 时蔬', kcal:580, tag:'green' },
+          { name:'烤鱼一份 + 老豆腐 + 玉米一根', kcal:560, tag:'green' },
+          { name:'半份酸菜鱼（少油汤） + 杂粮饭半碗 + 一份青菜', kcal:600, tag:'yellow' },
+      ]},
+      { slot:'夜宵（如需，21:30 后）', goal:'≤ 150 kcal，纯蛋白/纤维',
+        picks:[
+          { name:'2 个水煮蛋 + 一杯温豆浆', kcal:210, tag:'yellow' },
+          { name:'希腊酸奶 100g + 圣女果', kcal:110, tag:'green' },
+          { name:'一碗紫菜蛋花汤', kcal:80, tag:'green' },
+      ]},
+    ],
+  },
+};
+
+function renderMeals() {
+  const el = document.getElementById('page-meals');
+  const shift = state.activeShift;
+  const plan = CANTEEN_PLAN[shift];
+
+  el.innerHTML = `
+    <div class="flex items-center gap-2 p-1 rounded-2xl bg-slate-100">
+      ${[{k:'day',label:'☀️ 早班'},{k:'night',label:'🌙 晚班'}].map(it =>
+        `<button data-shift="${it.k}" class="segment-btn ${shift===it.k?'active':''} flex-1 py-2 rounded-xl text-sm font-medium">${it.label}</button>`
+      ).join('')}
+    </div>
+
+    <div class="rounded-2xl bg-gradient-to-br from-mint-500 to-emerald-600 text-white p-4 shadow-soft">
+      <div class="text-sm font-semibold">${plan.title}</div>
+      <div class="text-xs opacity-90 mt-2 leading-relaxed">${plan.tip}</div>
+    </div>
+
+    ${plan.meals.map(m => `
+      <div class="rounded-2xl bg-white shadow-card border border-slate-100 overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-100">
+          <div class="text-sm font-semibold">${m.slot}</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">${m.goal}</div>
+        </div>
+        <div class="p-4 space-y-2">
+          ${m.picks.map(p => `
+            <div class="flex items-center justify-between bg-slate-50 rounded-xl px-3 py-2.5">
+              <div class="flex-1 min-w-0 pr-2">
+                <div class="text-sm text-slate-800">${escapeHtml(p.name)}</div>
+                <div class="mt-1"><span class="chip ${p.tag}-chip">${tagCn(p.tag)}</span></div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-semibold">${p.kcal}</div>
+                <div class="text-[10px] text-slate-400">kcal</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('')}
+
+    <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
+      <div class="text-sm font-semibold mb-3">餐厅红绿灯速查</div>
+      <div class="space-y-3">
+        <div>
+          <div class="flex items-center gap-1.5 mb-1.5"><span class="chip green-chip">🟢 绿灯 · 放心吃</span></div>
+          <div class="text-xs text-slate-600 leading-relaxed">鱼虾、鸡胸、牛肉、鸡蛋、豆腐、豆浆、绿叶菜、番茄鸡蛋、蒸南瓜/玉米、糙米/杂粮饭半碗、无糖酸奶</div>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5 mb-1.5"><span class="chip yellow-chip">🟡 黄灯 · 控量吃</span></div>
+          <div class="text-xs text-slate-600 leading-relaxed">酸菜鱼（少油汤）、烧鸭、冒菜、麻辣香锅、烤鸡腿、寿司、香蕉、面条 — 一周不超过 2-3 次</div>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5 mb-1.5"><span class="chip red-chip">🔴 红灯 · 避雷</span></div>
+          <div class="text-xs text-slate-600 leading-relaxed">炸鸡、干锅、炒饭/炒面、红烧肉、甜奶茶、可乐、蛋糕、薯条 — 一周最多解馋一次</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="w-full py-3 rounded-2xl bg-mint-50 text-mint-700 text-sm font-medium border border-mint-100" data-goto="log">
+      + 从推荐挑一份，去记录今日饮食
+    </button>
+  `;
+}
+
+/* ==============================================================
+   渲染：CAL（成就页 · 日历热图 + 徽章 + 数据看板）
+   ============================================================== */
+let calCursor = new Date();
+function renderCal() {
+  const el = document.getElementById('page-cal');
+  const year = calCursor.getFullYear();
+  const month = calCursor.getMonth();
+  const first = new Date(year, month, 1);
+  const startWeekday = first.getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const streak = streakDays();
+
+  const monthKey = `${year}-${pad(month+1)}`;
+  const monthPunches = Object.keys(state.weights).filter(d => d.startsWith(monthKey)).length;
+
+  // 本周 / 本月看板
+  const weekData = computePeriod(7);
+  const monthData = computePeriod(30);
+
+  const cells = [];
+  for (let i = 0; i < startWeekday; i++) cells.push({ empty: true });
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${year}-${pad(month+1)}-${pad(d)}`;
+    cells.push({
+      empty:false, day:d, key,
+      isToday: key === today(),
+      hasWeight: state.weights[key] != null,
+      hasDiet: !!state.diet[key],
+      hasEx: !!(state.exercise[key] && state.exercise[key].length),
+      weight: state.weights[key],
+    });
+  }
+
+  const unlockedBadges = state.badges.length;
+
+  el.innerHTML = `
+    <!-- 3 KPI -->
+    <div class="grid grid-cols-3 gap-3">
+      <div class="rounded-2xl bg-gradient-to-br from-mint-500 to-emerald-600 text-white p-3 shadow-soft text-center">
+        <div class="text-[11px] opacity-80">连续打卡</div>
+        <div class="text-xl font-bold mt-1">${streak}<span class="text-xs opacity-80 font-normal">天</span></div>
+      </div>
+      <div class="rounded-2xl bg-white p-3 shadow-card border border-slate-100 text-center">
+        <div class="text-[11px] text-slate-500">本月称重</div>
+        <div class="text-xl font-bold mt-1">${monthPunches}<span class="text-xs text-slate-400 font-normal">天</span></div>
+      </div>
+      <div class="rounded-2xl bg-white p-3 shadow-card border border-slate-100 text-center">
+        <div class="text-[11px] text-slate-500">已解锁</div>
+        <div class="text-xl font-bold mt-1">${unlockedBadges}<span class="text-xs text-slate-400 font-normal">/${BADGES.length}</span></div>
+      </div>
+    </div>
+
+    <!-- 数据看板 -->
+    <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold">数据看板</div>
+        <button class="text-xs text-mint-600 font-medium" id="btn-weekly-share">生成周报卡片 →</button>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="rounded-xl bg-slate-50 p-3">
+          <div class="text-[11px] text-slate-500 mb-2">本周（近 7 天）</div>
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between"><span class="text-slate-500">热量均值</span><b>${weekData.kcalAvg} kcal</b></div>
+            <div class="flex justify-between"><span class="text-slate-500">蛋白达标</span><b>${weekData.proteinPass}/${weekData.dayCount} 天</b></div>
+            <div class="flex justify-between"><span class="text-slate-500">运动</span><b>${weekData.exDays} 天</b></div>
+            <div class="flex justify-between"><span class="text-slate-500">水分达标</span><b>${weekData.waterPass} 天</b></div>
+            <div class="flex justify-between pt-1 border-t border-slate-200">
+              <span class="text-slate-500">体重变化</span>
+              <b class="${weekData.weightDiff < 0 ? 'text-mint-600' : 'text-slate-700'}">${weekData.weightDiff > 0 ? '+' : ''}${weekData.weightDiff.toFixed(1)} 斤</b>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-xl bg-slate-50 p-3">
+          <div class="text-[11px] text-slate-500 mb-2">本月（近 30 天）</div>
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between"><span class="text-slate-500">热量均值</span><b>${monthData.kcalAvg} kcal</b></div>
+            <div class="flex justify-between"><span class="text-slate-500">蛋白达标</span><b>${monthData.proteinPass}/${monthData.dayCount} 天</b></div>
+            <div class="flex justify-between"><span class="text-slate-500">运动</span><b>${monthData.exDays} 天</b></div>
+            <div class="flex justify-between"><span class="text-slate-500">水分达标</span><b>${monthData.waterPass} 天</b></div>
+            <div class="flex justify-between pt-1 border-t border-slate-200">
+              <span class="text-slate-500">体重变化</span>
+              <b class="${monthData.weightDiff < 0 ? 'text-mint-600' : 'text-slate-700'}">${monthData.weightDiff > 0 ? '+' : ''}${monthData.weightDiff.toFixed(1)} 斤</b>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 月历 -->
+    <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
+      <div class="flex items-center justify-between mb-3">
+        <button data-cal="prev" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="text-sm font-semibold">${year} 年 ${month+1} 月</div>
+        <button data-cal="next" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+      <div class="grid grid-cols-7 gap-1 text-center text-[10px] text-slate-400 mb-2">
+        ${['日','一','二','三','四','五','六'].map(w => `<div>${w}</div>`).join('')}
+      </div>
+      <div class="grid grid-cols-7 gap-1">
+        ${cells.map(c => {
+          if (c.empty) return `<div class="cal-cell"></div>`;
+          const cnt = (c.hasWeight?1:0) + (c.hasDiet?1:0) + (c.hasEx?1:0);
+          let bg = 'bg-slate-50 text-slate-400';
+          if (cnt === 3) bg = 'bg-mint-600 text-white shadow-sm';
+          else if (cnt === 2) bg = 'bg-mint-400 text-white';
+          else if (cnt === 1) bg = 'bg-mint-100 text-mint-700';
+          const ring = c.isToday ? 'ring-2 ring-mint-500 ring-offset-1' : '';
+          return `
+            <div class="cal-cell rounded-lg ${bg} ${ring} flex flex-col items-center justify-center text-xs font-medium">
+              <div>${c.day}</div>
+              ${c.hasWeight ? `<div class="text-[9px] font-normal opacity-90 mt-0.5">${c.weight.toFixed(1)}</div>` : ''}
+            </div>
+          `;
+        }).join('')}
+      </div>
+      <div class="flex items-center justify-center gap-3 text-[10px] text-slate-500 mt-3">
+        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-mint-600"></span>全打卡</div>
+        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-mint-400"></span>2 项</div>
+        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-mint-100"></span>1 项</div>
+      </div>
+    </div>
+
+    <!-- 徽章墙 -->
+    <div class="rounded-2xl bg-white p-4 shadow-card border border-slate-100">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold">徽章墙</div>
+        <div class="text-[11px] text-slate-400">${unlockedBadges} / ${BADGES.length}</div>
+      </div>
+      <div class="grid grid-cols-4 gap-3">
+        ${BADGES.map(b => {
+          const unlocked = state.badges.includes(b.id);
+          return `
+            <div class="text-center ${unlocked?'':'badge-locked'}" title="${b.desc}">
+              <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br ${unlocked?'from-amber-100 to-orange-100':'from-slate-50 to-slate-100'} flex items-center justify-center text-3xl">${b.icon}</div>
+              <div class="text-[10px] mt-1 text-slate-700 font-medium truncate">${b.name}</div>
+              <div class="text-[9px] text-slate-400 truncate">${unlocked?'已解锁':'未解锁'}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- 鼓励语 -->
+    <div class="rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 p-4">
+      <div class="text-sm font-semibold text-slate-800 mb-1">${motivationText(streak)}</div>
+      <div class="text-xs text-slate-600 leading-relaxed">
+        减脂不是短跑，是慢慢建立的生活方式。每一次称重、每一顿饮食记录，都是在给未来的自己攒复利。
+      </div>
+    </div>
+  `;
+}
+
+function computePeriod(n) {
+  const dates = [];
+  for (let i = 0; i < n; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    dates.push(fmtDate(d));
+  }
+  let kcalSum=0, kcalCnt=0, proteinPass=0, dayCount=0, exDays=0, waterPass=0;
+  dates.forEach(d => {
+    const m = macrosOfDay(d);
+    if (m.k > 0) { kcalSum += m.k; kcalCnt++; dayCount++; if (m.p >= USER_PROFILE.proteinMin) proteinPass++; }
+    if (state.exercise[d] && state.exercise[d].length) exDays++;
+    if ((state.water[d]||0) >= USER_PROFILE.waterTarget) waterPass++;
+  });
+  // 体重差
+  const wdates = Object.keys(state.weights).sort().filter(x => daysBetween(x, today()) <= n && daysBetween(x, today()) >= 0);
+  let weightDiff = 0;
+  if (wdates.length >= 2) weightDiff = state.weights[wdates[wdates.length-1]] - state.weights[wdates[0]];
+  return {
+    kcalAvg: kcalCnt ? Math.round(kcalSum/kcalCnt) : 0,
+    proteinPass, dayCount, exDays, waterPass,
+    weightDiff,
+  };
+}
+
+function motivationText(n) {
+  if (n === 0) return '今天开始第 1 天 💪';
+  if (n < 3) return `已经连续 ${n} 天，坚持住！`;
+  if (n < 7) return `连续打卡 ${n} 天，习惯正在形成 🌱`;
+  if (n < 14) return `连续打卡 ${n} 天，你已经很棒了 ✨`;
+  if (n < 30) return `连续打卡 ${n} 天，你就是自律本律 🔥`;
+  return `连续打卡 ${n} 天，减脂已经成为生活方式 🏆`;
+}
+
+/* ==============================================================
+   周报卡片 · 可截图
+   ============================================================== */
+function openWeeklyReport() {
+  const wk = computePeriod(7);
+  const now = currentWeight();
+  const first = firstWeight();
+  const streak = streakDays();
+  const remain = (now - USER_PROFILE.goalWeight).toFixed(1);
+  const totalLost = (first - now).toFixed(1);
+
+  openModal(`
+    <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+      <div class="text-base font-semibold">📊 本周周报</div>
+      <button class="text-slate-400" data-close>
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-4">
+      <div id="weekly-card" class="rounded-3xl overflow-hidden" style="background: linear-gradient(135deg,#10b981 0%,#059669 60%,#065f46 100%); color:white; padding:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:11px; opacity:.85;">${todayStr()}</div>
+            <div style="font-size:20px; font-weight:800; margin-top:4px;">🌱 我的减脂周报</div>
+          </div>
+          <div style="font-size:11px; opacity:.85; text-align:right;">
+            连续打卡<br><span style="font-size:22px; font-weight:800;">${streak}</span> 天
+          </div>
+        </div>
+        <div style="margin-top:20px; padding:16px; background:rgba(255,255,255,0.15); border-radius:16px;">
+          <div style="display:flex; justify-content:space-between;">
+            <div>
+              <div style="font-size:11px; opacity:.85;">当前体重</div>
+              <div style="font-size:32px; font-weight:800;">${now.toFixed(1)}<span style="font-size:14px; opacity:.85; font-weight:500;"> 斤</span></div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:11px; opacity:.85;">距目标</div>
+              <div style="font-size:32px; font-weight:800;">${remain}<span style="font-size:14px; opacity:.85; font-weight:500;"> 斤</span></div>
+            </div>
+          </div>
+          <div style="margin-top:12px; font-size:11px; opacity:.9;">累计减重 ${totalLost} 斤 · 起始 ${first.toFixed(1)} → 目标 ${USER_PROFILE.goalWeight}</div>
+        </div>
+        <div style="margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div style="background:rgba(255,255,255,0.15); border-radius:12px; padding:12px;">
+            <div style="font-size:11px; opacity:.85;">热量均值</div>
+            <div style="font-size:20px; font-weight:700; margin-top:2px;">${wk.kcalAvg}<span style="font-size:11px; opacity:.85; font-weight:500;"> kcal</span></div>
+          </div>
+          <div style="background:rgba(255,255,255,0.15); border-radius:12px; padding:12px;">
+            <div style="font-size:11px; opacity:.85;">蛋白达标</div>
+            <div style="font-size:20px; font-weight:700; margin-top:2px;">${wk.proteinPass}<span style="font-size:11px; opacity:.85; font-weight:500;"> / ${wk.dayCount} 天</span></div>
+          </div>
+          <div style="background:rgba(255,255,255,0.15); border-radius:12px; padding:12px;">
+            <div style="font-size:11px; opacity:.85;">运动打卡</div>
+            <div style="font-size:20px; font-weight:700; margin-top:2px;">${wk.exDays}<span style="font-size:11px; opacity:.85; font-weight:500;"> 天</span></div>
+          </div>
+          <div style="background:rgba(255,255,255,0.15); border-radius:12px; padding:12px;">
+            <div style="font-size:11px; opacity:.85;">水分达标</div>
+            <div style="font-size:20px; font-weight:700; margin-top:2px;">${wk.waterPass}<span style="font-size:11px; opacity:.85; font-weight:500;"> 天</span></div>
+          </div>
+        </div>
+        <div style="margin-top:16px; padding-top:12px; border-top:1px dashed rgba(255,255,255,0.3); font-size:11px; opacity:.85;">
+          本周体重 ${wk.weightDiff <= 0 ? '↓' : '↑'} ${Math.abs(wk.weightDiff).toFixed(1)} 斤 · 已解锁 ${state.badges.length} 枚徽章
+        </div>
+        <div style="margin-top:14px; text-align:center; font-size:10px; opacity:.7;">— 轻食日记 · 减脂 App —</div>
+      </div>
+      <button id="btn-download" class="mt-4 w-full py-3 bg-mint-500 text-white text-sm font-medium rounded-2xl active:bg-mint-600">📥 保存为图片</button>
+      <div class="text-[11px] text-slate-400 text-center mt-2">保存后可分享到朋友圈/群里</div>
+    </div>
+  `);
+  document.querySelector('#btn-download').addEventListener('click', async () => {
+    try {
+      const el = document.getElementById('weekly-card');
+      const canvas = await html2canvas(el, { backgroundColor: null, scale: 2 });
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `减脂周报-${today()}.png`;
+      a.click();
+      toast('已保存到相册/下载');
+    } catch(e) {
+      console.error(e);
+      toast('保存失败，请长按卡片截图');
+    }
+  });
+}
+
+/* ==============================================================
+   路由 & 全局事件
+   ============================================================== */
+const RENDERERS = { home: renderHome, log: renderLog, weight: renderWeight, meals: renderMeals, cal: renderCal };
+function switchTab(name) {
+  state.activeTab = name;
+  save();
+  ['home','log','weight','meals','cal'].forEach(k => document.getElementById('page-'+k).classList.toggle('hidden', k !== name));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  RENDERERS[name]();
+  // 触发图表
+  setTimeout(() => {
+    if (name === 'log' && state.activeLogTab === 'diet') { drawMacroDonut(); drawDiet7d(); }
+  }, 30);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function refreshCurrent() {
+  RENDERERS[state.activeTab]?.();
+  if (state.activeTab === 'log') {
+    setTimeout(() => { if (state.activeLogTab === 'diet') { drawMacroDonut(); drawDiet7d(); } }, 30);
+  }
+}
+
+function drawMacroDonut() {
+  const c = document.getElementById('macro-donut');
+  if (!c) return;
+  const m = macrosOfDay(today());
+  const pKcal = m.p * 4, cKcal = m.c * 4, fKcal = m.f * 9;
+  const totalMacros = pKcal + cKcal + fKcal;
+  if (totalMacros === 0) {
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0,0,c.width,c.height);
+    ctx.strokeStyle = '#e5e7eb';
+    ctx.lineWidth = 12;
+    ctx.beginPath(); ctx.arc(56, 56, 46, 0, Math.PI*2); ctx.stroke();
+    return;
+  }
+  new Chart(c, {
+    type: 'doughnut',
+    data: {
+      labels: ['蛋白','碳水','脂肪'],
+      datasets: [{
+        data: [pKcal, cKcal, fKcal],
+        backgroundColor: ['#3b82f6','#f59e0b','#ec4899'],
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      cutout: '75%',
+      plugins: { legend:{display:false}, tooltip:{ callbacks:{ label:(c)=>c.label+': '+Math.round(c.parsed)+' kcal' }}}
+    }
+  });
+}
+
+let diet7dChart = null;
+function drawDiet7d() {
+  const c = document.getElementById('diet-7d-chart');
+  if (!c) return;
+  if (diet7dChart) diet7dChart.destroy();
+  const dates = [];
+  for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate()-i); dates.push(fmtDate(d)); }
+  const data = dates.map(d => macrosOfDay(d).k);
+  const labels = dates.map(d => d.slice(5));
+  diet7dChart = new Chart(c, {
+    type:'bar',
+    data: {
+      labels,
+      datasets: [{
+        data, backgroundColor: data.map(v => v > USER_PROFILE.calorieMax ? '#ef4444' : v >= USER_PROFILE.calorieMin ? '#22c55e' : v > 0 ? '#f59e0b' : '#e5e7eb'),
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>c.parsed.y+' kcal'}} },
+      scales: {
+        x: { grid:{display:false}, ticks:{font:{size:10}, color:'#94a3b8'} },
+        y: { grid:{color:'rgba(148,163,184,0.15)'}, ticks:{font:{size:10}, color:'#94a3b8', stepSize:500} },
+      }
+    }
+  });
+}
+
+/* ==============================================================
+   事件委托
+   ============================================================== */
+document.addEventListener('click', (e) => {
+  const tabBtn = e.target.closest('.tab-btn');
+  if (tabBtn) { switchTab(tabBtn.dataset.tab); return; }
+
+  const goto = e.target.closest('[data-goto]');
+  if (goto) { switchTab(goto.dataset.goto); return; }
+
+  // 快捷按钮
+  const quick = e.target.closest('[data-quick]');
+  if (quick) {
+    if (quick.dataset.quick === 'quick-weight') openWeightDialog();
+    else if (quick.dataset.quick === 'quick-diet') { switchTab('log'); state.activeLogTab='diet'; save(); refreshCurrent(); }
+    else if (quick.dataset.quick === 'quick-water') { switchTab('log'); state.activeLogTab='water'; save(); refreshCurrent(); }
+    else if (quick.dataset.quick === 'quick-exercise') openExerciseDialog(null);
+    return;
+  }
+
+  // log 子tab 切换
+  const sublog = e.target.closest('[data-sublog]');
+  if (sublog) { state.activeLogTab = sublog.dataset.sublog; save(); renderLog(); setTimeout(() => { if (state.activeLogTab === 'diet') { drawMacroDonut(); drawDiet7d(); } }, 30); return; }
+
+  // 添加菜品
+  const add = e.target.closest('[data-add-meal]');
+  if (add) { openMealDialog(add.dataset.addMeal); return; }
+
+  // 删除菜品
+  const del = e.target.closest('[data-del]');
+  if (del) { const [meal, idx] = del.dataset.del.split(':'); delFood(meal, Number(idx)); return; }
+
+  // 快速运动
+  const qex = e.target.closest('[data-quickex]');
+  if (qex) { openExerciseDialog(JSON.parse(qex.dataset.quickex)); return; }
+  if (e.target.closest('[data-exercise-more]')) { openExerciseDialog(null); return; }
+
+  // 删除运动
+  const delEx = e.target.closest('[data-del-ex]');
+  if (delEx) {
+    const idx = Number(delEx.dataset.delEx);
+    state.exercise[today()].splice(idx, 1);
+    save();
+    refreshCurrent();
+    return;
+  }
+
+  // 水
+  const water = e.target.closest('[data-water]');
+  if (water) {
+    const v = water.dataset.water;
+    if (v === 'custom') { openWaterCustom(); return; }
+    const n = Number(v);
+    if (!isNaN(n)) { addWater(n); return; }
+  }
+
+  // 删除体重
+  const delW = e.target.closest('[data-del-weight]');
+  if (delW) { delete state.weights[delW.dataset.delWeight]; save(); renderWeight(); return; }
+
+  // 体重保存（在 weight 页面）
+  if (e.target.id === 'w-save') {
+    const v = Number(document.getElementById('w-input').value);
+    if (!v || v < 40 || v > 400) { toast('请输入合理体重（斤）'); return; }
+    state.weights[today()] = v;
+    save();
+    toast('已打卡今日体重');
+    checkBadges();
+    renderWeight();
+    return;
+  }
+
+  // 班次
+  const shift = e.target.closest('[data-shift]');
+  if (shift) { state.activeShift = shift.dataset.shift; save(); renderMeals(); return; }
+
+  // 日历翻页
+  const cal = e.target.closest('[data-cal]');
+  if (cal) { calCursor.setDate(1); calCursor.setMonth(calCursor.getMonth() + (cal.dataset.cal === 'next' ? 1 : -1)); renderCal(); return; }
+
+  // 防暴食
+  if (e.target.closest('[data-craving]')) { openCravingDialog(); return; }
+
+  // 周报
+  if (e.target.closest('#btn-share') || e.target.closest('#btn-weekly-share')) { openWeeklyReport(); return; }
+
+  // 重置
+  if (e.target.closest('#btn-reset')) {
+    if (confirm('确定要清空所有本地数据吗？此操作不可恢复。')) {
+      localStorage.removeItem(LS_KEY);
+      state = load();
+      calCursor = new Date();
+      switchTab('home');
+      toast('已清空所有数据');
+    }
+    return;
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && e.target.id === 'w-input') document.getElementById('w-save').click();
+});
+
+/* ==============================================================
+   初始化
+   ============================================================== */
+if (Object.keys(state.weights).length === 0) {
+  state.weights[USER_PROFILE.startDate] = USER_PROFILE.startWeight;
+  save();
+}
+checkBadges();
+switchTab(state.activeTab || 'home');
+</script>
+</body>
+</html>
